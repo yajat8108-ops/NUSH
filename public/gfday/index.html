@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>REWIND — a tape for nush</title>
+<meta name="description" content="Happy Girlfriends Day, Nush. Press play." />
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/sections.css" />
+</head>
+<body>
+
+<!-- ===== persistent camcorder viewfinder chrome ===== -->
+<div id="viewfinder">
+  <span class="vf-corner tl"></span>
+  <span class="vf-corner tr"></span>
+  <span class="vf-corner bl"></span>
+  <span class="vf-corner br"></span>
+  <div class="vf-hud">
+    <span class="vf-rec"><span class="dot"></span> REC</span>
+    <span id="hud-time">00:00:00</span>
+  </div>
+  <div class="vf-love">
+    <span>LOVE METER</span>
+    <span class="vf-love-track"><span class="vf-love-fill" id="love-fill"></span></span>
+    <span id="love-pct">0%</span>
+  </div>
+</div>
+<div class="grain"></div>
+
+<!-- ===== 0. splash ===== -->
+<section id="splash">
+  <div class="power-flash"></div>
+  <img class="splash-photo" src="assets/photos/photo-new-1.jpg" alt="" style="width:160px; top:12%; left:8%;" />
+  <img class="splash-photo" src="assets/photos/photo-new-2.jpg" alt="" style="width:130px; bottom:14%; right:10%; animation-delay:0.3s, 1.2s;" />
+  <img class="splash-photo" src="assets/photos/photo-new-3.jpg" alt="" style="width:110px; bottom:20%; left:12%; animation-delay:0.5s, 0.7s;" />
+  <div class="splash-inner">
+    <div class="splash-eyebrow">TAPE 002 · AUG 22 · 2ND MONTH ANNIVERSARY</div>
+    <h1 class="splash-title" id="splash-title">Happy 2 Months, Nushi 😭❤️<span class="cursor">&nbsp;</span></h1>
+    <div class="name-lockup" id="name-lockup">
+      <span class="name-a name-interactive" id="name-yajat" title="Tap Yajat 🐻">Yajat</span>
+      <span class="heart-wrap" id="heart-wrap" title="tap it">
+        <span class="heart-glow"></span>
+        <span class="heart-emoji" id="heart-emoji">❤</span>
+      </span>
+      <span class="name-b name-interactive" id="name-nush" title="Tap Nush 🌸">Nush</span>
+    </div>
+    <p class="splash-sub">Two months, our sacred Open Audi memories, daily 8 PM guard escape missions & our shared songs. Press play whenever you're ready.</p>
+    <button class="btn rose splash-cta" id="btn-play">▶ Press play</button>
+  </div>
+</section>
+
+<!-- ===== 1. filmstrip timeline ===== -->
+<section id="filmstrip">
+  <div class="filmstrip-head wrap reveal">
+    <span class="eyebrow">reel one</span>
+    <h2 class="section-title">Days Since Day One</h2>
+    
+    <div class="timeline-counter" id="timeline-counter">
+      <div class="tc-box"><div class="tc-val" id="tc-days">0</div><div class="tc-lbl">DAYS</div></div>
+      <div class="tc-box"><div class="tc-val" id="tc-hours">0</div><div class="tc-lbl">HRS</div></div>
+      <div class="tc-box"><div class="tc-val" id="tc-mins">0</div><div class="tc-lbl">MINS</div></div>
+      <div class="tc-box"><div class="tc-val" id="tc-secs">0</div><div class="tc-lbl">SECS</div></div>
+    </div>
+    
+    <div class="tracklist-milestones">
+      <div class="tm-track milestone-interactive" id="milestone-1" style="cursor:pointer; flex-direction:column; align-items:stretch;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; width:100%;">
+          <span><span class="tm-num">01</span> <span class="tm-name">8 July, Your Birthday</span></span>
+          <span class="tm-time">00:00</span>
+        </div>
+        <div class="tm-expand hidden" id="tm-expand-1">
+          <img src="assets/photos/photo-1.jpg" alt="Teddy" style="width:100%; border-radius:4px; border:2px solid rgba(255,255,255,0.1); display:block;"/>
+          <p style="text-align:center; font-family:var(--font-script); font-size:18px; color:#ff758c; margin-top:8px;">You named the bear "Yajat" 😭🧸</p>
+        </div>
+      </div>
+      <div class="tm-track milestone-interactive" id="milestone-2" style="cursor:pointer; flex-direction:column; align-items:stretch;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; width:100%;">
+          <span><span class="tm-num">02</span> <span class="tm-name">First "I love you"</span></span>
+          <span class="tm-time">00:00</span>
+        </div>
+        <div class="tm-expand hidden" id="tm-expand-2" style="padding:15px; background:rgba(0,0,0,0.3); border-radius:4px; text-align:center; font-family:var(--font-script); font-size:20px; color:#ff758c; border:1px dashed rgba(255,117,140,0.3);">
+          You said it first.<br>You fell first, but I fell harder. ✨
+        </div>
+      </div>
+      <div class="tm-track milestone-interactive" id="milestone-3" style="cursor:pointer; flex-direction:column; align-items:stretch;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; width:100%;">
+          <span><span class="tm-num">03</span> <span class="tm-name">22 August, Two Months of Us ❤️</span></span>
+          <span class="tm-time">00:00</span>
+        </div>
+        <div class="tm-expand hidden" id="tm-expand-3" style="padding:15px; background:rgba(0,0,0,0.3); border-radius:4px; text-align:center; font-family:var(--font-script); font-size:20px; color:#ff758c; border:1px dashed rgba(255,117,140,0.3);">
+          Two months feel like a lifetime of the most beautiful memories.<br>Here's to us and our little world ❤️🎶😭
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <div class="filmstrip-pin">
+    <div class="reel-track" id="reel-track">
+      <!-- frames injected by JS -->
+    </div>
+    <svg class="heart-progress" width="46" height="42" viewBox="0 0 46 42">
+      <path id="heart-path" d="M23 39C23 39 3 26.5 3 13.5C3 6 8.5 2 14.5 2C19 2 22 5 23 8C24 5 27 2 31.5 2C37.5 2 43 13.5C43 26.5 23 39 23 39Z"
+        fill="none" stroke="#7cf29c" stroke-width="2" stroke-dasharray="130" stroke-dashoffset="130" />
+    </svg>
+  </div>
+</section>
+
+<!-- ===== 2. memory match ===== -->
+<section id="memory">
+  <div class="wrap reveal">
+    <span class="eyebrow">reel two · a little game</span>
+    <h2 class="section-title">Sync the tapes</h2>
+    <p style="max-width:440px; font-size:14px; opacity:.75;">Flip two at a time. Match every pair to unlock the next reel.</p>
+    <div class="memory-grid" id="memory-grid"></div>
+    <div class="memory-status" id="memory-status">0 / 6 pairs synced</div>
+  </div>
+</section>
+
+<!-- ===== 3. quiz ===== -->
+<section id="quiz">
+  <div class="wrap reveal">
+    <span class="eyebrow">reel three · trivia tape</span>
+    <h2 class="section-title">How well do you know us?</h2>
+    <div class="quiz-box" id="quiz-box">
+      <div class="quiz-counter" id="quiz-counter">QUESTION 1 / 8</div>
+      <div class="quiz-q" id="quiz-question"></div>
+      <div class="quiz-options" id="quiz-options"></div>
+      <div class="quiz-result" id="quiz-result">
+        <div class="script" id="quiz-result-title"></div>
+        <div id="quiz-result-sub" style="font-family:var(--font-mono); font-size:12px; opacity:.7;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. corkboard ===== -->
+<section id="corkboard">
+  <div class="wrap reveal">
+    <span class="eyebrow">reel four · the cutting room floor</span>
+    <h2 class="section-title">Drag them around</h2>
+    <div class="board" id="board">
+      
+      <!-- Interactive Love Letter Envelope -->
+      <div class="love-letter-envelope" id="love-letter-envelope" style="top: 20%; left: 40%; transform: rotate(3deg);">
+        <div class="env-flap"></div>
+        <div class="env-body">
+          <span class="env-seal">❤</span>
+        </div>
+        <div class="env-paper" id="env-paper">
+          <div class="typewriter-text" id="ll-text"></div>
+        </div>
+      </div>
+      
+      <!-- polaroids + note injected by JS -->
+    </div>
+    <p class="corkboard-hint">psst — move things around. something's taped underneath.</p>
+  </div>
+</section>
+
+<!-- ===== 5. jukebox & mixtape ===== -->
+<section id="jukebox">
+  <div class="wrap reveal">
+    <span class="eyebrow">reel five · now playing</span>
+    <h2 class="section-title">Pick a tape</h2>
+    <div class="deck">
+      <div class="deck-slot">
+        <video id="deck-video" controls playsinline src="assets/videos/our-video.mp4"></video>
+      </div>
+      <div class="tapes">
+        <button class="tape active" data-src="assets/videos/video-new.mp4" id="tape-1">
+          <span class="reel"></span>
+          <span class="tape-meta"><span class="name">Month 2 ❤️</span>August '26</span>
+        </button>
+        <button class="tape" data-src="assets/videos/our-video.mp4" id="tape-2">
+          <span class="reel"></span>
+          <span class="tape-meta"><span class="name">mera manana</span>Summer '26</span>
+        </button>
+        <button class="tape" data-src="assets/videos/our-video-2.mp4" id="tape-3">
+          <span class="reel"></span>
+          <span class="tape-meta"><span class="name">me lifting u in front of evryone</span>The surprise</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="mixtape-reel" style="margin-top:60px;">
+      <h3 class="section-title" style="font-size:24px; margin-bottom:15px;">Our Mixtape</h3>
+      <div class="tracklist-milestones mixtape-list" style="max-width:550px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); padding: 10px; border-radius: 16px;">
+      
+      <!-- Agar Tum Saath Ho with inside joke -->
+      <div class="tm-track mt-interactive" data-spotify-id="5yGPP4F6MAc0ZZ3hAtsRAy" style="cursor:pointer; flex-direction:column; align-items:stretch; padding: 12px 16px; border-radius: 8px; transition: background 0.3s, transform 0.2s;">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; gap: 15px;">
+          <div style="display:flex; align-items:center; flex:1;">
+            <div class="tm-num" style="font-size:11px; font-weight:bold; width:35px;">A1</div>
+            <div class="tm-name" style="font-family:var(--font-body); font-weight:700; font-size:16px; margin:0;">Agar Tum Saath Ho <span style="font-weight:400; opacity:0.6; font-size:14px;">- Alka Yagnik, Arijit Singh</span></div>
+          </div>
+          <div class="tm-desc" style="font-family:var(--font-script); font-size:16px; color:var(--rose); text-transform:none; margin:0; flex-shrink: 0;">(bhete bhete bhaagi phiru... khade khade..... 👻)</div>
+        </div>
+        <div class="mt-player" style="margin-top:15px; display:none;"></div>
+      </div>
+
+      <div class="tm-track mt-interactive" data-spotify-id="0tgVpDi06FyKpA1z0VMD4v" style="cursor:pointer; flex-direction:column; align-items:stretch; padding: 12px 16px; border-radius: 8px; transition: background 0.3s, transform 0.2s;">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; gap: 15px;">
+          <div style="display:flex; align-items:center; flex:1;">
+            <div class="tm-num" style="font-size:11px; font-weight:bold; width:35px;">A2</div>
+            <div class="tm-name" style="font-family:var(--font-body); font-weight:700; font-size:16px; margin:0;">Perfect <span style="font-weight:400; opacity:0.6; font-size:14px;">- Ed Sheeran</span></div>
+          </div>
+          <div class="tm-desc" style="font-family:var(--font-script); font-size:18px; color:var(--rose); text-transform:none; margin:0; flex-shrink: 0;">because you're perfect to me.</div>
+        </div>
+        <div class="mt-player" style="margin-top:15px; display:none;"></div>
+      </div>
+      <div class="tm-track mt-interactive" data-spotify-id="1dGr1c8CrMLDpV6mPbImSI" style="cursor:pointer; flex-direction:column; align-items:stretch; padding: 12px 16px; border-radius: 8px; transition: background 0.3s, transform 0.2s;">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; gap: 15px;">
+          <div style="display:flex; align-items:center; flex:1;">
+            <div class="tm-num" style="font-size:11px; font-weight:bold; width:35px;">B1</div>
+            <div class="tm-name" style="font-family:var(--font-body); font-weight:700; font-size:16px; margin:0;">Lover <span style="font-weight:400; opacity:0.6; font-size:14px;">- Taylor Swift</span></div>
+          </div>
+          <div class="tm-desc" style="font-family:var(--font-script); font-size:18px; color:var(--rose); text-transform:none; margin:0; flex-shrink: 0;">our kitchen dance song.</div>
+        </div>
+        <div class="mt-player" style="margin-top:15px; display:none;"></div>
+      </div>
+      <div class="tm-track mt-interactive" data-spotify-id="3AJwUDPv19qlkGqDkF166A" style="cursor:pointer; flex-direction:column; align-items:stretch; padding: 12px 16px; border-radius: 8px; transition: background 0.3s, transform 0.2s;">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; gap: 15px;">
+          <div style="display:flex; align-items:center; flex:1;">
+            <div class="tm-num" style="font-size:11px; font-weight:bold; width:35px;">B2</div>
+            <div class="tm-name" style="font-family:var(--font-body); font-weight:700; font-size:16px; margin:0;">Yellow <span style="font-weight:400; opacity:0.6; font-size:14px;">- Coldplay</span></div>
+          </div>
+          <div class="tm-desc" style="font-family:var(--font-script); font-size:18px; color:var(--rose); text-transform:none; margin:0; flex-shrink: 0;">look how they shine for you.</div>
+        </div>
+        <div class="mt-player" style="margin-top:15px; display:none;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 6. coming attractions ===== -->
+<section id="coming-attractions">
+  <div class="wrap reveal">
+    <span class="eyebrow">sneak peek</span>
+    <h2 class="section-title">Coming Attractions</h2>
+    <div class="trailer-grid">
+      <div class="trailer-card">
+        <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=400" alt="Marriage" />
+        <div class="tc-overlay">
+          <div class="tc-title">The Wedding</div>
+          <div class="tc-sub">coming soon to a chapel near you</div>
+        </div>
+      </div>
+      <div class="trailer-card">
+        <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=400" alt="Travel" />
+        <div class="tc-overlay">
+          <div class="tc-title">Our World Tour</div>
+          <div class="tc-sub">packing our bags next summer</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 7. coupon booklet ===== -->
+<section id="coupons">
+  <div class="wrap reveal">
+    <span class="eyebrow">bonus inclusions</span>
+    <h2 class="section-title">Redeemable Tokens</h2>
+    
+    <div id="coupon-quiz-container">
+      <p style="font-size:16px; margin-bottom:20px;">Before you claim your tokens, answer this one very important question:</p>
+      <div class="quiz-box" style="margin-bottom: 30px;">
+        <div class="quiz-q" style="font-size:18px;">What is the absolute best thing to do on a lazy Sunday?</div>
+        <div class="quiz-options" id="coupon-quiz-options">
+          <button class="quiz-opt coupon-opt">Cleaning the apartment</button>
+          <button class="quiz-opt coupon-opt">Going grocery shopping</button>
+          <button class="quiz-opt coupon-opt">Doing laundry</button>
+          <button class="quiz-opt coupon-opt correct-opt">Cuddling and watching movies</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="coupon-reveal-container" style="display:none; text-align:center;">
+      <div class="jk-animation" id="jk-text" style="font-family:var(--font-script); font-size:48px; color:#ff758c; margin-bottom:20px; opacity:0; transform:scale(0.5); transition:all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);">
+        Jk... all of these are your redeemable tokens...<br/>
+        <span style="font-family:var(--font-mono); font-size:14px; letter-spacing:1px; color:#fff; text-transform:uppercase;">whenever you want... your wish is my command ✨</span>
+      </div>
+      
+      <p style="font-size:14px; opacity:0.7;">Tear one off whenever you need it.</p>
+      <div class="coupon-stack">
+        <div class="coupon">
+          <div class="cp-left">🎟</div>
+          <div class="cp-right">
+            <strong>Movie Night</strong>
+            <span>Your pick. I won't complain.</span>
+          </div>
+        </div>
+        <div class="coupon">
+          <div class="cp-left">🥞</div>
+          <div class="cp-right">
+            <strong>Breakfast in Bed</strong>
+            <span>Served hot, anytime.</span>
+          </div>
+        </div>
+        <div class="coupon wildcard">
+          <div class="cp-left">✨</div>
+          <div class="cp-right">
+            <strong>Wildcard Date</strong>
+            <span>You choose whatever you want for our next date!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 8. finale ===== -->
+<section id="finale">
+  <div class="wrap reveal finale-locked" id="finale-wrap">
+    <div class="splash-eyebrow" style="margin-bottom:14px;">TAPE 001 · END</div>
+    <div class="finale-title">the end?</div>
+    <div class="finale-teaser" style="font-family:var(--font-mono); color:#ffd700; margin-top:-10px; margin-bottom:20px; font-size:14px; letter-spacing:2px; animation:flicker 2s infinite;">TAPE 002 — COMING SOON</div>
+    <div class="finale-sub" id="finale-sub">KEEP PLAYING TO UNLOCK THE CREDITS</div>
+
+    <div class="certificate" id="certificate" style="display:none;">
+      <canvas id="cert-canvas" width="680" height="880" style="width:100%; display:block;"></canvas>
+    </div>
+
+    <div class="finale-cta">
+      <button class="btn gold" id="btn-certificate">🎞 Save this tape</button>
+    </div>
+    <p class="finale-hint">with love, yours — <span class="name-a name-interactive" id="finale-yajat">Yajat</span> 🐻🩷</p>
+  </div>
+</section>
+
+<div id="qr-holder" style="position:absolute; left:-9999px; top:-9999px;"></div>
+
+<!-- ===== Secret Nush & Yajat Love Overlay ===== -->
+<div id="ny-secret-overlay" class="ny-secret-overlay hidden">
+  <div class="ny-backdrop" id="ny-backdrop"></div>
+  <div class="ny-floating-hearts" id="ny-floating-hearts"></div>
+  <div class="ny-modal">
+    <button class="ny-close" id="ny-close" title="Close">✕</button>
+    <div class="ny-heart-badge">💖</div>
+    <div class="ny-subtitle">✨ SECRET TAPE UNLOCKED ✨</div>
+    <h2 class="ny-title"><span class="name-a name-interactive" id="sec-yajat">Yajat</span> &amp; <span class="name-b name-interactive" id="sec-nush">Nush</span></h2>
+    <p class="ny-message">"You are my absolute favorite person in the whole universe. Happy Girlfriends Day, Nush! I love you so so much! 🩷✨"</p>
+    <div class="ny-photos-row">
+      <img src="assets/photos/photo-10.jpg" alt="Us" />
+      <img src="assets/photos/photo-13.jpg" alt="Us" />
+    </div>
+    <button class="btn rose" id="ny-btn-love" style="padding:10px 20px; font-weight:bold;">🩷 Send Infinite Love 🩷</button>
+  </div>
+</div>
+
+<!-- ===== Yajat's Heart Collector Minigame ===== -->
+<div id="yajat-minigame" class="hidden">
+  <div class="ym-backdrop"></div>
+  <div class="ym-ui">
+    <div class="ym-title">Catch 10 Hearts! 🐻</div>
+    <div id="ym-score">0 / 10</div>
+  </div>
+  <div id="ym-play-area">
+    <div id="ym-catcher">🐻</div>
+  </div>
+  <div id="ym-win" class="hidden">
+    <div class="ym-win-text">You caught my heart! 🩷</div>
+  </div>
+</div>
+
+<!-- ===== AUDIO TOGGLE ===== -->
+<button id="audio-toggle" class="hud-item" style="top: 20px; right: 20px; z-index: 100000; width: auto; font-family: var(--font-mono); font-size: 14px; padding: 6px 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; cursor: pointer; color: #fff;">
+  AUDIO: OFF
+</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

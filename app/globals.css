@@ -1,0 +1,521 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== Global Reset & Smooth Scroll ===== */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Smooth Hardware-Accelerated Transitions ===== */
+@media (prefers-reduced-motion: no-preference) {
+  .anniversary-body,
+  .hero,
+  .anniversary-section,
+  .letter,
+  .photo-card,
+  .note,
+  .gift-card,
+  .day-chip,
+  .calc-frame-shell {
+    transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+/* ===== GPU Compositor Acceleration Utilities ===== */
+.gpu-smooth {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}
+
+.will-change-transform {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+/* ANNIVERSARY SITE STYLES */
+:root {
+  --cream:#FFF4ED;
+  --pink:#FF9EC9;
+  --pink-deep:#FF5C8E;
+  --lav:#B9AEF5;
+  --butter:#FFDD8C;
+  --mocha:#8A5A34;
+  --mocha-light:#EFD9BE;
+  --plum:#3B2245;
+  --plum-soft:#6b4d78;
+  --white:#FFFFFF;
+  --card-shadow: 0 18px 40px rgba(59,34,69,0.14);
+}
+
+[data-theme='dark'] {
+  --cream: #2A1A12;
+  --pink: #d97793;
+  --pink-deep: #ff7aa5;
+  --lav: #9a8bcc;
+  --butter: #c9a255;
+  --mocha: #fcebdc;
+  --mocha-light: #4A3222;
+  --plum: #F9F1E7;
+  --plum-soft: #D4BFA6;
+  --white: #3A261A;
+  --card-shadow: 0 18px 40px rgba(0,0,0,0.4);
+}
+
+.anniversary-body {
+  background: var(--cream);
+  color: var(--plum);
+  font-family: var(--font-quicksand), sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: block; /* override generic app-main body styles */
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.script {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 700;
+  margin: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-nunito), sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--pink-deep);
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6rem 1.5rem 4rem;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255,158,201,0.35), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(185,174,245,0.35), transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(255,221,140,0.35), transparent 45%),
+    var(--cream);
+  overflow: hidden;
+  transition: background-color 0.5s ease;
+}
+
+[data-theme='dark'] .hero {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255,107,154,0.15), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(106,87,170,0.15), transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(156,123,57,0.15), transparent 45%),
+    var(--cream);
+}
+
+.hero > *:not(.hearts-container) {
+  position: relative;
+  z-index: 1;
+}
+
+.floating-heart {
+  position: absolute;
+  opacity: 0.55;
+  animation: floatUp 9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  pointer-events: none;
+  will-change: transform;
+}
+
+@keyframes floatUp {
+  0% { transform: translate3d(0, 20px, 0) rotate(-6deg); }
+  50% { transform: translate3d(0, -18px, 0) rotate(6deg); }
+  100% { transform: translate3d(0, 20px, 0) rotate(-6deg); }
+}
+
+.hero .script.big {
+  font-size: clamp(3.2rem, 11vw, 7rem);
+  line-height: 0.95;
+  color: var(--plum);
+  text-shadow: 3px 3px 0 rgba(255,158,201,0.55);
+}
+
+.hero-sub {
+  font-family: var(--font-nunito), sans-serif;
+  font-weight: 600;
+  color: var(--plum-soft);
+  max-width: 34ch;
+  margin: 1.1rem auto 0;
+  font-size: 1.05rem;
+}
+
+.day-chip {
+  margin-top: 2rem;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  background: var(--white);
+  border: 2px solid var(--mocha);
+  padding: 0.9rem 1.6rem;
+  border-radius: 100px;
+  box-shadow: var(--card-shadow);
+}
+
+.day-chip .num {
+  font-family: var(--font-caveat), cursive;
+  font-size: 2.6rem;
+  color: var(--pink-deep);
+  font-weight: 700;
+  min-width: 2.4ch;
+  text-align: right;
+}
+
+.day-chip .label {
+  font-family: var(--font-nunito), sans-serif;
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--plum-soft);
+  text-align: left;
+}
+
+.scroll-cue {
+  margin-top: 3.2rem;
+  font-family: var(--font-nunito), sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--plum-soft);
+  opacity: 0.7;
+  animation: bob 2.4s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, 8px, 0); }
+}
+
+.anniversary-section {
+  padding: 5rem 1.5rem;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.section-head {
+  text-align: center;
+  margin-bottom: 2.8rem;
+}
+
+.section-head h2 {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 700;
+  margin: 0;
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  color: var(--plum);
+}
+
+.section-head p {
+  font-family: var(--font-nunito), sans-serif;
+  color: var(--plum-soft);
+  font-weight: 600;
+  margin-top: 0.4rem;
+}
+
+/* ---------- GALLERY ---------- */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.6rem;
+}
+
+.photo-card {
+  background: var(--white);
+  padding: 0.7rem 0.7rem 1.1rem;
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  transform: translate3d(0, 0, 0) rotate(var(--r, 0deg));
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  translate: 0 24px;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.photo-card.in-view {
+  animation: riseIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes riseIn {
+  to { opacity: 1; translate: 0 0; }
+}
+
+.photo-card:hover {
+  transform: translate3d(0, -6px, 0) rotate(0deg) scale(1.035);
+  box-shadow: 0 24px 46px rgba(59,34,69,0.22);
+  z-index: 2;
+}
+
+.photo-card img {
+  display: block;
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.photo-card figcaption {
+  font-family: var(--font-caveat), cursive;
+  font-size: 1.35rem;
+  text-align: center;
+  padding-top: 0.6rem;
+  color: var(--plum-soft);
+}
+
+/* ---------- REASONS (sticky notes) ---------- */
+.notes-wrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.4rem;
+}
+
+.note {
+  background: var(--butter);
+  padding: 1.4rem 1.3rem;
+  border-radius: 6px;
+  font-family: var(--font-nunito), sans-serif;
+  font-weight: 700;
+  color: #4a3418;
+  box-shadow: 0 12px 24px rgba(59,34,69,0.12);
+  transform: translate3d(0, 0, 0) rotate(var(--r, 0deg));
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  position: relative;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.note:nth-child(4n+1) { background: var(--pink); color: #5c1633; }
+.note:nth-child(4n+2) { background: var(--lav); color: #2c1d4d; }
+.note:nth-child(4n+3) { background: var(--mocha-light); color: #4a2f14; }
+[data-theme='dark'] .note:nth-child(4n+3) { color: #EFD9BE; }
+.note:hover { transform: translate3d(0, -6px, 0) rotate(0deg); box-shadow: 0 18px 32px rgba(59,34,69,0.18); }
+
+.note .n {
+  font-family: var(--font-caveat), cursive;
+  font-size: 1.6rem;
+  display: block;
+  margin-bottom: 0.3rem;
+  opacity: 0.65;
+}
+
+/* ---------- LETTER ---------- */
+.letter {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+  padding: clamp(2rem, 6vw, 4rem);
+  position: relative;
+  overflow: hidden;
+}
+
+.letter::before {
+  content: "";
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(255,158,201,0.4), transparent 70%);
+}
+
+.letter p {
+  font-family: var(--font-nunito), sans-serif;
+  font-size: 1.08rem;
+  line-height: 1.85;
+  color: var(--plum-soft);
+  font-weight: 600;
+  margin: 0 0 1.1rem;
+}
+
+.letter .signoff {
+  font-family: var(--font-caveat), cursive;
+  font-size: 2.2rem;
+  color: var(--pink-deep);
+  margin-top: 1rem;
+}
+
+/* ---------- CARD ---------- */
+.card-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.real-card {
+  background: var(--white);
+  padding: 1.1rem 1.1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  max-width: 380px;
+  transform: rotate(-2deg);
+  transition: transform 0.35s ease;
+}
+
+.real-card:hover { transform: rotate(0deg) scale(1.02); }
+
+.real-card img {
+  display: block;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.real-card figcaption {
+  font-family: var(--font-caveat), cursive;
+  font-size: 1.4rem;
+  text-align: center;
+  padding-top: 0.7rem;
+  color: var(--plum-soft);
+}
+
+/* ---------- GIFT CALLOUT ---------- */
+.gift-card {
+  background: linear-gradient(135deg, var(--mocha-light), var(--white));
+  border: 2px dashed var(--mocha);
+  border-radius: 18px;
+  padding: clamp(1.6rem, 5vw, 2.6rem);
+  text-align: center;
+  box-shadow: var(--card-shadow);
+}
+
+.gift-card .script {
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
+  color: var(--mocha);
+  margin-bottom: 0.6rem;
+}
+
+.gift-card p {
+  font-family: var(--font-nunito), sans-serif;
+  font-weight: 600;
+  color: var(--plum-soft);
+  max-width: 52ch;
+  margin: 0 auto 0.5rem;
+  line-height: 1.7;
+}
+
+.gift-card .filename {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-family: var(--font-nunito), sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  color: var(--mocha);
+  background: var(--white);
+  border: 1.5px solid var(--mocha);
+  padding: 0.5rem 1.1rem;
+  border-radius: 100px;
+}
+
+/* ---------- EMBEDDED CALCULATOR SECTION ---------- */
+.calc-embed-wrap {
+  background: linear-gradient(160deg, var(--mocha-light), var(--cream));
+  border-radius: 22px;
+  padding: clamp(1.2rem, 4vw, 2.2rem);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  justify-content: center;
+}
+
+.calc-frame-shell {
+  background: #0d0d10;
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 20px 44px rgba(59,34,69,0.28);
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.anniversary-footer {
+  text-align: center;
+  padding: 3rem 1.5rem 4rem;
+  font-family: var(--font-nunito), sans-serif;
+  color: var(--plum-soft);
+  font-size: 0.9rem;
+}
+
+.anniversary-footer .heart-row {
+  font-size: 1.4rem;
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.3rem;
+}
+
+@media (max-width:600px){
+  .photo-card img { height: 220px; }
+  .anniversary-section { padding: 3.6rem 1.2rem; }
+}
+
+.top-nav {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 10;
+}
+
+.calc-link {
+  font-family: var(--font-nunito), sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--pink-deep);
+  background: var(--white);
+  border: 2px solid var(--pink-deep);
+  padding: 0.6rem 1.2rem;
+  border-radius: 100px;
+  text-decoration: none;
+  box-shadow: var(--card-shadow);
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease, color 0.3s ease, box-shadow 0.35s ease;
+  display: inline-block;
+  will-change: transform;
+}
+
+.calc-link:hover {
+  background: var(--pink-deep);
+  color: var(--white);
+  transform: translate3d(0, -3px, 0) scale(1.03);
+  box-shadow: 0 12px 24px rgba(255, 92, 142, 0.35);
+}
+
+@media print {
+  .hero, .anniversary-hero, #gallery, #reasons, #card, .fixed, #apology-link, .calc-link, .interactive-particles, .theme-toggle, .scroll-progress, .heart-row, nav, header, footer, .qr-footer {
+    display: none !important;
+  }
+  body, .anniversary-body {
+    background: white !important;
+    color: black !important;
+  }
+  .love-letter-content {
+    page-break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+  .photo-gallery {
+    page-break-before: always;
+  }
+}

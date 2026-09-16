@@ -1,0 +1,16 @@
+{
+  "name": "Yajat & Nush",
+  "short_name": "Our Anniversary",
+  "description": "Happy 1 Month Anniversary",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FF5C8E",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
