@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  turbopack: {},
   // Enable WebAssembly
   webpack: (config, { isServer }) => {
     // Required for .wasm file support
