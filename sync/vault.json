@@ -1,0 +1,29 @@
+[
+  {
+    "id": "vault-latest-1",
+    "author": "nush",
+    "type": "love_note",
+    "content": "I lovee YOUU nushhhhhhhh",
+    "moodEmoji": "\ud83e\udd70",
+    "createdAt": "2026-09-16T18:00:00.000Z",
+    "sticker": "\ud83d\udc8c"
+  },
+  {
+    "id": "seed_1",
+    "author": "yajat",
+    "type": "love_note",
+    "content": "Welcome to your private authorship corner, Nushi! Anything you write here is saved forever on your device. Tell me your thoughts, request 2 AM Maggi, or log your mood anytime \u2764\ufe0f",
+    "moodEmoji": "\ud83d\udc96",
+    "createdAt": "2026-08-22T00:00:00.000Z",
+    "sticker": "\ud83d\udc8c"
+  },
+  {
+    "id": "seed_2",
+    "author": "yajat",
+    "type": "date_wish",
+    "content": "Standing date coupon: Unlimited tight hugs and zero complaints whenever you demand it.",
+    "moodEmoji": "\ud83e\udee2",
+    "createdAt": "2026-08-23T12:00:00.000Z",
+    "sticker": "\ud83c\udf9f\ufe0f"
+  }
+]
