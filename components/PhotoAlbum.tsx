@@ -9,9 +9,9 @@ import { SoundEngine } from '@/lib/audio';
 // If provided, photos are uploaded to Cloudinary.
 // If empty, photos are auto-compressed client-side to ~50KB JPEG
 // and synced directly across devices via global cloud sync!
-const CLOUDINARY_CLOUD_NAME   = ''; 
-const CLOUDINARY_UPLOAD_PRESET = ''; 
-const CLOUDINARY_CONFIGURED   = CLOUDINARY_CLOUD_NAME !== '' && CLOUDINARY_UPLOAD_PRESET !== '';
+const CLOUDINARY_CLOUD_NAME: string   = 'fxq1fsm9'; 
+const CLOUDINARY_UPLOAD_PRESET: string = 'nush_photos'; 
+const CLOUDINARY_CONFIGURED: boolean   = Boolean(CLOUDINARY_CLOUD_NAME && CLOUDINARY_UPLOAD_PRESET);
 // ───────────────────────────────────────────────────────────────
 
 export interface CloudPhoto {
@@ -127,7 +127,7 @@ export default function PhotoAlbum() {
     formData.append('folder', 'nush_album');
     try {
       const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`,
         { method: 'POST', body: formData }
       );
       if (!res.ok) throw new Error('Upload failed');
