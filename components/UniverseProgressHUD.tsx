@@ -12,8 +12,13 @@ export default function UniverseProgressHUD() {
     toggleSoundtrack,
     enteredUniverse,
     streakCount,
+    checkAndUpdateStreak,
   } = useUniverseStore();
   const { theme, toggleTheme } = useStore();
+
+  useEffect(() => {
+    checkAndUpdateStreak();
+  }, [checkAndUpdateStreak]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);

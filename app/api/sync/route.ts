@@ -16,6 +16,7 @@ const FILE_MAP: Record<string, string> = {
   journal: 'sync/journal.json',
   vault: 'sync/vault.json',
   voice: 'sync/voice.json',
+  streak: 'sync/streak.json',
 };
 
 // In-memory cache for fast responses
@@ -123,10 +124,11 @@ export async function GET(req: NextRequest) {
   const key = searchParams.get('key') || 'all';
 
   if (key === 'all') {
-    const [journalRes, vaultRes, voiceRes] = await Promise.all([
+    const [journalRes, vaultRes, voiceRes, streakRes] = await Promise.all([
       fetchFromGitHub('journal'),
       fetchFromGitHub('vault'),
       fetchFromGitHub('voice'),
+      fetchFromGitHub('streak'),
     ]);
 
     return NextResponse.json(
@@ -134,6 +136,7 @@ export async function GET(req: NextRequest) {
         journal: journalRes.data,
         vault: vaultRes.data,
         voice: voiceRes.data,
+        streak: streakRes.data || { streakCount: 7, lastVisitDate: '2026-09-23' },
       },
       {
         headers: {
@@ -162,10 +165,44 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { type, action, item, id } = body;
+    const { type, action, item, id, date } = body;
 
     if (!type || !FILE_MAP[type]) {
       return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
+    }
+
+    if (type === 'streak') {
+      const { data: currentStreakObj } = await fetchFromGitHub('streak');
+      const current =
+        currentStreakObj && typeof currentStreakObj.streakCount === 'number'
+          ? { ...currentStreakObj }
+          : { streakCount: 7, lastVisitDate: null };
+
+      const today = date || new Date().toISOString().slice(0, 10);
+
+      if (!current.lastVisitDate) {
+        current.lastVisitDate = today;
+        current.streakCount = Math.max(current.streakCount || 1, 1);
+      } else if (current.lastVisitDate !== today) {
+        const [y1, m1, d1] = current.lastVisitDate.split('-').map(Number);
+        const [y2, m2, d2] = today.split('-').map(Number);
+        const diff = Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86400000);
+
+        if (diff === 1) {
+          current.streakCount += 1;
+          current.lastVisitDate = today;
+        } else if (diff > 1) {
+          if (diff <= 2) {
+            current.lastVisitDate = today;
+          } else {
+            current.streakCount = 1;
+            current.lastVisitDate = today;
+          }
+        }
+      }
+
+      await writeToGitHub('streak', current);
+      return NextResponse.json({ success: true, data: current });
     }
 
     const { data: currentList } = await fetchFromGitHub(type);

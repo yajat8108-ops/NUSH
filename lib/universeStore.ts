@@ -453,36 +453,65 @@ export const useUniverseStore = create<UniverseStore>()(
       setVideoCallOpen: (open) => set({ isVideoCallOpen: open }),
 
       // Daily Streak & Countdown
-      streakCount: 1,
+      streakCount: 7,
       lastVisitDate: null,
       checkAndUpdateStreak: () => {
-        const todayStr = new Date().toISOString().slice(0, 10);
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+
         const { lastVisitDate, streakCount, unlockAchievement } = get();
 
+        // Local optimistic streak calculation
+        let localStreak = Math.max(streakCount || 1, 1);
         if (!lastVisitDate) {
-          set({ lastVisitDate: todayStr, streakCount: 1 });
-          return;
-        }
+          set({ lastVisitDate: todayStr, streakCount: localStreak });
+        } else if (lastVisitDate !== todayStr) {
+          const [y1, m1, d1] = lastVisitDate.split('-').map(Number);
+          const [y2, m2, d2] = todayStr.split('-').map(Number);
+          const diffDays = Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86400000);
 
-        if (lastVisitDate === todayStr) {
-          // Already visited today
-          return;
-        }
-
-        const prevDate = new Date(lastVisitDate);
-        const currDate = new Date(todayStr);
-        const diffDays = Math.round((currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 1) {
-          // Consecutive day
-          const nextStreak = streakCount + 1;
-          set({ lastVisitDate: todayStr, streakCount: nextStreak });
-          if (nextStreak >= 3) {
-            unlockAchievement('countdown_streak');
+          if (diffDays === 1) {
+            localStreak += 1;
+            set({ lastVisitDate: todayStr, streakCount: localStreak });
+            if (localStreak >= 3) {
+              unlockAchievement('countdown_streak');
+            }
+          } else if (diffDays <= 2) {
+            // Forgive a 1-day gap: keep streak active
+            set({ lastVisitDate: todayStr });
+          } else {
+            localStreak = 1;
+            set({ lastVisitDate: todayStr, streakCount: 1 });
           }
-        } else if (diffDays > 1) {
-          // Reset streak
-          set({ lastVisitDate: todayStr, streakCount: 1 });
+        }
+
+        // Global sync with server so Nush and Yajat share the exact same streak!
+        if (typeof window !== 'undefined') {
+          fetch('/api/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'streak',
+              action: 'check_in',
+              date: todayStr,
+            }),
+          })
+            .then((r) => r.json())
+            .then((res) => {
+              if (res && res.data && typeof res.data.streakCount === 'number') {
+                set({
+                  streakCount: Math.max(res.data.streakCount, 1),
+                  lastVisitDate: res.data.lastVisitDate || todayStr,
+                });
+                if (res.data.streakCount >= 3) {
+                  unlockAchievement('countdown_streak');
+                }
+              }
+            })
+            .catch(() => {});
         }
       },
 

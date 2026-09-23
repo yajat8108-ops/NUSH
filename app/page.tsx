@@ -43,16 +43,20 @@ import SectionDivider from '@/components/SectionDivider';
 import CompatibilityTest from '@/components/CompatibilityTest';
 import RelationshipDashboard from '@/components/RelationshipDashboard';
 import LockedSection from '@/components/LockedSection';
+import { useUniverseStore } from '@/lib/universeStore';
 
 export default function Home() {
+  const checkAndUpdateStreak = useUniverseStore((s) => s.checkAndUpdateStreak);
+
   React.useEffect(() => {
+    checkAndUpdateStreak();
     if (typeof window !== 'undefined') {
       if ('scrollRestoration' in window.history) {
         window.history.scrollRestoration = 'manual';
       }
       window.scrollTo(0, 0);
     }
-  }, []);
+  }, [checkAndUpdateStreak]);
 
   return (
     <>
