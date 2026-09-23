@@ -37,20 +37,15 @@ export default function RelationshipJournal() {
     setMounted(true);
     syncWithServer();
 
-    const interval = setInterval(() => {
-      syncWithServer();
-    }, 15000);
-
-    const onFocus = () => {
-      syncWithServer();
-    };
-    window.addEventListener('focus', onFocus);
+    const interval = setInterval(syncWithServer, 15000);
+    window.addEventListener('focus', syncWithServer);
 
     return () => {
       clearInterval(interval);
-      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('focus', syncWithServer);
     };
-  }, [syncWithServer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!mounted) return null;
 

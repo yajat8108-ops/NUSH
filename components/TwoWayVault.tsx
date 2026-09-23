@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SectionHead from './SectionHead';
 import { useVaultStore, VaultEntry } from '@/lib/vaultStore';
@@ -28,26 +28,19 @@ export default function TwoWayVault() {
   const [author, setAuthor] = useState<'nush' | 'yajat'>('nush');
   const [selectedType, setSelectedType] = useState<VaultEntry['type']>('love_note');
   const [selectedMood, setSelectedMood] = useState(MOODS[0].emoji);
-  const [mounted, setMounted] = useState(false);
 
-  React.useEffect(() => {
-    setMounted(true);
+  useEffect(() => {
+    // Initial fetch
     syncWithServer();
 
-    const interval = setInterval(() => {
-      syncWithServer();
-    }, 15000);
-
-    const onFocus = () => {
-      syncWithServer();
-    };
-    window.addEventListener('focus', onFocus);
-
+    const interval = setInterval(syncWithServer, 15000);
+    window.addEventListener('focus', syncWithServer);
     return () => {
       clearInterval(interval);
-      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('focus', syncWithServer);
     };
-  }, [syncWithServer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +61,7 @@ export default function TwoWayVault() {
     <section id="two-way-vault" className="anniversary-section py-16 px-4 max-w-5xl mx-auto font-nunito">
       <SectionHead
         eyebrow="reciprocal memory vault"
-        title="Nush’s Authorship Corner ✍️"
+        title="Nush's Authorship Corner ✍️"
         subtitle="write permanent notes to Yajat, log your mood, or file 2 AM Maggi demands"
       />
 
@@ -211,7 +204,7 @@ export default function TwoWayVault() {
           <div className="flex items-center justify-between px-2">
             <h4 className="font-bold text-sm text-[var(--plum)] font-mono flex items-center gap-2">
               <span>📌</span>
-              <span>Vault Memory Wall ({mounted ? entries.length : 0} Entries)</span>
+              <span>Vault Memory Wall ({entries.length} Entries)</span>
             </h4>
             <span className="text-xs font-mono text-emerald-600 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -220,6 +213,7 @@ export default function TwoWayVault() {
           </div>
 
           <div className="space-y-3.5 max-h-[600px] overflow-y-auto pr-1">
+            {/* Loading shimmer */}
             {isLoading ? (
               <>
                 {[0, 1, 2].map((i) => (
@@ -240,65 +234,65 @@ export default function TwoWayVault() {
                 ))}
               </>
             ) : (
-            <AnimatePresence initial={false}>
-              {(mounted ? entries : []).map((entry) => {
-                const isNush = entry.author === 'nush';
-                const formattedDate = new Date(entry.createdAt).toLocaleDateString([], {
-                  month: 'short',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                });
+              <AnimatePresence initial={false}>
+                {entries.map((entry) => {
+                  const isNush = entry.author === 'nush';
+                  const formattedDate = new Date(entry.createdAt).toLocaleDateString([], {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  });
 
-                return (
-                  <motion.div
-                    key={entry.id}
-                    initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    layout
-                    className={`p-5 rounded-3xl border-2 shadow-md relative transition-all ${
-                      isNush
-                        ? 'bg-[#FFF9FA] border-[var(--pink)]/50 shadow-[0_4px_20px_rgba(255,92,142,0.12)]'
-                        : 'bg-[#FAF8FF] border-[var(--lav)]/50 shadow-[0_4px_20px_rgba(185,174,245,0.12)]'
-                    }`}
-                  >
-                    {/* Header */}
-                    <div className="flex items-center justify-between border-b border-black/5 pb-2.5 mb-2.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">{entry.moodEmoji}</span>
-                        <div>
-                          <span className="font-mono text-xs font-bold text-[var(--plum)] block">
-                            {isNush ? 'Anushka (Nush)' : 'Yajat'}
+                  return (
+                    <motion.div
+                      key={entry.id}
+                      initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      layout
+                      className={`p-5 rounded-3xl border-2 shadow-md relative transition-all ${
+                        isNush
+                          ? 'bg-[#FFF9FA] border-[var(--pink)]/50 shadow-[0_4px_20px_rgba(255,92,142,0.12)]'
+                          : 'bg-[#FAF8FF] border-[var(--lav)]/50 shadow-[0_4px_20px_rgba(185,174,245,0.12)]'
+                      }`}
+                    >
+                      {/* Header */}
+                      <div className="flex items-center justify-between border-b border-black/5 pb-2.5 mb-2.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{entry.moodEmoji}</span>
+                          <div>
+                            <span className="font-mono text-xs font-bold text-[var(--plum)] block">
+                              {isNush ? 'Anushka (Nush)' : 'Yajat'}
+                            </span>
+                            <span className="text-[10px] text-zinc-400 font-mono">
+                              {formattedDate}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white border border-zinc-200 text-zinc-600 shadow-xs">
+                            {entry.type.replace('_', ' ')}
                           </span>
-                          <span className="text-[10px] text-zinc-400 font-mono">
-                            {formattedDate}
-                          </span>
+                          <button
+                            onClick={() => deleteEntry(entry.id)}
+                            className="text-zinc-400 hover:text-red-500 text-xs p-1 cursor-pointer transition-colors"
+                            title="Delete note"
+                          >
+                            ✕
+                          </button>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white border border-zinc-200 text-zinc-600 shadow-xs">
-                          {entry.type.replace('_', ' ')}
-                        </span>
-                        <button
-                          onClick={() => deleteEntry(entry.id)}
-                          className="text-zinc-400 hover:text-red-500 text-xs p-1 cursor-pointer transition-colors"
-                          title="Delete note"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Note Content */}
-                    <p className="font-caveat text-2xl text-[var(--plum)] leading-relaxed whitespace-pre-wrap">
-                      &ldquo;{entry.content}&rdquo;
-                    </p>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
+                      {/* Note Content */}
+                      <p className="font-caveat text-2xl text-[var(--plum)] leading-relaxed whitespace-pre-wrap">
+                        &ldquo;{entry.content}&rdquo;
+                      </p>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             )}
           </div>
         </div>
