@@ -11,12 +11,15 @@ interface VoiceClip {
   date: string;
   duration: number; // in seconds
   blobUrl?: string;
+  audioData?: string; // base64 data URL for global cloud sync
   isPreRecorded?: boolean;
 }
 
 export default function VoiceMemories() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordSeconds, setRecordSeconds] = useState(0);
+  const [author, setAuthor] = useState<'Nush' | 'Yajat'>('Nush');
+  const [isSyncing, setIsSyncing] = useState(false);
   const [clips, setClips] = useState<VoiceClip[]>([
     {
       id: 'pre_1',
@@ -31,6 +34,39 @@ export default function VoiceMemories() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
+  const fetchClips = async () => {
+    try {
+      setIsSyncing(true);
+      const res = await fetch('/api/sync?key=voice', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setClips(data);
+        }
+      }
+    } catch (e) {
+      console.error('Error fetching voice clips:', e);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchClips();
+    const interval = setInterval(fetchClips, 15000);
+    const onFocus = () => fetchClips();
+    window.addEventListener('focus', onFocus);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', onFocus);
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current = null;
+      }
+    };
+  }, []);
 
   const startRecording = async () => {
     try {
@@ -47,15 +83,49 @@ export default function VoiceMemories() {
 
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const newClip: VoiceClip = {
-          id: `clip_${Date.now()}`,
-          name: `Nush’s Voice Memo #${clips.length + 1} 🌸`,
-          date: new Date().toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-          duration: recordSeconds,
-          blobUrl: audioUrl,
+        const localBlobUrl = URL.createObjectURL(audioBlob);
+
+        // Convert to base64 Data URL for persistent global cloud sync
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = async () => {
+          const base64Data = reader.result as string;
+          const newClip: VoiceClip = {
+            id: `clip_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+            name: `${author === 'Nush' ? 'Nush’s' : 'Yajat’s'} Voice Memo #${clips.length + 1} 🌸`,
+            date: new Date().toLocaleDateString([], {
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+            duration: recordSeconds || 1,
+            blobUrl: localBlobUrl,
+            audioData: base64Data,
+          };
+
+          // Optimistic local update
+          setClips((prev) => [newClip, ...prev]);
+
+          // Global cloud save
+          try {
+            setIsSyncing(true);
+            await fetch('/api/sync', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                type: 'voice',
+                action: 'add',
+                item: newClip,
+              }),
+            });
+          } catch (e) {
+            console.error('Failed to sync voice clip to server:', e);
+          } finally {
+            setIsSyncing(false);
+          }
         };
-        setClips((prev) => [newClip, ...prev]);
+
         stream.getTracks().forEach((track) => track.stop());
       };
 
@@ -89,21 +159,55 @@ export default function VoiceMemories() {
 
   const playClip = (clip: VoiceClip) => {
     if (playingId === clip.id) {
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current = null;
+      }
       setPlayingId(null);
       return;
+    }
+
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current = null;
     }
 
     SoundEngine.click();
     setPlayingId(clip.id);
 
-    if (clip.blobUrl) {
-      const audio = new Audio(clip.blobUrl);
-      audio.play();
-      audio.onended = () => setPlayingId(null);
+    const audioSrc = clip.audioData || clip.blobUrl;
+    if (audioSrc) {
+      const audio = new Audio(audioSrc);
+      audioPlayerRef.current = audio;
+      audio.play().catch((err) => {
+        console.error('Audio playback error:', err);
+        setPlayingId(null);
+      });
+      audio.onended = () => {
+        setPlayingId(null);
+        audioPlayerRef.current = null;
+      };
     } else {
       // Simulating pre-recorded playback chime
       SoundEngine.diamondGlow();
       setTimeout(() => setPlayingId(null), clip.duration * 1000);
+    }
+  };
+
+  const deleteClip = async (id: string) => {
+    setClips((prev) => prev.filter((c) => c.id !== id));
+    try {
+      await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'voice',
+          action: 'delete',
+          id,
+        }),
+      });
+    } catch (e) {
+      console.error('Failed to delete voice clip from server:', e);
     }
   };
 
@@ -126,7 +230,7 @@ export default function VoiceMemories() {
             </p>
 
             {/* Audio Equalizer Bars */}
-            <div className="flex items-center justify-center gap-1.5 h-12 mb-6 w-full">
+            <div className="flex items-center justify-center gap-1.5 h-12 mb-4 w-full">
               {Array.from({ length: 14 }).map((_, i) => (
                 <motion.div
                   key={i}
@@ -141,6 +245,35 @@ export default function VoiceMemories() {
                   }}
                 />
               ))}
+            </div>
+
+            {/* Author Toggle */}
+            <div className="flex items-center justify-center gap-2 mb-4 w-full max-w-xs">
+              <span className="text-[11px] font-mono text-gray-300">Voice of:</span>
+              <div className="flex-1 flex gap-1.5 bg-black/40 p-1 rounded-xl border border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setAuthor('Nush')}
+                  className={`flex-1 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    author === 'Nush'
+                      ? 'bg-[var(--pink-deep)] text-white shadow'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  🌸 Nush
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAuthor('Yajat')}
+                  className={`flex-1 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    author === 'Yajat'
+                      ? 'bg-[var(--pink-deep)] text-white shadow'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  🐻 Yajat
+                </button>
+              </div>
             </div>
 
             {/* Record Trigger Button */}
@@ -174,7 +307,10 @@ export default function VoiceMemories() {
               <span>🎧</span>
               <span>Audio Vault Playlist ({clips.length} Clips)</span>
             </h4>
-            <span className="text-xs font-mono text-[var(--plum-soft)]">Velvety Radio FM</span>
+            <span className="text-xs font-mono text-emerald-600 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>{isSyncing ? 'Syncing...' : 'Global Cloud ☁️'}</span>
+            </span>
           </div>
 
           <div className="space-y-3">
@@ -209,9 +345,24 @@ export default function VoiceMemories() {
                     </div>
                   </div>
 
-                  <span className="text-xs font-mono px-3 py-1 rounded-full border border-black/10 bg-black/5">
-                    {clip.isPreRecorded ? '📻 Master Tape' : '🎙️ Nush Note'}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono px-3 py-1 rounded-full border border-black/10 bg-black/5">
+                      {clip.isPreRecorded
+                        ? '📻 Master Tape'
+                        : clip.name.includes('Yajat')
+                        ? '🎙️ Yajat Note'
+                        : '🎙️ Nush Note'}
+                    </span>
+                    {!clip.isPreRecorded && (
+                      <button
+                        onClick={() => deleteClip(clip.id)}
+                        className="text-zinc-400 hover:text-red-500 text-xs p-1.5 rounded-full hover:bg-black/5 transition-colors cursor-pointer"
+                        title="Delete voice note"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
                 </div>
               );
             })}

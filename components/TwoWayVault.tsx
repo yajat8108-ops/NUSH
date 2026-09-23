@@ -23,22 +23,38 @@ const ENTRY_TYPES: { id: VaultEntry['type']; label: string; icon: string }[] = [
 ];
 
 export default function TwoWayVault() {
-  const { entries, currentMood, setCurrentMood, addEntry, deleteEntry } = useVaultStore();
+  const { entries, currentMood, setCurrentMood, addEntry, deleteEntry, syncWithServer, isSyncing } = useVaultStore();
   const [content, setContent] = useState('');
+  const [author, setAuthor] = useState<'nush' | 'yajat'>('nush');
   const [selectedType, setSelectedType] = useState<VaultEntry['type']>('love_note');
   const [selectedMood, setSelectedMood] = useState(MOODS[0].emoji);
   const [mounted, setMounted] = useState(false);
 
   React.useEffect(() => {
     setMounted(true);
-  }, []);
+    syncWithServer();
+
+    const interval = setInterval(() => {
+      syncWithServer();
+    }, 15000);
+
+    const onFocus = () => {
+      syncWithServer();
+    };
+    window.addEventListener('focus', onFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [syncWithServer]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
 
     addEntry({
-      author: 'nush',
+      author,
       type: selectedType,
       content: content.trim(),
       moodEmoji: selectedMood,
@@ -62,11 +78,48 @@ export default function TwoWayVault() {
           <div className="bg-[var(--white)]/95 backdrop-blur-md rounded-3xl p-6 md:p-7 border-2 border-[var(--pink-deep)]/40 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[var(--pink)]/20 to-transparent rounded-bl-full pointer-events-none" />
 
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">📝</span>
-              <h3 className="font-bold text-lg text-[var(--plum)] font-mono">
-                Post to Our Vault
-              </h3>
+            <div className="flex items-center justify-between gap-2 mb-4">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">📝</span>
+                <h3 className="font-bold text-lg text-[var(--plum)] font-mono">
+                  Post to Our Vault
+                </h3>
+              </div>
+              <span className="text-[11px] font-mono text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1.5 shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>{isSyncing ? 'Syncing...' : 'Global Cloud ☁️'}</span>
+              </span>
+            </div>
+
+            {/* Author Toggle */}
+            <div className="mb-4">
+              <label className="text-xs font-bold uppercase tracking-wider text-[var(--plum-soft)] block mb-1.5 font-mono">
+                Posting As:
+              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setAuthor('nush')}
+                  className={`flex-1 py-1.5 rounded-xl font-bold text-xs border cursor-pointer transition-all ${
+                    author === 'nush'
+                      ? 'bg-[var(--pink-deep)] border-[var(--pink-deep)] text-white shadow'
+                      : 'bg-white/60 border-zinc-200 text-zinc-600'
+                  }`}
+                >
+                  👑 Anushka (Nush)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAuthor('yajat')}
+                  className={`flex-1 py-1.5 rounded-xl font-bold text-xs border cursor-pointer transition-all ${
+                    author === 'yajat'
+                      ? 'bg-[var(--pink-deep)] border-[var(--pink-deep)] text-white shadow'
+                      : 'bg-white/60 border-zinc-200 text-zinc-600'
+                  }`}
+                >
+                  🐻 Yajat
+                </button>
+              </div>
             </div>
 
             {/* Mood Picker Chips */}
@@ -160,8 +213,9 @@ export default function TwoWayVault() {
               <span>📌</span>
               <span>Vault Memory Wall ({mounted ? entries.length : 0} Entries)</span>
             </h4>
-            <span className="text-xs font-mono text-[var(--plum-soft)]">
-              Saved locally to Nush&apos;s device
+            <span className="text-xs font-mono text-emerald-600 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Synced globally between Yajat &amp; Nush ☁️</span>
             </span>
           </div>
 
@@ -207,15 +261,13 @@ export default function TwoWayVault() {
                         <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white border border-zinc-200 text-zinc-600 shadow-xs">
                           {entry.type.replace('_', ' ')}
                         </span>
-                        {isNush && (
-                          <button
-                            onClick={() => deleteEntry(entry.id)}
-                            className="text-zinc-400 hover:text-red-500 text-xs p-1 cursor-pointer transition-colors"
-                            title="Delete note"
-                          >
-                            ✕
-                          </button>
-                        )}
+                        <button
+                          onClick={() => deleteEntry(entry.id)}
+                          className="text-zinc-400 hover:text-red-500 text-xs p-1 cursor-pointer transition-colors"
+                          title="Delete note"
+                        >
+                          ✕
+                        </button>
                       </div>
                     </div>
 

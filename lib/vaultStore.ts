@@ -18,12 +18,23 @@ export interface VaultEntry {
 interface VaultStore {
   entries: VaultEntry[];
   currentMood: string;
+  isSyncing: boolean;
   setCurrentMood: (mood: string) => void;
-  addEntry: (entry: Omit<VaultEntry, 'id' | 'createdAt'>) => void;
-  deleteEntry: (id: string) => void;
+  addEntry: (entry: Omit<VaultEntry, 'id' | 'createdAt'>) => Promise<void>;
+  deleteEntry: (id: string) => Promise<void>;
+  syncWithServer: () => Promise<void>;
 }
 
 const INITIAL_ENTRIES: VaultEntry[] = [
+  {
+    id: 'vault-latest-1',
+    author: 'nush',
+    type: 'love_note',
+    content: 'I lovee YOUU nushhhhhhhh',
+    moodEmoji: '🥰',
+    createdAt: '2026-09-16T18:00:00.000Z',
+    sticker: '💌',
+  },
   {
     id: 'seed_1',
     author: 'yajat',
@@ -49,16 +60,34 @@ export const useVaultStore = create<VaultStore>()(
     (set, get) => ({
       entries: INITIAL_ENTRIES,
       currentMood: '🥰 Loved',
+      isSyncing: false,
 
       setCurrentMood: (mood: string) => {
         SoundEngine.pop();
         set({ currentMood: mood });
       },
 
-      addEntry: (data) => {
+      syncWithServer: async () => {
+        try {
+          set({ isSyncing: true });
+          const res = await fetch('/api/sync?key=vault', { cache: 'no-store' });
+          if (res.ok) {
+            const serverEntries = await res.json();
+            if (Array.isArray(serverEntries) && serverEntries.length > 0) {
+              set({ entries: serverEntries });
+            }
+          }
+        } catch (e) {
+          console.error('Failed to sync vault entries from server:', e);
+        } finally {
+          set({ isSyncing: false });
+        }
+      },
+
+      addEntry: async (data) => {
         const newEntry: VaultEntry = {
           ...data,
-          id: `entry_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+          id: 'entry_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
           createdAt: new Date().toISOString(),
         };
 
@@ -70,20 +99,53 @@ export const useVaultStore = create<VaultStore>()(
           colors: ['#FF5C8E', '#FF9EC9', '#FFDD8C', '#B9AEF5'],
         });
 
+        // Optimistic update
         set((state) => ({
           entries: [newEntry, ...state.entries],
         }));
+
+        // Global server sync
+        try {
+          set({ isSyncing: true });
+          await fetch('/api/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'vault',
+              action: 'add',
+              item: newEntry,
+            }),
+          });
+        } catch (e) {
+          console.error('Failed to save vault entry to server:', e);
+        } finally {
+          set({ isSyncing: false });
+        }
       },
 
-      deleteEntry: (id: string) => {
+      deleteEntry: async (id: string) => {
         SoundEngine.click();
         set((state) => ({
           entries: state.entries.filter((e) => e.id !== id),
         }));
+
+        try {
+          await fetch('/api/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'vault',
+              action: 'delete',
+              id,
+            }),
+          });
+        } catch (e) {
+          console.error('Failed to delete vault entry from server:', e);
+        }
       },
     }),
     {
-      name: 'yajat_nush_two_way_vault_v1',
+      name: 'yajat_nush_two_way_vault_v2',
     }
   )
 );

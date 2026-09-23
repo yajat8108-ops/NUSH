@@ -18,7 +18,7 @@ const MOODS: { emoji: JournalEntry['mood']; label: string }[] = [
 ];
 
 export default function RelationshipJournal() {
-  const { entries, addEntry } = useJournalStore();
+  const { entries, addEntry, syncWithServer, isSyncing } = useJournalStore();
   const [mounted, setMounted] = useState(false);
   const [activeMood, setActiveMood] = useState<string>('all');
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
@@ -35,7 +35,22 @@ export default function RelationshipJournal() {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    syncWithServer();
+
+    const interval = setInterval(() => {
+      syncWithServer();
+    }, 15000);
+
+    const onFocus = () => {
+      syncWithServer();
+    };
+    window.addEventListener('focus', onFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [syncWithServer]);
 
   if (!mounted) return null;
 
@@ -137,15 +152,22 @@ export default function RelationshipJournal() {
             ))}
           </div>
 
-          <button
-            onClick={() => {
-              SoundEngine.click();
-              setIsComposing(true);
-            }}
-            className="px-5 py-2 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--butter)] text-black font-mono text-xs font-bold shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
-          >
-            <span>✍️</span> Write Entry
-          </button>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5 shadow">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{isSyncing ? 'Syncing...' : 'Live Synced ☁️'}</span>
+            </span>
+
+            <button
+              onClick={() => {
+                SoundEngine.click();
+                setIsComposing(true);
+              }}
+              className="px-5 py-2 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--butter)] text-black font-mono text-xs font-bold shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>✍️</span> Write Entry
+            </button>
+          </div>
         </div>
 
         {/* DIARY ENTRY CARDS */}
