@@ -1,7 +1,6 @@
 'use client';
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 export interface JournalEntry {
   id: string;
@@ -16,125 +15,77 @@ export interface JournalEntry {
 
 interface JournalStore {
   entries: JournalEntry[];
+  isLoading: boolean;
   isSyncing: boolean;
   addEntry: (entry: Omit<JournalEntry, 'id'>) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   syncWithServer: () => Promise<void>;
 }
 
-const PRESEEDED_ENTRIES: JournalEntry[] = [
-  {
-    id: 'journal-latest-1',
-    author: 'Yajat',
-    title: 'I LOVE NUSH',
-    content: 'This is the !st day of this site bieng up!!! i hope u keep ussing this site lovee uu nushhhhh!!!!',
-    date: '2026-09-16T18:00:00.000Z',
-    mood: '🥰',
-    moodLabel: 'Loved',
-    tags: ['#us', '#latenight'],
-  },
-  {
-    id: 'journal-1',
-    author: 'Yajat',
-    title: 'The Birthday Teddy & That Unforgettable Smile',
-    content: "I will never forget giving you that brown teddy bear on your birthday. You held it so gently, looked right at me, and announced you were naming it 'Yajat'. I laughed so hard my stomach hurt, but in my heart, I knew you were making sure a piece of me stayed with you in your room every night. Best gift decision of my life.",
-    date: '2026-07-22T21:30:00.000Z',
-    mood: '🥰',
-    moodLabel: 'Completely In Love',
-    tags: ['#birthday', '#teddy', '#wifey'],
-  },
-  {
-    id: 'journal-2',
-    author: 'Yajat',
-    title: '8:00 PM Open Audi Guard Escape & Slow Walk to GB-2',
-    content: "The guard whistled right at 8:00 PM. We both packed up slowly, laughing as we walked towards AB-1. Then AB-1 closed too, so we took the detour past Dr. Morphin's just to buy 10 more minutes together. Standing outside Girls Block 2 saying goodbye is the hardest thing every day, but also the proof of how precious every single minute is.",
-    date: '2026-08-14T20:15:00.000Z',
-    mood: '🥹',
-    moodLabel: 'Emotional & Sacred',
-    tags: ['#openaudi', '#campuswalk', '#guards'],
-  },
-  {
-    id: 'journal-3',
-    author: 'Yajat',
-    title: 'All-Night FaceTime with Screen Brightness at 1%',
-    content: "It was 4:15 AM. You had fallen asleep while talking about your classes, phone propped against your pillow. I kept the call running at 1% brightness, listening to your soft breathing until the sun started rising. I never want you to go to sleep feeling lonely ever again.",
-    date: '2026-08-28T04:23:00.000Z',
-    mood: '😴',
-    moodLabel: 'Peaceful & Warm',
-    tags: ['#latenight', '#facetime', '#forever'],
-  },
-];
+export const useJournalStore = create<JournalStore>()((set, get) => ({
+  entries: [],       // always empty on load — server is the truth
+  isLoading: true,   // show spinner until first server fetch completes
+  isSyncing: false,
 
-export const useJournalStore = create<JournalStore>()(
-  persist(
-    (set, get) => ({
-      entries: PRESEEDED_ENTRIES,
-      isSyncing: false,
-
-      syncWithServer: async () => {
-        try {
-          set({ isSyncing: true });
-          const res = await fetch('/api/sync?key=journal', { cache: 'no-store' });
-          if (res.ok) {
-            const serverEntries = await res.json();
-            if (Array.isArray(serverEntries) && serverEntries.length > 0) {
-              set({ entries: serverEntries });
-            }
-          }
-        } catch (e) {
-          console.error('Failed to sync journal entries from server:', e);
-        } finally {
-          set({ isSyncing: false });
+  syncWithServer: async () => {
+    try {
+      set({ isSyncing: true });
+      const res = await fetch('/api/sync?key=journal', { cache: 'no-store' });
+      if (res.ok) {
+        const serverEntries = await res.json();
+        if (Array.isArray(serverEntries)) {
+          set({ entries: serverEntries });
         }
-      },
-
-      addEntry: async (entry) => {
-        const newEntry: JournalEntry = {
-          ...entry,
-          id: 'journal-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-        };
-
-        // Optimistic update
-        set((state) => ({ entries: [newEntry, ...state.entries] }));
-
-        // Sync with global server
-        try {
-          set({ isSyncing: true });
-          await fetch('/api/sync', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              type: 'journal',
-              action: 'add',
-              item: newEntry,
-            }),
-          });
-        } catch (e) {
-          console.error('Failed to save journal entry to server:', e);
-        } finally {
-          set({ isSyncing: false });
-        }
-      },
-
-      deleteEntry: async (id) => {
-        set((state) => ({ entries: state.entries.filter((e) => e.id !== id) }));
-        try {
-          await fetch('/api/sync', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              type: 'journal',
-              action: 'delete',
-              id,
-            }),
-          });
-        } catch (e) {
-          console.error('Failed to delete journal entry from server:', e);
-        }
-      },
-    }),
-    {
-      name: 'yajat_nush_relationship_journal_v2',
+      }
+    } catch (e) {
+      console.error('Failed to sync journal entries from server:', e);
+    } finally {
+      set({ isSyncing: false, isLoading: false });
     }
-  )
-);
+  },
+
+  addEntry: async (entry) => {
+    const newEntry: JournalEntry = {
+      ...entry,
+      id: 'journal-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+    };
+
+    // Optimistic update
+    set((state) => ({ entries: [newEntry, ...state.entries] }));
+
+    // Sync with global server
+    try {
+      set({ isSyncing: true });
+      await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'journal',
+          action: 'add',
+          item: newEntry,
+        }),
+      });
+    } catch (e) {
+      console.error('Failed to save journal entry to server:', e);
+    } finally {
+      set({ isSyncing: false });
+    }
+  },
+
+  deleteEntry: async (id) => {
+    set((state) => ({ entries: state.entries.filter((e) => e.id !== id) }));
+    try {
+      await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'journal',
+          action: 'delete',
+          id,
+        }),
+      });
+    } catch (e) {
+      console.error('Failed to delete journal entry from server:', e);
+    }
+  },
+}));

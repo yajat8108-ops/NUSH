@@ -5,13 +5,20 @@ import SectionHead from './SectionHead';
 import { SoundEngine } from '@/lib/audio';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// ────────────────────────────────────────────────────────────
+// Cloudinary config — free tier, 25GB storage, audio support
+// Upload preset must be set to "unsigned" in Cloudinary dashboard
+// ────────────────────────────────────────────────────────────
+const CLOUDINARY_CLOUD_NAME = 'nush-radio'; // ← change to your Cloudinary cloud name
+const CLOUDINARY_UPLOAD_PRESET = 'nush_voice_unsigned'; // ← change to your upload preset
+
 interface VoiceClip {
   id: string;
   name: string;
   date: string;
   duration: number; // in seconds
-  blobUrl?: string;
-  audioData?: string; // base64 data URL for global cloud sync
+  audioUrl?: string;   // Cloudinary URL (persistent, global)
+  blobUrl?: string;    // local fallback only (for immediate playback before upload)
   isPreRecorded?: boolean;
 }
 
@@ -20,15 +27,9 @@ export default function VoiceMemories() {
   const [recordSeconds, setRecordSeconds] = useState(0);
   const [author, setAuthor] = useState<'Nush' | 'Yajat'>('Nush');
   const [isSyncing, setIsSyncing] = useState(false);
-  const [clips, setClips] = useState<VoiceClip[]>([
-    {
-      id: 'pre_1',
-      name: 'Yajat’s 3-Month Anniversary Whisper Note 🎙️',
-      date: 'Aug 22, 2026',
-      duration: 12,
-      isPreRecorded: true,
-    },
-  ]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
+  const [clips, setClips] = useState<VoiceClip[]>([]);
   const [playingId, setPlayingId] = useState<string | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -42,7 +43,7 @@ export default function VoiceMemories() {
       const res = await fetch('/api/sync?key=voice', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setClips(data);
         }
       }
@@ -50,6 +51,7 @@ export default function VoiceMemories() {
       console.error('Error fetching voice clips:', e);
     } finally {
       setIsSyncing(false);
+      setIsLoading(false);
     }
   };
 
@@ -68,6 +70,33 @@ export default function VoiceMemories() {
     };
   }, []);
 
+  /**
+   * Uploads a Blob to Cloudinary via unsigned upload and returns the secure URL.
+   * Cloudinary free tier gives 25 GB storage + 25 GB bandwidth/month — more than
+   * enough for short voice memos.
+   */
+  const uploadToCloudinary = async (blob: Blob): Promise<string | null> => {
+    try {
+      const formData = new FormData();
+      formData.append('file', blob, 'voice-memo.webm');
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      formData.append('resource_type', 'video'); // Cloudinary treats audio as "video"
+      formData.append('folder', 'nush_radio');
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
+        { method: 'POST', body: formData }
+      );
+
+      if (!res.ok) throw new Error('Cloudinary upload failed');
+      const data = await res.json();
+      return data.secure_url as string;
+    } catch (e) {
+      console.error('Cloudinary upload error:', e);
+      return null;
+    }
+  };
+
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -81,50 +110,59 @@ export default function VoiceMemories() {
         }
       };
 
-      mediaRecorder.onstop = () => {
+      mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         const localBlobUrl = URL.createObjectURL(audioBlob);
 
-        // Convert to base64 Data URL for persistent global cloud sync
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = async () => {
-          const base64Data = reader.result as string;
-          const newClip: VoiceClip = {
-            id: `clip_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-            name: `${author === 'Nush' ? 'Nush’s' : 'Yajat’s'} Voice Memo #${clips.length + 1} 🌸`,
-            date: new Date().toLocaleDateString([], {
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            }),
-            duration: recordSeconds || 1,
-            blobUrl: localBlobUrl,
-            audioData: base64Data,
-          };
-
-          // Optimistic local update
-          setClips((prev) => [newClip, ...prev]);
-
-          // Global cloud save
-          try {
-            setIsSyncing(true);
-            await fetch('/api/sync', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                type: 'voice',
-                action: 'add',
-                item: newClip,
-              }),
-            });
-          } catch (e) {
-            console.error('Failed to sync voice clip to server:', e);
-          } finally {
-            setIsSyncing(false);
-          }
+        const newClip: VoiceClip = {
+          id: `clip_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+          name: `${author === 'Nush' ? "Nush's" : "Yajat's"} Voice Memo #${clips.length + 1} 🌸`,
+          date: new Date().toLocaleDateString([], {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+          duration: recordSeconds || 1,
+          blobUrl: localBlobUrl, // immediate local playback
         };
+
+        // Show it immediately with local blob
+        setClips((prev) => [newClip, ...prev]);
+
+        // Upload to Cloudinary for persistent global access
+        setIsUploading(true);
+        const cloudUrl = await uploadToCloudinary(audioBlob);
+        setIsUploading(false);
+
+        const finalClip: VoiceClip = cloudUrl
+          ? { ...newClip, audioUrl: cloudUrl }
+          : newClip;
+
+        // Update the clip in state with Cloudinary URL
+        if (cloudUrl) {
+          setClips((prev) =>
+            prev.map((c) => (c.id === newClip.id ? finalClip : c))
+          );
+        }
+
+        // Save to global sync (store Cloudinary URL, not base64)
+        try {
+          setIsSyncing(true);
+          await fetch('/api/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'voice',
+              action: 'add',
+              item: finalClip,
+            }),
+          });
+        } catch (e) {
+          console.error('Failed to sync voice clip to server:', e);
+        } finally {
+          setIsSyncing(false);
+        }
 
         stream.getTracks().forEach((track) => track.stop());
       };
@@ -175,7 +213,7 @@ export default function VoiceMemories() {
     SoundEngine.click();
     setPlayingId(clip.id);
 
-    const audioSrc = clip.audioData || clip.blobUrl;
+    const audioSrc = clip.audioUrl || clip.blobUrl;
     if (audioSrc) {
       const audio = new Audio(audioSrc);
       audioPlayerRef.current = audio;
@@ -276,6 +314,13 @@ export default function VoiceMemories() {
               </div>
             </div>
 
+            {/* Upload status */}
+            {isUploading && (
+              <p className="text-[11px] font-mono text-yellow-400 mb-2 animate-pulse">
+                ☁️ Uploading to cloud...
+              </p>
+            )}
+
             {/* Record Trigger Button */}
             {isRecording ? (
               <div className="flex flex-col items-center gap-3">
@@ -313,6 +358,23 @@ export default function VoiceMemories() {
             </span>
           </div>
 
+          {/* Loading shimmer */}
+          {isLoading ? (
+            <div className="space-y-3">
+              {[0, 1].map((i) => (
+                <div
+                  key={i}
+                  className="p-4 rounded-2xl border-2 border-[var(--pink)]/20 bg-white/80 animate-pulse flex items-center gap-3"
+                >
+                  <div className="w-11 h-11 rounded-full bg-zinc-200 flex-shrink-0" />
+                  <div className="flex flex-col gap-2 flex-1">
+                    <div className="h-3 w-3/4 rounded bg-zinc-200" />
+                    <div className="h-2 w-1/2 rounded bg-zinc-100" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
           <div className="space-y-3">
             {clips.map((clip) => {
               const isPlaying = playingId === clip.id;
@@ -367,6 +429,7 @@ export default function VoiceMemories() {
               );
             })}
           </div>
+          )}
         </div>
       </div>
     </section>

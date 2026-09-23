@@ -23,7 +23,7 @@ const ENTRY_TYPES: { id: VaultEntry['type']; label: string; icon: string }[] = [
 ];
 
 export default function TwoWayVault() {
-  const { entries, currentMood, setCurrentMood, addEntry, deleteEntry, syncWithServer, isSyncing } = useVaultStore();
+  const { entries, currentMood, setCurrentMood, addEntry, deleteEntry, syncWithServer, isSyncing, isLoading } = useVaultStore();
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState<'nush' | 'yajat'>('nush');
   const [selectedType, setSelectedType] = useState<VaultEntry['type']>('love_note');
@@ -220,6 +220,26 @@ export default function TwoWayVault() {
           </div>
 
           <div className="space-y-3.5 max-h-[600px] overflow-y-auto pr-1">
+            {isLoading ? (
+              <>
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="p-5 rounded-3xl border-2 border-zinc-100 bg-white shadow-md animate-pulse flex flex-col gap-3"
+                  >
+                    <div className="flex items-center gap-2 border-b border-black/5 pb-2.5">
+                      <div className="w-8 h-8 rounded-full bg-zinc-200" />
+                      <div className="flex flex-col gap-1">
+                        <div className="h-2.5 w-20 rounded bg-zinc-200" />
+                        <div className="h-2 w-28 rounded bg-zinc-200" />
+                      </div>
+                    </div>
+                    <div className="h-6 w-full rounded bg-zinc-100" />
+                    <div className="h-6 w-4/5 rounded bg-zinc-100" />
+                  </div>
+                ))}
+              </>
+            ) : (
             <AnimatePresence initial={false}>
               {(mounted ? entries : []).map((entry) => {
                 const isNush = entry.author === 'nush';
@@ -279,6 +299,7 @@ export default function TwoWayVault() {
                 );
               })}
             </AnimatePresence>
+            )}
           </div>
         </div>
       </div>

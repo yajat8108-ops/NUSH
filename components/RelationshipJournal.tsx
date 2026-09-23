@@ -18,7 +18,7 @@ const MOODS: { emoji: JournalEntry['mood']; label: string }[] = [
 ];
 
 export default function RelationshipJournal() {
-  const { entries, addEntry, syncWithServer, isSyncing } = useJournalStore();
+  const { entries, addEntry, syncWithServer, isSyncing, isLoading } = useJournalStore();
   const [mounted, setMounted] = useState(false);
   const [activeMood, setActiveMood] = useState<string>('all');
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
@@ -171,6 +171,28 @@ export default function RelationshipJournal() {
         </div>
 
         {/* DIARY ENTRY CARDS */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[0, 1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="relative p-6 rounded-3xl bg-white/5 border border-white/10 shadow-xl flex flex-col gap-3 animate-pulse"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-white/10" />
+                  <div className="flex flex-col gap-1">
+                    <div className="h-2.5 w-16 rounded bg-white/10" />
+                    <div className="h-2 w-24 rounded bg-white/10" />
+                  </div>
+                </div>
+                <div className="h-5 w-3/4 rounded bg-white/10" />
+                <div className="h-3 w-full rounded bg-white/10" />
+                <div className="h-3 w-5/6 rounded bg-white/10" />
+                <div className="h-3 w-2/3 rounded bg-white/10" />
+              </div>
+            ))}
+          </div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredEntries.map((entry) => (
             <motion.div
@@ -230,6 +252,7 @@ export default function RelationshipJournal() {
             </motion.div>
           ))}
         </div>
+        )}
       </div>
 
       {/* READ DIARY ENTRY MODAL */}
