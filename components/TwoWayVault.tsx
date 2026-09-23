@@ -33,7 +33,8 @@ export default function TwoWayVault() {
     // Initial fetch
     syncWithServer();
 
-    const interval = setInterval(syncWithServer, 15000);
+    // Staggered to 17s so journal (15s), vault (17s) and voice (19s) don't all fire simultaneously
+    const interval = setInterval(syncWithServer, 17000);
     window.addEventListener('focus', syncWithServer);
     return () => {
       clearInterval(interval);

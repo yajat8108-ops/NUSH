@@ -17,6 +17,7 @@ const FILE_MAP: Record<string, string> = {
   vault: 'sync/vault.json',
   voice: 'sync/voice.json',
   streak: 'sync/streak.json',
+  photos: 'sync/photos.json',
 };
 
 // In-memory cache for fast responses
@@ -124,11 +125,12 @@ export async function GET(req: NextRequest) {
   const key = searchParams.get('key') || 'all';
 
   if (key === 'all') {
-    const [journalRes, vaultRes, voiceRes, streakRes] = await Promise.all([
+    const [journalRes, vaultRes, voiceRes, streakRes, photosRes] = await Promise.all([
       fetchFromGitHub('journal'),
       fetchFromGitHub('vault'),
       fetchFromGitHub('voice'),
       fetchFromGitHub('streak'),
+      fetchFromGitHub('photos'),
     ]);
 
     return NextResponse.json(
@@ -137,6 +139,7 @@ export async function GET(req: NextRequest) {
         vault: vaultRes.data,
         voice: voiceRes.data,
         streak: streakRes.data || { streakCount: 7, lastVisitDate: '2026-09-23' },
+        photos: photosRes.data || [],
       },
       {
         headers: {

@@ -1,48 +1,55 @@
 'use client';
 
 import React from 'react';
-import UniverseEntrance from '@/components/UniverseEntrance';
-import UniverseProgressHUD from '@/components/UniverseProgressHUD';
-import AchievementsModal from '@/components/AchievementsModal';
-import UniverseSecrets from '@/components/UniverseSecrets';
-import NushSecret from '@/components/NushSecret';
-import AnniversaryHero from '@/components/AnniversaryHero';
-import TheKissMilestone from '@/components/TheKissMilestone';
-import LoveArcadeHub from '@/components/arcade/LoveArcadeHub';
-import UniverseLetter from '@/components/UniverseLetter';
-import UniverseTimeline from '@/components/UniverseTimeline';
-import FilmstripScroller from '@/components/FilmstripScroller';
-import CorkboardSection from '@/components/CorkboardSection';
-import ReasonsSection from '@/components/ReasonsSection';
-import QuizSection from '@/components/QuizSection';
-import AskYajatConsole from '@/components/AskYajatConsole';
-import CouponsSection from '@/components/CouponsSection';
-import SecretRoom from '@/components/SecretRoom';
-import FutureSection from '@/components/FutureSection';
-import CertificateSection from '@/components/CertificateSection';
-import CinematicEnding from '@/components/CinematicEnding';
-import QrFooter from '@/components/QrFooter';
-import CampusRouteMap from '@/components/CampusRouteMap';
-import AmbientEffects from '@/components/AmbientEffects';
-import ScrollProgress from '@/components/ScrollProgress';
-import ThemeToggle from '@/components/ThemeToggle';
-import CamcorderViewfinder from '@/components/CamcorderViewfinder';
-import TimeMachineVault from '@/components/TimeMachineVault';
-import FloatingBottomDock from '@/components/FloatingBottomDock';
-import EraDiff from '@/components/EraDiff';
-import TwoWayVault from '@/components/TwoWayVault';
-import VoiceMemories from '@/components/VoiceMemories';
-import OriginStorySection from '@/components/OriginStorySection';
-import OurSong from '@/components/OurSong';
-import TimeCapsule from '@/components/TimeCapsule';
-import DateSimulator from '@/components/DateSimulator';
-import HandwrittenCanvas from '@/components/HandwrittenCanvas';
-import DreamMap from '@/components/DreamMap';
-import RelationshipJournal from '@/components/RelationshipJournal';
-import SectionDivider from '@/components/SectionDivider';
-import CompatibilityTest from '@/components/CompatibilityTest';
-import RelationshipDashboard from '@/components/RelationshipDashboard';
-import LockedSection from '@/components/LockedSection';
+import dynamic from 'next/dynamic';
+
+// ── Above-fold: load eagerly (user sees these immediately) ──────────
+import UniverseEntrance      from '@/components/UniverseEntrance';
+import UniverseProgressHUD   from '@/components/UniverseProgressHUD';
+import AmbientEffects        from '@/components/AmbientEffects';
+import ScrollProgress        from '@/components/ScrollProgress';
+import FloatingBottomDock    from '@/components/FloatingBottomDock';
+import AnniversaryHero       from '@/components/AnniversaryHero';
+
+// ── Below-fold: lazy-load on demand — massive bundle size reduction ─
+const AchievementsModal    = dynamic(() => import('@/components/AchievementsModal'),    { ssr: false });
+const UniverseSecrets      = dynamic(() => import('@/components/UniverseSecrets'),      { ssr: false });
+const NushSecret           = dynamic(() => import('@/components/NushSecret'),           { ssr: false });
+const ThemeToggle          = dynamic(() => import('@/components/ThemeToggle'),          { ssr: false });
+const CamcorderViewfinder  = dynamic(() => import('@/components/CamcorderViewfinder'),  { ssr: false });
+const TimeMachineVault     = dynamic(() => import('@/components/TimeMachineVault'),     { ssr: false });
+const SectionDivider       = dynamic(() => import('@/components/SectionDivider'),       { ssr: false });
+const OriginStorySection   = dynamic(() => import('@/components/OriginStorySection'),   { ssr: false });
+const TheKissMilestone     = dynamic(() => import('@/components/TheKissMilestone'),     { ssr: false });
+const LoveArcadeHub        = dynamic(() => import('@/components/arcade/LoveArcadeHub'), { ssr: false });
+const UniverseLetter       = dynamic(() => import('@/components/UniverseLetter'),       { ssr: false });
+const UniverseTimeline     = dynamic(() => import('@/components/UniverseTimeline'),     { ssr: false });
+const EraDiff              = dynamic(() => import('@/components/EraDiff'),              { ssr: false });
+const CampusRouteMap       = dynamic(() => import('@/components/CampusRouteMap'),       { ssr: false });
+const FilmstripScroller    = dynamic(() => import('@/components/FilmstripScroller'),    { ssr: false });
+const PhotoAlbum           = dynamic(() => import('@/components/PhotoAlbum'),           { ssr: false });
+const OurSong              = dynamic(() => import('@/components/OurSong'),              { ssr: false });
+const CorkboardSection     = dynamic(() => import('@/components/CorkboardSection'),     { ssr: false });
+const ReasonsSection       = dynamic(() => import('@/components/ReasonsSection'),       { ssr: false });
+const TwoWayVault          = dynamic(() => import('@/components/TwoWayVault'),          { ssr: false });
+const HandwrittenCanvas    = dynamic(() => import('@/components/HandwrittenCanvas'),    { ssr: false });
+const RelationshipJournal  = dynamic(() => import('@/components/RelationshipJournal'),  { ssr: false });
+const QuizSection          = dynamic(() => import('@/components/QuizSection'),          { ssr: false });
+const CompatibilityTest    = dynamic(() => import('@/components/CompatibilityTest'),    { ssr: false });
+const AskYajatConsole      = dynamic(() => import('@/components/AskYajatConsole'),      { ssr: false });
+const DateSimulator        = dynamic(() => import('@/components/DateSimulator'),        { ssr: false });
+const CouponsSection       = dynamic(() => import('@/components/CouponsSection'),       { ssr: false });
+const VoiceMemories        = dynamic(() => import('@/components/VoiceMemories'),        { ssr: false });
+const TimeCapsule          = dynamic(() => import('@/components/TimeCapsule'),          { ssr: false });
+const SecretRoom           = dynamic(() => import('@/components/SecretRoom'),           { ssr: false });
+const FutureSection        = dynamic(() => import('@/components/FutureSection'),        { ssr: false });
+const DreamMap             = dynamic(() => import('@/components/DreamMap'),             { ssr: false });
+const RelationshipDashboard= dynamic(() => import('@/components/RelationshipDashboard'),{ ssr: false });
+const CertificateSection   = dynamic(() => import('@/components/CertificateSection'),   { ssr: false });
+const CinematicEnding      = dynamic(() => import('@/components/CinematicEnding'),      { ssr: false });
+const QrFooter             = dynamic(() => import('@/components/QrFooter'),             { ssr: false });
+const LockedSection        = dynamic(() => import('@/components/LockedSection'),        { ssr: false });
+
 import { useUniverseStore } from '@/lib/universeStore';
 
 export default function Home() {
@@ -56,7 +63,8 @@ export default function Home() {
       }
       window.scrollTo(0, 0);
     }
-  }, [checkAndUpdateStreak]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -113,7 +121,10 @@ export default function Home() {
         {/* 10. GF DAY 35MM FILMSTRIP HORIZONTAL SCRUBBER */}
         <FilmstripScroller />
 
-        {/* 10.5 SHARED PLAYLIST / MIXTAPE BUILDER (Phase 2 Reveal) */}
+        {/* 10.5 OUR PHOTO ALBUM — GLOBAL CLOUD GALLERY */}
+        <PhotoAlbum />
+
+        {/* 10.8 SHARED PLAYLIST / MIXTAPE BUILDER (Phase 2 Reveal) */}
         <LockedSection
           minProgress={15}
           sectionName="Our Shared Mixtape"

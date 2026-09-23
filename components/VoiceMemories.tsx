@@ -5,20 +5,12 @@ import SectionHead from './SectionHead';
 import { SoundEngine } from '@/lib/audio';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// ────────────────────────────────────────────────────────────
-// Cloudinary config — free tier, 25GB storage, audio support
-// Upload preset must be set to "unsigned" in Cloudinary dashboard
-// ────────────────────────────────────────────────────────────
-const CLOUDINARY_CLOUD_NAME = 'nush-radio'; // ← change to your Cloudinary cloud name
-const CLOUDINARY_UPLOAD_PRESET = 'nush_voice_unsigned'; // ← change to your upload preset
-
 interface VoiceClip {
   id: string;
   name: string;
   date: string;
-  duration: number; // in seconds
-  audioUrl?: string;   // Cloudinary URL (persistent, global)
-  blobUrl?: string;    // local fallback only (for immediate playback before upload)
+  duration: number;
+  audioData?: string; // base64 data URL — WebM is ~25KB per 15s clip, well under 1MB limit
   isPreRecorded?: boolean;
 }
 
@@ -28,10 +20,11 @@ export default function VoiceMemories() {
   const [author, setAuthor] = useState<'Nush' | 'Yajat'>('Nush');
   const [isSyncing, setIsSyncing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isUploading, setIsUploading] = useState(false);
   const [clips, setClips] = useState<VoiceClip[]>([]);
   const [playingId, setPlayingId] = useState<string | null>(null);
 
+  // Ref to track isRecording without stale closures in the timer callback
+  const isRecordingRef = useRef(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -57,45 +50,19 @@ export default function VoiceMemories() {
 
   useEffect(() => {
     fetchClips();
-    const interval = setInterval(fetchClips, 15000);
-    const onFocus = () => fetchClips();
-    window.addEventListener('focus', onFocus);
+    // Staggered to 19s so it doesn't fire at same time as journal (15s) and vault (17s)
+    const interval = setInterval(fetchClips, 19000);
+    window.addEventListener('focus', fetchClips);
     return () => {
       clearInterval(interval);
-      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('focus', fetchClips);
       if (audioPlayerRef.current) {
         audioPlayerRef.current.pause();
         audioPlayerRef.current = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  /**
-   * Uploads a Blob to Cloudinary via unsigned upload and returns the secure URL.
-   * Cloudinary free tier gives 25 GB storage + 25 GB bandwidth/month — more than
-   * enough for short voice memos.
-   */
-  const uploadToCloudinary = async (blob: Blob): Promise<string | null> => {
-    try {
-      const formData = new FormData();
-      formData.append('file', blob, 'voice-memo.webm');
-      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-      formData.append('resource_type', 'video'); // Cloudinary treats audio as "video"
-      formData.append('folder', 'nush_radio');
-
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
-        { method: 'POST', body: formData }
-      );
-
-      if (!res.ok) throw new Error('Cloudinary upload failed');
-      const data = await res.json();
-      return data.secure_url as string;
-    } catch (e) {
-      console.error('Cloudinary upload error:', e);
-      return null;
-    }
-  };
 
   const startRecording = async () => {
     try {
@@ -110,75 +77,63 @@ export default function VoiceMemories() {
         }
       };
 
-      mediaRecorder.onstop = async () => {
+      mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const localBlobUrl = URL.createObjectURL(audioBlob);
 
-        const newClip: VoiceClip = {
-          id: `clip_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-          name: `${author === 'Nush' ? "Nush's" : "Yajat's"} Voice Memo #${clips.length + 1} 🌸`,
-          date: new Date().toLocaleDateString([], {
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-          duration: recordSeconds || 1,
-          blobUrl: localBlobUrl, // immediate local playback
-        };
-
-        // Show it immediately with local blob
-        setClips((prev) => [newClip, ...prev]);
-
-        // Upload to Cloudinary for persistent global access
-        setIsUploading(true);
-        const cloudUrl = await uploadToCloudinary(audioBlob);
-        setIsUploading(false);
-
-        const finalClip: VoiceClip = cloudUrl
-          ? { ...newClip, audioUrl: cloudUrl }
-          : newClip;
-
-        // Update the clip in state with Cloudinary URL
-        if (cloudUrl) {
-          setClips((prev) =>
-            prev.map((c) => (c.id === newClip.id ? finalClip : c))
-          );
-        }
-
-        // Save to global sync (store Cloudinary URL, not base64)
-        try {
-          setIsSyncing(true);
-          await fetch('/api/sync', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              type: 'voice',
-              action: 'add',
-              item: finalClip,
+        // Convert to base64 for global cloud storage
+        // WebM (Opus codec) is ~25KB per 15s — well under GitHub's 1MB file limit
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = async () => {
+          const base64Data = reader.result as string;
+          const newClip: VoiceClip = {
+            id: `clip_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+            name: `${author === 'Nush' ? "Nush's" : "Yajat's"} Voice Memo #${clips.length + 1} 🌸`,
+            date: new Date().toLocaleDateString([], {
+              month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
             }),
-          });
-        } catch (e) {
-          console.error('Failed to sync voice clip to server:', e);
-        } finally {
-          setIsSyncing(false);
-        }
+            duration: recordSeconds || 1,
+            audioData: base64Data,
+          };
+
+          // Optimistic local update
+          setClips((prev) => [newClip, ...prev]);
+
+          // Save to global cloud
+          try {
+            setIsSyncing(true);
+            await fetch('/api/sync', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ type: 'voice', action: 'add', item: newClip }),
+            });
+          } catch (e) {
+            console.error('Failed to sync voice clip:', e);
+          } finally {
+            setIsSyncing(false);
+          }
+        };
 
         stream.getTracks().forEach((track) => track.stop());
       };
 
       mediaRecorder.start();
+
+      // Update both state AND ref so stopRecording always has current value
+      isRecordingRef.current = true;
       setIsRecording(true);
       setRecordSeconds(0);
       SoundEngine.pop();
 
       timerRef.current = setInterval(() => {
         setRecordSeconds((s) => {
-          if (s >= 15) {
+          const next = s + 1;
+          if (next >= 15) {
+            // Use ref — never a stale closure
             stopRecording();
             return 15;
           }
-          return s + 1;
+          return next;
         });
       }, 1000);
     } catch (err) {
@@ -187,10 +142,15 @@ export default function VoiceMemories() {
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
+    // isRecordingRef.current is always current — no stale closure issue
+    if (mediaRecorderRef.current && isRecordingRef.current) {
       mediaRecorderRef.current.stop();
+      isRecordingRef.current = false;
       setIsRecording(false);
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
       SoundEngine.chime();
     }
   };
@@ -204,29 +164,19 @@ export default function VoiceMemories() {
       setPlayingId(null);
       return;
     }
-
     if (audioPlayerRef.current) {
       audioPlayerRef.current.pause();
       audioPlayerRef.current = null;
     }
-
     SoundEngine.click();
     setPlayingId(clip.id);
 
-    const audioSrc = clip.audioUrl || clip.blobUrl;
-    if (audioSrc) {
-      const audio = new Audio(audioSrc);
+    if (clip.audioData) {
+      const audio = new Audio(clip.audioData);
       audioPlayerRef.current = audio;
-      audio.play().catch((err) => {
-        console.error('Audio playback error:', err);
-        setPlayingId(null);
-      });
-      audio.onended = () => {
-        setPlayingId(null);
-        audioPlayerRef.current = null;
-      };
+      audio.play().catch(() => setPlayingId(null));
+      audio.onended = () => { setPlayingId(null); audioPlayerRef.current = null; };
     } else {
-      // Simulating pre-recorded playback chime
       SoundEngine.diamondGlow();
       setTimeout(() => setPlayingId(null), clip.duration * 1000);
     }
@@ -238,14 +188,10 @@ export default function VoiceMemories() {
       await fetch('/api/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'voice',
-          action: 'delete',
-          id,
-        }),
+        body: JSON.stringify({ type: 'voice', action: 'delete', id }),
       });
     } catch (e) {
-      console.error('Failed to delete voice clip from server:', e);
+      console.error('Failed to delete voice clip:', e);
     }
   };
 
@@ -273,14 +219,8 @@ export default function VoiceMemories() {
                 <motion.div
                   key={i}
                   className="w-2 rounded-full bg-gradient-to-t from-[var(--pink-deep)] via-[var(--lav)] to-[var(--butter)]"
-                  animate={{
-                    height: isRecording || playingId ? ['20%', '100%', '35%', '85%', '20%'] : '15%',
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 0.4 + (i % 4) * 0.12,
-                    ease: 'easeInOut',
-                  }}
+                  animate={{ height: isRecording || playingId ? ['20%', '100%', '35%', '85%', '20%'] : '15%' }}
+                  transition={{ repeat: Infinity, duration: 0.4 + (i % 4) * 0.12, ease: 'easeInOut' }}
                 />
               ))}
             </div>
@@ -289,39 +229,22 @@ export default function VoiceMemories() {
             <div className="flex items-center justify-center gap-2 mb-4 w-full max-w-xs">
               <span className="text-[11px] font-mono text-gray-300">Voice of:</span>
               <div className="flex-1 flex gap-1.5 bg-black/40 p-1 rounded-xl border border-white/10">
-                <button
-                  type="button"
-                  onClick={() => setAuthor('Nush')}
-                  className={`flex-1 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
-                    author === 'Nush'
-                      ? 'bg-[var(--pink-deep)] text-white shadow'
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  🌸 Nush
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAuthor('Yajat')}
-                  className={`flex-1 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
-                    author === 'Yajat'
-                      ? 'bg-[var(--pink-deep)] text-white shadow'
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  🐻 Yajat
-                </button>
+                {(['Nush', 'Yajat'] as const).map((a) => (
+                  <button
+                    key={a}
+                    type="button"
+                    onClick={() => setAuthor(a)}
+                    className={`flex-1 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                      author === a ? 'bg-[var(--pink-deep)] text-white shadow' : 'text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    {a === 'Nush' ? '🌸 Nush' : '🐻 Yajat'}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Upload status */}
-            {isUploading && (
-              <p className="text-[11px] font-mono text-yellow-400 mb-2 animate-pulse">
-                ☁️ Uploading to cloud...
-              </p>
-            )}
-
-            {/* Record Trigger Button */}
+            {/* Record Button */}
             {isRecording ? (
               <div className="flex flex-col items-center gap-3">
                 <button
@@ -345,7 +268,7 @@ export default function VoiceMemories() {
           </div>
         </div>
 
-        {/* Right: Saved Clips Playlist */}
+        {/* Right: Saved Clips */}
         <div className="md:col-span-7 flex flex-col gap-4">
           <div className="flex items-center justify-between px-2">
             <h4 className="font-bold text-sm text-[var(--plum)] font-mono flex items-center gap-2">
@@ -358,14 +281,10 @@ export default function VoiceMemories() {
             </span>
           </div>
 
-          {/* Loading shimmer */}
           {isLoading ? (
             <div className="space-y-3">
               {[0, 1].map((i) => (
-                <div
-                  key={i}
-                  className="p-4 rounded-2xl border-2 border-[var(--pink)]/20 bg-white/80 animate-pulse flex items-center gap-3"
-                >
+                <div key={i} className="p-4 rounded-2xl border-2 border-[var(--pink)]/20 bg-white/80 animate-pulse flex items-center gap-3">
                   <div className="w-11 h-11 rounded-full bg-zinc-200 flex-shrink-0" />
                   <div className="flex flex-col gap-2 flex-1">
                     <div className="h-3 w-3/4 rounded bg-zinc-200" />
@@ -375,60 +294,60 @@ export default function VoiceMemories() {
               ))}
             </div>
           ) : (
-          <div className="space-y-3">
-            {clips.map((clip) => {
-              const isPlaying = playingId === clip.id;
-              return (
-                <div
-                  key={clip.id}
-                  className={`p-4 rounded-2xl border-2 transition-all flex items-center justify-between shadow-md ${
-                    isPlaying
-                      ? 'bg-[#251738] border-[var(--butter)] text-white shadow-xl'
-                      : 'bg-[var(--white)]/90 border-[var(--pink)]/30 text-[var(--plum)]'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => playClip(clip)}
-                      className={`w-11 h-11 rounded-full flex items-center justify-center text-lg shadow-md transition-transform hover:scale-110 active:scale-95 cursor-pointer ${
-                        isPlaying
-                          ? 'bg-[var(--butter)] text-black font-bold'
-                          : 'bg-gradient-to-tr from-[var(--pink-deep)] to-[var(--lav)] text-white'
-                      }`}
-                    >
-                      {isPlaying ? '⏸️' : '▶️'}
-                    </button>
-
-                    <div>
-                      <h5 className="font-bold text-sm font-mono">{clip.name}</h5>
-                      <span className="text-xs opacity-70 font-mono">
-                        {clip.date} &middot; {clip.duration}s clip
+            <div className="space-y-3">
+              {clips.length === 0 && (
+                <div className="text-center py-10 text-gray-400 font-mono text-sm">
+                  <div className="text-4xl mb-2">🎙️</div>
+                  <p>No voice memos yet — record the first one!</p>
+                </div>
+              )}
+              {clips.map((clip) => {
+                const isPlaying = playingId === clip.id;
+                return (
+                  <div
+                    key={clip.id}
+                    className={`p-4 rounded-2xl border-2 transition-all flex items-center justify-between shadow-md ${
+                      isPlaying
+                        ? 'bg-[#251738] border-[var(--butter)] text-white shadow-xl'
+                        : 'bg-[var(--white)]/90 border-[var(--pink)]/30 text-[var(--plum)]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => playClip(clip)}
+                        className={`w-11 h-11 rounded-full flex items-center justify-center text-lg shadow-md transition-transform hover:scale-110 active:scale-95 cursor-pointer ${
+                          isPlaying
+                            ? 'bg-[var(--butter)] text-black font-bold'
+                            : 'bg-gradient-to-tr from-[var(--pink-deep)] to-[var(--lav)] text-white'
+                        }`}
+                      >
+                        {isPlaying ? '⏸️' : '▶️'}
+                      </button>
+                      <div>
+                        <h5 className="font-bold text-sm font-mono">{clip.name}</h5>
+                        <span className="text-xs opacity-70 font-mono">
+                          {clip.date} &middot; {clip.duration}s clip
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono px-3 py-1 rounded-full border border-black/10 bg-black/5">
+                        {clip.isPreRecorded ? '📻 Master Tape' : clip.name.includes('Yajat') ? '🎙️ Yajat' : '🌸 Nush'}
                       </span>
+                      {!clip.isPreRecorded && (
+                        <button
+                          onClick={() => deleteClip(clip.id)}
+                          className="text-zinc-400 hover:text-red-500 text-xs p-1.5 rounded-full hover:bg-black/5 transition-colors cursor-pointer"
+                          title="Delete voice note"
+                        >
+                          ✕
+                        </button>
+                      )}
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono px-3 py-1 rounded-full border border-black/10 bg-black/5">
-                      {clip.isPreRecorded
-                        ? '📻 Master Tape'
-                        : clip.name.includes('Yajat')
-                        ? '🎙️ Yajat Note'
-                        : '🎙️ Nush Note'}
-                    </span>
-                    {!clip.isPreRecorded && (
-                      <button
-                        onClick={() => deleteClip(clip.id)}
-                        className="text-zinc-400 hover:text-red-500 text-xs p-1.5 rounded-full hover:bg-black/5 transition-colors cursor-pointer"
-                        title="Delete voice note"
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>

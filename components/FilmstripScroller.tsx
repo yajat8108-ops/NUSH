@@ -10,7 +10,10 @@ interface Frame {
   caption: string;
 }
 
-const frames: Frame[] = [
+import { CloudPhoto } from './PhotoAlbum';
+
+// Hardcoded local frames (always present)
+const STATIC_FRAMES: Frame[] = [
   { id: 'F01', src: '/photos/photo-new-1.jpg', caption: 'our newest memory ❤️' },
   { id: 'F02', src: '/photos/photo-1.jpg', caption: 'the teddy bear delivery 🧸' },
   { id: 'F03', src: '/photos/photo-new-2.jpg', caption: 'still smiling 🩷' },
@@ -31,11 +34,16 @@ const frames: Frame[] = [
 
 export default function FilmstripScroller() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [cloudFrames, setCloudFrames] = useState<Frame[]>([]);
   const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progressPercent, setProgressPercent] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  // Merge static + cloud frames
+  const frames = [...STATIC_FRAMES, ...cloudFrames];
 
   // Momentum / inertia state
   const velocityRef = useRef(0);
@@ -66,6 +74,28 @@ export default function FilmstripScroller() {
     }
     return () => clearInterval(interval);
   }, [isPlaying]);
+
+  // Fetch cloud-uploaded photos and append to filmstrip
+  useEffect(() => {
+    const fetchCloudPhotos = async () => {
+      try {
+        const res = await fetch('/api/sync?key=photos', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setCloudFrames(data.map((p: CloudPhoto, idx: number) => ({
+              id: `CF${String(idx + 1).padStart(2, '0')}`,
+              src: p.url,
+              caption: p.caption || '💕',
+            })));
+          }
+        }
+      } catch (e) {
+        console.error('Failed to fetch cloud photos for filmstrip:', e);
+      }
+    };
+    fetchCloudPhotos();
+  }, []);
 
   // Handle native scroll & wheel lock
   const handleScroll = () => {
@@ -288,6 +318,18 @@ export default function FilmstripScroller() {
             aria-label="Next frame"
           >
             ›
+          </button>
+          <button
+            onClick={() => {
+              const el = document.getElementById('photo-album');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              window.dispatchEvent(new CustomEvent('open-photo-upload'));
+            }}
+            className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white font-mono text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+            title="Upload a photo to our cloud album"
+          >
+            <span>📷</span>
+            <span>Add Frame +</span>
           </button>
         </div>
       </div>

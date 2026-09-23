@@ -164,17 +164,13 @@ export default function AnniversaryHero() {
             Yajat
           </motion.span>
 
-          <motion.span 
+          <span
             onClick={handleBothClick}
-            whileHover={{ scale: 1.3, rotate: 15 }}
-            whileTap={{ scale: 0.85 }}
-            animate={{ scale: [1, 1.15, 1] }} 
-            transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
-            className="text-[var(--pink-deep)] inline-block drop-shadow-xl cursor-pointer"
+            className="text-[var(--pink-deep)] inline-block drop-shadow-xl cursor-pointer hero-amp"
             title="Click & for a spark! 💖"
           >
             &amp;
-          </motion.span>
+          </span>
 
           <motion.span
             onClick={handleNushClick}
