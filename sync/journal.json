@@ -1,11 +1,23 @@
 [
   {
+    "id": "test-live-entry-1",
+    "author": "Yajat",
+    "title": "Testing Global Sync Live",
+    "content": "Does this work globally?",
+    "date": "2026-09-23T18:00:00.000Z",
+    "mood": "🥰",
+    "moodLabel": "Loved",
+    "tags": [
+      "#test"
+    ]
+  },
+  {
     "id": "journal-latest-1",
     "author": "Yajat",
     "title": "I LOVE NUSH",
     "content": "This is the !st day of this site bieng up!!! i hope u keep ussing this site lovee uu nushhhhh!!!!",
     "date": "2026-09-16T18:00:00.000Z",
-    "mood": "\ud83e\udd70",
+    "mood": "🥰",
     "moodLabel": "Loved",
     "tags": [
       "#us",
@@ -18,7 +30,7 @@
     "title": "The Birthday Teddy & That Unforgettable Smile",
     "content": "I will never forget giving you that brown teddy bear on your birthday. You held it so gently, looked right at me, and announced you were naming it 'Yajat'. I laughed so hard my stomach hurt, but in my heart, I knew you were making sure a piece of me stayed with you in your room every night. Best gift decision of my life.",
     "date": "2026-07-22T21:30:00.000Z",
-    "mood": "\ud83e\udd70",
+    "mood": "🥰",
     "moodLabel": "Completely In Love",
     "tags": [
       "#birthday",
@@ -32,7 +44,7 @@
     "title": "8:00 PM Open Audi Guard Escape & Slow Walk to GB-2",
     "content": "The guard whistled right at 8:00 PM. We both packed up slowly, laughing as we walked towards AB-1. Then AB-1 closed too, so we took the detour past Dr. Morphin's just to buy 10 more minutes together. Standing outside Girls Block 2 saying goodbye is the hardest thing every day, but also the proof of how precious every single minute is.",
     "date": "2026-08-14T20:15:00.000Z",
-    "mood": "\ud83e\udd79",
+    "mood": "🥹",
     "moodLabel": "Emotional & Sacred",
     "tags": [
       "#openaudi",
@@ -46,7 +58,7 @@
     "title": "All-Night FaceTime with Screen Brightness at 1%",
     "content": "It was 4:15 AM. You had fallen asleep while talking about your classes, phone propped against your pillow. I kept the call running at 1% brightness, listening to your soft breathing until the sun started rising. I never want you to go to sleep feeling lonely ever again.",
     "date": "2026-08-28T04:23:00.000Z",
-    "mood": "\ud83d\ude34",
+    "mood": "😴",
     "moodLabel": "Peaceful & Warm",
     "tags": [
       "#latenight",
