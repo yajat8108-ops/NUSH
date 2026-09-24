@@ -116,6 +116,7 @@ export default function PhotoAlbum() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState('');
   const [author, setAuthor] = useState<'nush' | 'yajat'>('nush');
   const [caption, setCaption] = useState('');
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -181,7 +182,7 @@ export default function PhotoAlbum() {
   const uploadToCloudinary = async (file: File | Blob): Promise<string | null> => {
     if (!CLOUDINARY_CONFIGURED) return null;
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', file, 'memory.jpg');
     formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
     formData.append('folder', 'nush_album');
     const controller = new AbortController();
@@ -205,16 +206,19 @@ export default function PhotoAlbum() {
   const handleUpload = async () => {
     if (!selectedFile) return;
     setIsUploading(true);
+    setUploadStatus('Optimizing image... ⚡');
     try {
       let finalUrl = '';
       if (CLOUDINARY_CONFIGURED) {
         const prepared = await prepareImageForUpload(selectedFile);
+        setUploadStatus('Uploading to cloud... ☁️');
         const cloudUrl = await uploadToCloudinary(prepared);
         if (cloudUrl) finalUrl = cloudUrl;
       }
 
       // If Cloudinary is not configured or failed, use smart client-side compression
       if (!finalUrl) {
+        setUploadStatus('Saving memory... ✨');
         finalUrl = await compressImageToDataUrl(selectedFile);
       }
 
@@ -231,6 +235,7 @@ export default function PhotoAlbum() {
       setCaption('');
       setSelectedFile(null);
       setPreview(null);
+      setUploadStatus('');
       SoundEngine.confettiPop();
 
       window.dispatchEvent(new CustomEvent('photo-added', { detail: newPhoto }));
@@ -252,6 +257,7 @@ export default function PhotoAlbum() {
       alert('Could not save photo. Please try again.');
     } finally {
       setIsUploading(false);
+      setUploadStatus('');
     }
   };
 
@@ -431,7 +437,7 @@ export default function PhotoAlbum() {
                 disabled={!selectedFile || isUploading}
                 className="w-full py-3 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white font-bold font-mono text-sm shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                {isUploading ? '☁️ Saving to Cloud...' : '💾 Save to Our Album'}
+                {isUploading ? (uploadStatus || '☁️ Saving to Cloud...') : '💾 Save to Our Album'}
               </button>
             </motion.div>
           </motion.div>
