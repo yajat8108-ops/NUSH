@@ -102,10 +102,20 @@ export default function PhotoAlbum() {
     };
     window.addEventListener('open-photo-upload', handleOpenModal);
 
+    const handlePhotoDeleted = (e: Event) => {
+      const customEvt = e as CustomEvent<{ id: string }>;
+      const deletedId = customEvt.detail?.id;
+      if (deletedId) {
+        setPhotos((prev) => prev.filter((p) => p.id !== deletedId));
+      }
+    };
+    window.addEventListener('photo-deleted', handlePhotoDeleted);
+
     return () => {
       clearInterval(interval);
       window.removeEventListener('focus', fetchPhotos);
       window.removeEventListener('open-photo-upload', handleOpenModal);
+      window.removeEventListener('photo-deleted', handlePhotoDeleted);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -183,13 +193,20 @@ export default function PhotoAlbum() {
   };
 
   const deletePhoto = async (id: string) => {
+    if (!window.confirm('Remove this photo from our album? 🥺')) return;
     SoundEngine.click();
     setPhotos((prev) => prev.filter((p) => p.id !== id));
-    await fetch('/api/sync', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'photos', action: 'delete', id }),
-    });
+    if (lightboxPhoto?.id === id) setLightboxPhoto(null);
+    try {
+      await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'photos', action: 'delete', id }),
+      });
+      window.dispatchEvent(new CustomEvent('photo-deleted', { detail: { id } }));
+    } catch (e) {
+      console.error('Failed to delete photo:', e);
+    }
   };
 
   return (
@@ -257,10 +274,11 @@ export default function PhotoAlbum() {
               </div>
               <button
                 onClick={(e) => { e.stopPropagation(); deletePhoto(photo.id); }}
-                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-600 transition-all cursor-pointer"
-                title="Delete photo"
+                className="absolute top-2 right-2 px-2.5 py-1 rounded-full bg-black/70 hover:bg-red-600 text-white text-[11px] font-mono font-bold flex items-center gap-1 shadow-md opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-all cursor-pointer z-10"
+                title="Remove photo"
               >
-                ✕
+                <span>🗑️</span>
+                <span className="hidden sm:inline">Delete</span>
               </button>
             </motion.div>
           ))}
@@ -387,11 +405,21 @@ export default function PhotoAlbum() {
                 alt={lightboxPhoto.caption}
                 className="w-full h-auto max-h-[80vh] object-contain rounded-2xl shadow-2xl"
               />
-              <div className="mt-3 text-center">
-                <p className="font-caveat text-white text-2xl">{lightboxPhoto.caption}</p>
-                <p className="font-mono text-xs text-white/60 mt-1">
-                  {lightboxPhoto.author === 'nush' ? '👑 Nush' : '🐻 Yajat'} · {new Date(lightboxPhoto.uploadedAt).toLocaleDateString()}
-                </p>
+              <div className="mt-4 pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+                <div className="text-left">
+                  <p className="font-caveat text-white text-2xl md:text-3xl">{lightboxPhoto.caption}</p>
+                  <p className="font-mono text-xs text-white/60 mt-1">
+                    {lightboxPhoto.author === 'nush' ? '👑 Anushka (Nush)' : '🐻 Yajat'} · {new Date(lightboxPhoto.uploadedAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => deletePhoto(lightboxPhoto.id)}
+                  className="px-4 py-2 rounded-xl bg-red-600/30 hover:bg-red-600 text-red-300 hover:text-white border border-red-500/40 text-xs font-mono font-bold flex items-center gap-1.5 shadow-lg transition-all cursor-pointer"
+                >
+                  <span>🗑️</span>
+                  <span>Remove Photo</span>
+                </button>
               </div>
             </motion.div>
           </motion.div>

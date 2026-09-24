@@ -8,6 +8,7 @@ interface Frame {
   id: string;
   src: string;
   caption: string;
+  photoId?: string;
 }
 
 import { CloudPhoto } from './PhotoAlbum';
@@ -85,6 +86,7 @@ export default function FilmstripScroller() {
           if (Array.isArray(data) && data.length > 0) {
             setCloudFrames(data.map((p: CloudPhoto, idx: number) => ({
               id: `CF${String(idx + 1).padStart(2, '0')}`,
+              photoId: p.id,
               src: p.url,
               caption: p.caption || '💕',
             })));
@@ -95,7 +97,38 @@ export default function FilmstripScroller() {
       }
     };
     fetchCloudPhotos();
+
+    const handlePhotoDeleted = (e: Event) => {
+      const customEvt = e as CustomEvent<{ id: string }>;
+      const deletedId = customEvt.detail?.id;
+      if (deletedId) {
+        setCloudFrames((prev) => prev.filter((f) => f.photoId !== deletedId));
+      }
+    };
+    window.addEventListener('photo-deleted', handlePhotoDeleted);
+
+    return () => {
+      window.removeEventListener('photo-deleted', handlePhotoDeleted);
+    };
   }, []);
+
+  const handleDeleteCloudFrame = async (frame: Frame) => {
+    if (!frame.photoId) return;
+    if (!window.confirm('Remove this photo frame from our filmstrip? 🥺')) return;
+    const photoId = frame.photoId;
+    setCloudFrames((prev) => prev.filter((f) => f.photoId !== photoId));
+    if (selectedFrame?.id === frame.id) setSelectedFrame(null);
+    try {
+      await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'photos', action: 'delete', id: photoId }),
+      });
+      window.dispatchEvent(new CustomEvent('photo-deleted', { detail: { id: photoId } }));
+    } catch (e) {
+      console.error('Failed to delete cloud frame:', e);
+    }
+  };
 
   // Handle native scroll & wheel lock
   const handleScroll = () => {
@@ -403,6 +436,18 @@ export default function FilmstripScroller() {
                   <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/70 text-[10px] font-mono text-white/90">
                     {frame.id}
                   </div>
+                  {frame.photoId && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteCloudFrame(frame);
+                      }}
+                      className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-red-600/85 hover:bg-red-600 text-white text-[10px] font-mono font-bold flex items-center gap-1 shadow-md opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-all cursor-pointer z-10"
+                      title="Remove frame"
+                    >
+                      <span>🗑️</span>
+                    </button>
+                  )}
                   {/* Vintage vignette corner */}
                   <div className="absolute inset-0 pointer-events-none" style={{
                     boxShadow: 'inset 0 0 40px rgba(0,0,0,0.3)',
@@ -480,6 +525,16 @@ export default function FilmstripScroller() {
                 <p className="font-mono text-xs text-gray-500 mt-1 uppercase tracking-wider">
                   FRAME {selectedFrame.id} · YAJAT &amp; NUSH
                 </p>
+
+                {selectedFrame.photoId && (
+                  <button
+                    onClick={() => handleDeleteCloudFrame(selectedFrame)}
+                    className="mt-3 px-4 py-2 rounded-xl bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 hover:border-red-600 text-xs font-mono font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer mx-auto"
+                  >
+                    <span>🗑️</span>
+                    <span>Remove This Frame</span>
+                  </button>
+                )}
               </div>
             </motion.div>
           </motion.div>
