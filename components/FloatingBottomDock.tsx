@@ -41,63 +41,66 @@ export default function FloatingBottomDock() {
 
   return (
     <>
-      {/* 1. MOBILE UNIFIED BOTTOM DOCK (< sm) — Non-overlapping, compact floating glass pill */}
-      <div className="sm:hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1 p-1.5 rounded-full bg-black/85 backdrop-blur-xl border border-white/20 shadow-2xl print:hidden select-none max-w-[98vw]">
-        {/* VHS Mode */}
+      {/* 1. MOBILE & TABLET UNIFIED BOTTOM DOCK (< lg) — Non-overlapping, sleek floating glass capsule */}
+      <div className="lg:hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1.5 p-1.5 rounded-full bg-[#100e17]/90 backdrop-blur-2xl border border-white/25 shadow-[0_12px_40px_rgba(0,0,0,0.65)] print:hidden select-none max-w-[98vw]">
+        {/* VHS Mode Toggle */}
         <button
           onClick={() => {
             SoundEngine.click();
             setCamcorderOn(!isCamcorderOn);
           }}
-          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all ${
-            isCamcorderOn ? 'bg-red-600 text-white animate-pulse' : 'text-white/80 hover:text-white'
+          className={`h-8 px-2.5 rounded-full flex items-center gap-1 text-[11px] font-mono font-bold transition-all active:scale-95 cursor-pointer shrink-0 ${
+            isCamcorderOn
+              ? 'bg-red-600 text-white animate-pulse border border-white shadow-[0_0_15px_rgba(220,38,38,0.7)]'
+              : 'bg-white/10 hover:bg-white/20 text-white/90 border border-white/10'
           }`}
-          title="Toggle VHS Mode 🎥"
+          title="Toggle Vintage VHS Mode 🎥"
         >
-          🎥
+          <span className="text-xs">🎥</span>
+          <span>VHS</span>
         </button>
 
         {/* Library Pass */}
         <button
           onClick={handleOpenLibrary}
-          className="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white/80 hover:text-white transition-transform active:scale-95"
+          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-sm text-white transition-all active:scale-95 cursor-pointer shrink-0"
           title="Library Pass 📚"
         >
           📚
         </button>
 
-        {/* FaceTime */}
+        {/* FaceTime Video Call */}
         <button
           onClick={handleOpenVideoCall}
-          className="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white/80 hover:text-white transition-transform active:scale-95"
-          title="FaceTime 📱"
+          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-sm text-white transition-all active:scale-95 cursor-pointer shrink-0"
+          title="FaceTime Call 📱"
         >
           📱
         </button>
 
-        <div className="w-[1px] h-4 bg-white/20 mx-0.5" />
+        <div className="w-[1px] h-4 bg-white/20 mx-0.5 shrink-0" />
 
-        {/* Time Machine */}
+        {/* Time Machine Vault */}
         <button
           onClick={() => {
             SoundEngine.click();
             setTimeMachineOpen(true);
           }}
-          className="px-2.5 py-1 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white font-mono text-[11px] font-bold flex items-center gap-1 shadow-md active:scale-95"
-          title="Time Machine (5 Sites)"
+          className="h-8 px-2.5 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white font-mono text-[11px] font-bold flex items-center gap-1 shadow-md active:scale-95 cursor-pointer shrink-0"
+          title="Time Machine (5 Sites Archive)"
         >
           <span>⏳</span>
           <span>Vault</span>
         </button>
 
-        {/* Secrets */}
+        {/* Secrets Drawer */}
         <button
           onClick={() => {
             SoundEngine.pop();
             setSecretsPickerOpen(!isSecretsPickerOpen);
           }}
-          className="w-8 h-8 rounded-full bg-white/10 text-white text-xs flex items-center justify-center font-bold active:scale-95"
-          title="Secrets ✨"
+          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs flex items-center justify-center font-bold active:scale-95 cursor-pointer shrink-0"
+          title="Secret Easter Eggs ✨"
         >
           ✨
         </button>
@@ -108,16 +111,16 @@ export default function FloatingBottomDock() {
             SoundEngine.click();
             setAchievementsOpen(true);
           }}
-          className="px-2.5 py-1 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white font-mono text-[11px] font-bold flex items-center gap-1 shadow-md active:scale-95"
-          title="Achievements 🏆"
+          className="h-8 px-2.5 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white font-mono text-[11px] font-bold flex items-center gap-1 shadow-md active:scale-95 cursor-pointer shrink-0"
+          title="Achievements & Badges 🏆"
         >
           <span>🏆</span>
           <span>{unlockedCount}</span>
         </button>
       </div>
 
-      {/* 2. DESKTOP BOTTOM LEFT DOCK (sm and up) */}
-      <div className="hidden sm:flex fixed bottom-6 left-6 z-40 items-center gap-2.5 print:hidden select-none">
+      {/* 2. DESKTOP BOTTOM LEFT DOCK (lg and up) */}
+      <div className="hidden lg:flex fixed bottom-6 left-6 z-40 items-center gap-2.5 print:hidden select-none">
         {/* Camcorder VHS Mode Toggle */}
         <button
           onClick={() => {
@@ -154,8 +157,8 @@ export default function FloatingBottomDock() {
         </button>
       </div>
 
-      {/* 3. DESKTOP BOTTOM RIGHT DOCK (sm and up) */}
-      <div className="hidden sm:flex fixed bottom-6 right-6 z-40 flex-col items-end gap-2.5 print:hidden select-none max-w-[90vw]">
+      {/* 3. DESKTOP BOTTOM RIGHT DOCK (lg and up) */}
+      <div className="hidden lg:flex fixed bottom-6 right-6 z-40 flex-col items-end gap-2.5 print:hidden select-none max-w-[90vw]">
         {/* Row 1: Time Machine (Multiverse Vault) Button */}
         <motion.button
           onClick={() => {

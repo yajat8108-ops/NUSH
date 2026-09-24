@@ -13,6 +13,8 @@ export default function UniverseProgressHUD() {
     enteredUniverse,
     streakCount,
     checkAndUpdateStreak,
+    isCamcorderOn,
+    setCamcorderOn,
   } = useUniverseStore();
   const { theme, toggleTheme } = useStore();
 
@@ -50,6 +52,22 @@ export default function UniverseProgressHUD() {
           />
         </div>
       </div>
+
+      {/* VHS Mode Quick Toggle */}
+      <button
+        onClick={() => {
+          SoundEngine.click();
+          setCamcorderOn(!isCamcorderOn);
+        }}
+        className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center border shadow-lg backdrop-blur text-xs sm:text-sm transition-all hover:scale-105 active:scale-95 cursor-pointer ${
+          isCamcorderOn
+            ? 'bg-red-600 border-white text-white animate-pulse shadow-[0_0_12px_rgba(220,38,38,0.8)]'
+            : 'bg-black/70 border-white/20 text-gray-300 hover:text-white'
+        }`}
+        title={isCamcorderOn ? 'Exit VHS Mode 🎥' : 'Enable Vintage VHS Camcorder Mode 🎥'}
+      >
+        🎥
+      </button>
 
       {/* Soundtrack Toggle */}
       <button
