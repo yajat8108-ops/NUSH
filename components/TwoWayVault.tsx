@@ -59,17 +59,17 @@ export default function TwoWayVault() {
   };
 
   return (
-    <section id="two-way-vault" className="anniversary-section py-16 px-4 max-w-5xl mx-auto font-nunito">
+    <section id="two-way-vault" className="anniversary-section py-10 sm:py-16 px-3 sm:px-4 max-w-5xl mx-auto font-nunito">
       <SectionHead
         eyebrow="reciprocal memory vault"
         title="Nush's Authorship Corner ✍️"
         subtitle="write permanent notes to Yajat, log your mood, or file 2 AM Maggi demands"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mt-6 sm:mt-10">
         {/* Left Column: Interactive Creator Pad (5 cols) */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          <div className="bg-[var(--white)]/95 backdrop-blur-md rounded-3xl p-6 md:p-7 border-2 border-[var(--pink-deep)]/40 shadow-xl relative overflow-hidden">
+          <div className="bg-[var(--white)]/95 backdrop-blur-md rounded-2xl sm:rounded-3xl p-4 sm:p-7 border-2 border-[var(--pink-deep)]/40 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[var(--pink)]/20 to-transparent rounded-bl-full pointer-events-none" />
 
             <div className="flex items-center justify-between gap-2 mb-4">

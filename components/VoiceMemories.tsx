@@ -196,20 +196,20 @@ export default function VoiceMemories() {
   };
 
   return (
-    <section id="voice-memories" className="anniversary-section py-16 px-4 max-w-5xl mx-auto font-nunito">
+    <section id="voice-memories" className="anniversary-section py-10 sm:py-16 px-3 sm:px-4 max-w-5xl mx-auto font-nunito">
       <SectionHead
         eyebrow="radio nushi audio vault"
         title="Voice Notes &amp; Audio Memories 🎙️"
         subtitle="listen to whispered messages or record a quick audio note for Yajat"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mt-10">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 mt-6 sm:mt-10">
         {/* Left: Tape Recorder Console */}
         <div className="md:col-span-5 flex flex-col gap-4">
-          <div className="bg-[#1a1426] text-white p-6 md:p-8 rounded-3xl border-2 border-[var(--pink)] shadow-2xl relative overflow-hidden flex flex-col items-center text-center">
-            <span className="text-5xl mb-3 block">📻✨</span>
-            <h3 className="font-bold text-xl font-mono text-[var(--butter)]">Radio Nushi Studio</h3>
-            <p className="text-xs text-gray-300 mt-1 mb-6">
+          <div className="bg-[#1a1426] text-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border-2 border-[var(--pink)] shadow-2xl relative overflow-hidden flex flex-col items-center text-center">
+            <span className="text-4xl sm:text-5xl mb-2 sm:mb-3 block">📻✨</span>
+            <h3 className="font-bold text-lg sm:text-xl font-mono text-[var(--butter)]">Radio Nushi Studio</h3>
+            <p className="text-xs text-gray-300 mt-1 mb-4 sm:mb-6">
               Record a 15-second voice memo for our relationship archives
             </p>
 

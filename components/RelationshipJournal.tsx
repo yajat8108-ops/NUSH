@@ -102,16 +102,16 @@ export default function RelationshipJournal() {
       : entries.filter((entry) => entry.mood === activeMood);
 
   return (
-    <section id="relationship-journal" className="anniversary-section py-20 px-4 select-none">
+    <section id="relationship-journal" className="anniversary-section py-10 sm:py-20 px-3 sm:px-4 select-none font-nunito">
       <SectionHead
         eyebrow="daily chronicles · our private diary"
         title="Relationship Journal & Diary"
         subtitle="candid thoughts, real memories, and quiet late-night reflections 📖✍️"
       />
 
-      <div className="max-w-4xl mx-auto mt-6">
+      <div className="max-w-4xl mx-auto mt-4 sm:mt-6">
         {/* Top Control Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-3xl bg-black/25 backdrop-blur-md border border-white/10 shadow-lg mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-black/25 backdrop-blur-md border border-white/10 shadow-lg mb-6 sm:mb-8">
           {/* Mood Filter Chips */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <button
@@ -338,7 +338,7 @@ export default function RelationshipJournal() {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative max-w-lg w-full bg-[#161224] border-2 border-[var(--pink)] rounded-3xl p-6 shadow-2xl text-white space-y-4 max-h-[90vh] overflow-y-auto"
+              className="relative max-w-lg w-full bg-[#161224] border-2 border-[var(--pink)] rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl text-white space-y-3.5 sm:space-y-4 max-h-[88vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between pb-3 border-b border-white/10">
                 <h3 className="font-bold text-lg text-[var(--butter)] font-mono flex items-center gap-2">

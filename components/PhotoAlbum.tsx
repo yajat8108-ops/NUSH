@@ -210,7 +210,7 @@ export default function PhotoAlbum() {
   };
 
   return (
-    <section id="photo-album" className="anniversary-section py-16 px-4 max-w-5xl mx-auto font-nunito">
+    <section id="photo-album" className="anniversary-section py-10 sm:py-16 px-3 sm:px-4 max-w-5xl mx-auto font-nunito">
       <SectionHead
         eyebrow="our shared memories · global photo vault"
         title="Our Photo Album 📸"
@@ -218,15 +218,15 @@ export default function PhotoAlbum() {
       />
 
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mt-8 mb-6">
-        <span className="text-xs font-mono text-emerald-600 flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 mt-6 sm:mt-8 mb-4 sm:mb-6">
+        <span className="text-[11px] sm:text-xs font-mono text-emerald-600 flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           {isSyncing ? 'Syncing...' : `${photos.length} memories saved globally ☁️`}
         </span>
 
         <button
           onClick={() => { SoundEngine.pop(); setShowUploadModal(true); }}
-          className="px-5 py-2 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white font-mono font-bold text-xs shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+          className="px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white font-mono font-bold text-xs shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer"
         >
           <span>📷</span> Upload a Memory
         </button>
@@ -234,14 +234,14 @@ export default function PhotoAlbum() {
 
       {/* Loading shimmer */}
       {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-4">
           {[0,1,2,3,4,5].map((i) => (
             <div key={i} className="aspect-square rounded-2xl bg-white/60 border border-[var(--pink)]/20 animate-pulse" />
           ))}
         </div>
       ) : photos.length === 0 ? (
-        <div className="text-center py-16 text-gray-400 font-mono bg-white/40 rounded-3xl border border-dashed border-[var(--pink)]/30 p-8">
-          <div className="text-5xl mb-3">📸</div>
+        <div className="text-center py-12 sm:py-16 text-gray-400 font-mono bg-white/40 rounded-2xl sm:rounded-3xl border border-dashed border-[var(--pink)]/30 p-6 sm:p-8">
+          <div className="text-4xl sm:text-5xl mb-2 sm:mb-3">📸</div>
           <p className="text-sm font-bold text-[var(--plum)]">No photos uploaded yet!</p>
           <p className="text-xs text-gray-500 mt-1 max-w-xs mx-auto">
             Click &ldquo;Upload a Memory&rdquo; above to add your first photo together. It will sync globally!
@@ -249,7 +249,7 @@ export default function PhotoAlbum() {
         </div>
       ) : (
         /* Responsive masonry grid */
-        <div className="columns-2 sm:columns-3 md:columns-4 gap-4 space-y-4">
+        <div className="columns-2 sm:columns-3 md:columns-4 gap-2.5 sm:gap-4 space-y-2.5 sm:space-y-4">
           {photos.map((photo) => (
             <motion.div
               key={photo.id}
@@ -300,7 +300,7 @@ export default function PhotoAlbum() {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-4"
+              className="relative w-full max-w-md bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl space-y-3.5 sm:space-y-4 max-h-[90vh] overflow-y-auto"
             >
               <button
                 onClick={() => setShowUploadModal(false)}

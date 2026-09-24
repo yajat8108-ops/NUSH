@@ -299,66 +299,70 @@ export default function FilmstripScroller() {
       </div>
 
       {/* Control Bar & HUD */}
-      <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3 px-4 mb-4">
-        {/* Left: Frame Indicator */}
-        <div className="flex items-center gap-2 font-mono text-xs text-[var(--plum)] bg-[var(--butter)] px-3.5 py-1.5 rounded-full font-bold shadow-sm border border-amber-200">
-          <span>FRAME {frames[activeIndex]?.id || 'F01'} / F16</span>
-          <span className="opacity-40">|</span>
-          <span className="text-[var(--pink-deep)]">● REC</span>
-          {isDragging && (
-            <span className="text-emerald-600 animate-pulse ml-1">⟷ DRAG</span>
-          )}
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5 sm:gap-3 px-3 sm:px-4 mb-4">
+        {/* Row 1 on mobile: Frame Indicator + Scrubber */}
+        <div className="w-full md:w-auto flex items-center justify-between gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 font-mono text-[11px] sm:text-xs text-[var(--plum)] bg-[var(--butter)] px-3 py-1 rounded-full font-bold shadow-sm border border-amber-200 shrink-0">
+            <span>FRAME {frames[activeIndex]?.id || 'F01'}</span>
+            <span className="opacity-40">|</span>
+            <span className="text-[var(--pink-deep)]">● REC</span>
+            {isDragging && (
+              <span className="text-emerald-600 animate-pulse ml-1 text-[10px]">⟷</span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 flex-1 md:w-48 ml-1">
+            <input
+              type="range"
+              min="0"
+              max={frames.length - 1}
+              value={activeIndex}
+              onChange={(e) => jumpToFrame(Number(e.target.value))}
+              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-[var(--pink-deep)]"
+            />
+            <span className="font-mono text-[10px] text-gray-500 font-bold w-8 text-right shrink-0">
+              {Math.round(progressPercent)}%
+            </span>
+          </div>
         </div>
 
-        {/* Center: Interactive Scrubber Slider */}
-        <div className="flex items-center gap-3 flex-1 max-w-xs md:max-w-md mx-2">
-          <input
-            type="range"
-            min="0"
-            max={frames.length - 1}
-            value={activeIndex}
-            onChange={(e) => jumpToFrame(Number(e.target.value))}
-            className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-[var(--pink-deep)]"
-          />
-          <span className="font-mono text-xs text-gray-500 font-bold w-12 text-right">
-            {Math.round(progressPercent)}%
-          </span>
-        </div>
-
-        {/* Right: Controls (Play / Pause & Nav Arrows) */}
-        <div className="flex items-center gap-2">
+        {/* Row 2 on mobile: Play / Arrows / Add Frame */}
+        <div className="w-full md:w-auto flex items-center justify-between md:justify-end gap-1.5 sm:gap-2">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className={`px-3.5 py-1.5 rounded-full font-mono text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1 rounded-full font-mono text-[11px] sm:text-xs font-bold transition-all shadow-sm flex items-center gap-1 cursor-pointer ${
               isPlaying
                 ? 'bg-amber-400 text-black shadow-md scale-105'
                 : 'bg-white text-[var(--plum)] border border-[var(--pink)]/40 hover:bg-[var(--pink)] hover:text-white'
             }`}
           >
-            {isPlaying ? '⏸ Pause Reel' : '▶ Auto Play'}
+            {isPlaying ? '⏸ Pause' : '▶ Play'}
           </button>
           
-          <button
-            onClick={() => scrollByAmount('left')}
-            className="w-8 h-8 rounded-full bg-white border border-[var(--pink)]/40 text-[var(--plum)] flex items-center justify-center font-bold text-base hover:bg-[var(--pink)] hover:text-white transition-all shadow-sm active:scale-95 cursor-pointer"
-            aria-label="Previous frame"
-          >
-            ‹
-          </button>
-          <button
-            onClick={() => scrollByAmount('right')}
-            className="w-8 h-8 rounded-full bg-white border border-[var(--pink)]/40 text-[var(--plum)] flex items-center justify-center font-bold text-base hover:bg-[var(--pink)] hover:text-white transition-all shadow-sm active:scale-95 cursor-pointer"
-            aria-label="Next frame"
-          >
-            ›
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => scrollByAmount('left')}
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white border border-[var(--pink)]/40 text-[var(--plum)] flex items-center justify-center font-bold text-sm sm:text-base hover:bg-[var(--pink)] hover:text-white transition-all shadow-sm active:scale-95 cursor-pointer"
+              aria-label="Previous frame"
+            >
+              ‹
+            </button>
+            <button
+              onClick={() => scrollByAmount('right')}
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white border border-[var(--pink)]/40 text-[var(--plum)] flex items-center justify-center font-bold text-sm sm:text-base hover:bg-[var(--pink)] hover:text-white transition-all shadow-sm active:scale-95 cursor-pointer"
+              aria-label="Next frame"
+            >
+              ›
+            </button>
+          </div>
+
           <button
             onClick={() => {
               const el = document.getElementById('photo-album');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
               window.dispatchEvent(new CustomEvent('open-photo-upload'));
             }}
-            className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white font-mono text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white font-mono text-[11px] sm:text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
             title="Upload a photo to our cloud album"
           >
             <span>📷</span>

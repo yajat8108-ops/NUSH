@@ -29,20 +29,21 @@ export default function UniverseProgressHUD() {
   if (!enteredUniverse) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex items-center gap-2 print:hidden select-none font-nunito">
+    <div className="fixed top-2.5 right-2.5 sm:top-4 sm:right-4 z-50 flex items-center gap-1.5 sm:gap-2 print:hidden select-none font-nunito max-w-[95vw]">
       {/* Streak Pill */}
-      <div className="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 shadow-xl flex items-center gap-1.5 text-xs font-mono text-white">
-        <span className="text-base animate-bounce">🔥</span>
+      <div className="bg-black/70 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-1.5 rounded-full border border-white/20 shadow-xl flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-mono text-white">
+        <span className="text-xs sm:text-base">🔥</span>
         <span className="text-[var(--butter)] font-bold">{streakCount}d</span>
       </div>
 
       {/* Exploration Pill */}
-      <div className="bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 shadow-xl flex items-center gap-2 text-xs font-mono text-white">
-        <span className="text-[var(--pink)] animate-pulse">🌌</span>
+      <div className="bg-black/70 backdrop-blur-md px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full border border-white/20 shadow-xl flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-mono text-white">
+        <span className="text-[var(--pink)]">🌌</span>
         <span>
-          Universe: <b className="text-[var(--butter)]">{percent}%</b>
+          <span className="hidden sm:inline">Universe: </span>
+          <b className="text-[var(--butter)]">{percent}%</b>
         </span>
-        <div className="w-12 h-1.5 bg-white/20 rounded-full overflow-hidden">
+        <div className="w-8 sm:w-12 h-1.5 bg-white/20 rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-[var(--pink)] to-[var(--butter)] transition-all duration-500"
             style={{ width: `${percent}%` }}
@@ -56,10 +57,10 @@ export default function UniverseProgressHUD() {
           SoundEngine.click();
           toggleSoundtrack();
         }}
-        className={`w-9 h-9 rounded-full flex items-center justify-center border shadow-lg backdrop-blur text-sm transition-all hover:scale-105 active:scale-95 cursor-pointer ${
+        className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center border shadow-lg backdrop-blur text-xs sm:text-sm transition-all hover:scale-105 active:scale-95 cursor-pointer ${
           soundtrackPlaying
             ? 'bg-[var(--pink-deep)] border-white text-white'
-            : 'bg-black/60 border-white/20 text-gray-400'
+            : 'bg-black/70 border-white/20 text-gray-300'
         }`}
         title={soundtrackPlaying ? 'Pause Soundtrack' : 'Play Soundtrack'}
       >
@@ -72,7 +73,7 @@ export default function UniverseProgressHUD() {
           SoundEngine.pop();
           toggleTheme();
         }}
-        className="w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-black/60 shadow-lg backdrop-blur text-sm hover:scale-105 active:scale-95 transition-all cursor-pointer text-white"
+        className="w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center border border-white/20 bg-black/70 shadow-lg backdrop-blur text-xs sm:text-sm hover:scale-105 active:scale-95 transition-all cursor-pointer text-white"
         title={theme === 'dark' ? 'Switch to Light Mode 🌸' : 'Switch to Dark Mode ✨'}
       >
         {theme === 'dark' ? '✨' : '🌸'}

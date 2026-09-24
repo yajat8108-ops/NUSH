@@ -171,17 +171,17 @@ export default function CorkboardSection() {
   const constraintsRef = useRef(null);
 
   return (
-    <section className="py-20 w-full overflow-hidden bg-[var(--cream)]">
+    <section className="py-10 sm:py-20 w-full overflow-hidden bg-[var(--cream)] font-nunito">
       <SectionHead
         eyebrow="exhibit c"
         title="The Corkboard"
         subtitle="drag them around, flip the secret ones"
       />
       
-      <div className="container mx-auto px-4 mt-12">
+      <div className="container mx-auto px-2 sm:px-4 mt-8 sm:mt-12">
         <div 
           ref={constraintsRef}
-          className="relative w-full h-[600px] md:h-[800px] xl:h-[900px] rounded-xl shadow-2xl border-[12px] md:border-[16px] border-[#5c4033] overflow-hidden"
+          className="relative w-full h-[520px] sm:h-[650px] md:h-[800px] xl:h-[900px] rounded-xl shadow-2xl border-[8px] sm:border-[12px] md:border-[16px] border-[#5c4033] overflow-hidden"
           style={{
             background: 'linear-gradient(135deg, #8B6914, #A0864E, #8B6914)',
           }}
