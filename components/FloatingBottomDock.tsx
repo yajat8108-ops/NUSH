@@ -40,173 +40,95 @@ export default function FloatingBottomDock() {
   };
 
   return (
-    <>
-      {/* 1. MOBILE & TABLET UNIFIED BOTTOM DOCK (< lg) — Non-overlapping, sleek floating glass capsule */}
-      <div className="lg:hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1.5 p-1.5 rounded-full bg-[#100e17]/90 backdrop-blur-2xl border border-white/25 shadow-[0_12px_40px_rgba(0,0,0,0.65)] print:hidden select-none max-w-[98vw]">
-        {/* VHS Mode Toggle */}
+    <div className="fixed bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center justify-center print:hidden select-none max-w-[98vw]">
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-full bg-[#12101a]/92 backdrop-blur-2xl border border-white/20 shadow-[0_10px_35px_rgba(0,0,0,0.65)] hover:border-white/30 transition-all"
+      >
+        {/* 1. VHS Camcorder Mode Toggle */}
         <button
           onClick={() => {
             SoundEngine.click();
             setCamcorderOn(!isCamcorderOn);
           }}
-          className={`h-8 px-2.5 rounded-full flex items-center gap-1 text-[11px] font-mono font-bold transition-all active:scale-95 cursor-pointer shrink-0 ${
+          className={`h-8 sm:h-9 px-2.5 sm:px-3 rounded-full flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-mono font-bold transition-all active:scale-95 cursor-pointer shrink-0 ${
             isCamcorderOn
-              ? 'bg-red-600 text-white animate-pulse border border-white shadow-[0_0_15px_rgba(220,38,38,0.7)]'
-              : 'bg-white/10 hover:bg-white/20 text-white/90 border border-white/10'
+              ? 'bg-red-600 text-white animate-pulse border border-white shadow-[0_0_15px_rgba(220,38,38,0.8)]'
+              : 'bg-white/10 hover:bg-white/20 text-white border border-white/10'
           }`}
-          title="Toggle Vintage VHS Mode 🎥"
+          title="Toggle Vintage VHS Camcorder Viewfinder 🎥"
         >
-          <span className="text-xs">🎥</span>
-          <span>VHS</span>
+          <span className="text-xs sm:text-sm">🎥</span>
+          <span>{isCamcorderOn ? 'REC' : 'VHS'}</span>
         </button>
 
-        {/* Library Pass */}
+        {/* 2. Library Pass */}
         <button
           onClick={handleOpenLibrary}
-          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-sm text-white transition-all active:scale-95 cursor-pointer shrink-0"
-          title="Library Pass 📚"
+          className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-xs sm:text-sm text-white transition-all active:scale-95 cursor-pointer shrink-0"
+          title="VIT Central Library Study Pass 📚"
         >
           📚
         </button>
 
-        {/* FaceTime Video Call */}
+        {/* 3. FaceTime Call Simulation */}
         <button
           onClick={handleOpenVideoCall}
-          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-sm text-white transition-all active:scale-95 cursor-pointer shrink-0"
-          title="FaceTime Call 📱"
+          className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-xs sm:text-sm text-white transition-all active:scale-95 cursor-pointer shrink-0"
+          title="All-Night FaceTime Call Simulation 📱"
         >
           📱
         </button>
 
-        <div className="w-[1px] h-4 bg-white/20 mx-0.5 shrink-0" />
+        <div className="w-[1px] h-4 sm:h-5 bg-white/20 mx-0.5 shrink-0" />
 
-        {/* Time Machine Vault */}
+        {/* 4. Time Machine Vault */}
         <button
           onClick={() => {
             SoundEngine.click();
             setTimeMachineOpen(true);
           }}
-          className="h-8 px-2.5 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white font-mono text-[11px] font-bold flex items-center gap-1 shadow-md active:scale-95 cursor-pointer shrink-0"
-          title="Time Machine (5 Sites Archive)"
+          className="h-8 sm:h-9 px-2.5 sm:px-3.5 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white font-mono text-[11px] sm:text-xs font-bold flex items-center gap-1 sm:gap-1.5 shadow-md hover:scale-105 active:scale-95 cursor-pointer shrink-0 transition-all border border-white/20"
+          title="Time Machine (5 Past Anniversary Sites) ⏳"
         >
-          <span>⏳</span>
+          <span className="text-xs sm:text-sm animate-spin" style={{ animationDuration: '8s' }}>
+            ⏳
+          </span>
           <span>Vault</span>
         </button>
 
-        {/* Secrets Drawer */}
+        {/* 5. Secrets Drawer */}
         <button
           onClick={() => {
             SoundEngine.pop();
             setSecretsPickerOpen(!isSecretsPickerOpen);
           }}
-          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs flex items-center justify-center font-bold active:scale-95 cursor-pointer shrink-0"
-          title="Secret Easter Eggs ✨"
+          className={`h-8 sm:h-9 px-2.5 sm:px-3 rounded-full flex items-center gap-1 text-[11px] sm:text-xs font-mono font-bold transition-all active:scale-95 cursor-pointer shrink-0 border border-white/10 ${
+            isSecretsPickerOpen
+              ? 'bg-[var(--pink-deep)] text-white shadow-md'
+              : 'bg-white/10 hover:bg-white/20 text-white'
+          }`}
+          title="Secret Easter Eggs & Minigames ✨"
         >
-          ✨
+          <span>✨</span>
+          <span>Secrets</span>
         </button>
 
-        {/* Achievements */}
+        {/* 6. Achievements */}
         <button
           onClick={() => {
             SoundEngine.click();
             setAchievementsOpen(true);
           }}
-          className="h-8 px-2.5 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white font-mono text-[11px] font-bold flex items-center gap-1 shadow-md active:scale-95 cursor-pointer shrink-0"
+          className="h-8 sm:h-9 px-2.5 sm:px-3.5 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white font-mono text-[11px] sm:text-xs font-bold flex items-center gap-1 sm:gap-1.5 shadow-md hover:scale-105 active:scale-95 cursor-pointer shrink-0 transition-all border border-white/20"
           title="Achievements & Badges 🏆"
         >
           <span>🏆</span>
-          <span>{unlockedCount}</span>
+          <span>{unlockedCount}/{achievements.length}</span>
         </button>
-      </div>
-
-      {/* 2. DESKTOP BOTTOM LEFT DOCK (lg and up) */}
-      <div className="hidden lg:flex fixed bottom-6 left-6 z-40 items-center gap-2.5 print:hidden select-none">
-        {/* Camcorder VHS Mode Toggle */}
-        <button
-          onClick={() => {
-            SoundEngine.click();
-            setCamcorderOn(!isCamcorderOn);
-          }}
-          className={`h-10 px-3.5 rounded-full flex items-center gap-1.5 font-mono text-xs font-bold border shadow-xl backdrop-blur transition-all hover:scale-105 active:scale-95 cursor-pointer ${
-            isCamcorderOn
-              ? 'bg-red-600 border-white text-white animate-pulse'
-              : 'bg-black/60 hover:bg-black/80 border-white/20 text-white'
-          }`}
-          title="Toggle Vintage VHS Camcorder Viewfinder Overlay 🎥"
-        >
-          <span className="text-sm">🎥</span>
-          <span>VHS</span>
-        </button>
-
-        {/* Library Pass Easter Egg */}
-        <button
-          onClick={handleOpenLibrary}
-          className="w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 border border-white/20 flex items-center justify-center text-base shadow-xl backdrop-blur hover:scale-110 active:scale-95 transition-transform text-white cursor-pointer"
-          title="Central Library Study Pass (0% study, 100% stare) 📚"
-        >
-          📚
-        </button>
-
-        {/* Video Call Simulation */}
-        <button
-          onClick={handleOpenVideoCall}
-          className="w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 border border-white/20 flex items-center justify-center text-base shadow-xl backdrop-blur hover:scale-110 active:scale-95 transition-transform text-white cursor-pointer"
-          title="Simulate our 2nd-month all-night FaceTime call 📱"
-        >
-          📱
-        </button>
-      </div>
-
-      {/* 3. DESKTOP BOTTOM RIGHT DOCK (lg and up) */}
-      <div className="hidden lg:flex fixed bottom-6 right-6 z-40 flex-col items-end gap-2.5 print:hidden select-none max-w-[90vw]">
-        {/* Row 1: Time Machine (Multiverse Vault) Button */}
-        <motion.button
-          onClick={() => {
-            SoundEngine.click();
-            setTimeMachineOpen(true);
-          }}
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.96 }}
-          className="bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 border-2 border-white/40 font-mono text-xs md:text-sm font-bold backdrop-blur-md cursor-pointer hover:shadow-[0_0_25px_rgba(236,72,153,0.6)] transition-shadow"
-          aria-label="Open Time Machine Archive"
-        >
-          <span className="text-base animate-spin" style={{ animationDuration: '8s' }}>
-            ⏳
-          </span>
-          <span>Time Machine (5 Sites)</span>
-        </motion.button>
-
-        {/* Row 2: Secrets Pill + Achievements Pill in Non-Overlapping Flex Row */}
-        <div className="flex items-center gap-2">
-          {/* Secrets Drawer Toggle */}
-          <button
-            onClick={() => {
-              SoundEngine.pop();
-              setSecretsPickerOpen(!isSecretsPickerOpen);
-            }}
-            className="bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white px-3.5 py-2 rounded-full font-mono text-xs font-bold shadow-xl border border-white/30 backdrop-blur flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-transform cursor-pointer"
-            title="Open Secret Easter Eggs Menu"
-          >
-            <span>✨</span>
-            <span>Secrets</span>
-          </button>
-
-          {/* Achievements Trigger */}
-          <button
-            onClick={() => {
-              SoundEngine.click();
-              setAchievementsOpen(true);
-            }}
-            className="bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white px-4 py-2 rounded-full font-mono text-xs font-bold shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform border border-white/30 cursor-pointer"
-            title="View Relationship Badges & Achievements"
-          >
-            <span>🏆</span>
-            <span>
-              Achievements ({unlockedCount}/{achievements.length})
-            </span>
-          </button>
-        </div>
-      </div>
-    </>
+      </motion.div>
+    </div>
   );
 }
