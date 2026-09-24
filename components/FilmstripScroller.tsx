@@ -36,6 +36,7 @@ const STATIC_FRAMES: Frame[] = [
 export default function FilmstripScroller() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [cloudFrames, setCloudFrames] = useState<Frame[]>([]);
+  const [hiddenFrameIds, setHiddenFrameIds] = useState<string[]>([]);
   const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -43,8 +44,18 @@ export default function FilmstripScroller() {
   const [isDragging, setIsDragging] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Merge static + cloud frames
-  const frames = [...STATIC_FRAMES, ...cloudFrames];
+  // Load hidden frames from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('nush_hidden_frames');
+      if (saved) setHiddenFrameIds(JSON.parse(saved));
+    } catch {}
+  }, []);
+
+  // If cloud frames are loaded (synced from Cloudinary), use them; otherwise fallback to static
+  const frames = cloudFrames.length > 0
+    ? cloudFrames
+    : STATIC_FRAMES.filter((f) => !hiddenFrameIds.includes(f.id));
 
   // Momentum / inertia state
   const velocityRef = useRef(0);
@@ -97,6 +108,8 @@ export default function FilmstripScroller() {
       }
     };
     fetchCloudPhotos();
+    const interval = setInterval(fetchCloudPhotos, 20000);
+    window.addEventListener('focus', fetchCloudPhotos);
 
     const handlePhotoDeleted = (e: Event) => {
       const customEvt = e as CustomEvent<{ id: string }>;
@@ -107,27 +120,64 @@ export default function FilmstripScroller() {
     };
     window.addEventListener('photo-deleted', handlePhotoDeleted);
 
+    const handlePhotoAdded = (e: Event) => {
+      const customEvt = e as CustomEvent<CloudPhoto>;
+      const newPhoto = customEvt.detail;
+      if (newPhoto) {
+        setCloudFrames((prev) => [
+          ...prev,
+          {
+            id: `CF${String(prev.length + 1).padStart(2, '0')}`,
+            photoId: newPhoto.id,
+            src: newPhoto.url,
+            caption: newPhoto.caption || '💕',
+          },
+        ]);
+      }
+    };
+    window.addEventListener('photo-added', handlePhotoAdded);
+
     return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', fetchCloudPhotos);
       window.removeEventListener('photo-deleted', handlePhotoDeleted);
+      window.removeEventListener('photo-added', handlePhotoAdded);
     };
   }, []);
 
-  const handleDeleteCloudFrame = async (frame: Frame) => {
-    if (!frame.photoId) return;
+  const handleDeleteFrame = async (frame: Frame) => {
     if (!window.confirm('Remove this photo frame from our filmstrip? 🥺')) return;
-    const photoId = frame.photoId;
-    setCloudFrames((prev) => prev.filter((f) => f.photoId !== photoId));
     if (selectedFrame?.id === frame.id) setSelectedFrame(null);
-    try {
-      await fetch('/api/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'photos', action: 'delete', id: photoId }),
+
+    if (frame.photoId) {
+      const photoId = frame.photoId;
+      setCloudFrames((prev) => prev.filter((f) => f.photoId !== photoId));
+      try {
+        await fetch('/api/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'photos', action: 'delete', id: photoId }),
+        });
+        window.dispatchEvent(new CustomEvent('photo-deleted', { detail: { id: photoId } }));
+      } catch (e) {
+        console.error('Failed to delete cloud frame:', e);
+      }
+    } else {
+      setHiddenFrameIds((prev) => {
+        const next = [...prev, frame.id];
+        try {
+          localStorage.setItem('nush_hidden_frames', JSON.stringify(next));
+        } catch {}
+        return next;
       });
-      window.dispatchEvent(new CustomEvent('photo-deleted', { detail: { id: photoId } }));
-    } catch (e) {
-      console.error('Failed to delete cloud frame:', e);
     }
+  };
+
+  const handleRestoreHidden = () => {
+    setHiddenFrameIds([]);
+    try {
+      localStorage.removeItem('nush_hidden_frames');
+    } catch {}
   };
 
   // Handle native scroll & wheel lock
@@ -356,6 +406,17 @@ export default function FilmstripScroller() {
             </button>
           </div>
 
+          {hiddenFrameIds.length > 0 && (
+            <button
+              onClick={handleRestoreHidden}
+              className="px-2.5 py-1 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-mono text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1"
+              title="Restore removed default frames"
+            >
+              <span>↺</span>
+              <span>Restore ({hiddenFrameIds.length})</span>
+            </button>
+          )}
+
           <button
             onClick={() => {
               const el = document.getElementById('photo-album');
@@ -440,18 +501,16 @@ export default function FilmstripScroller() {
                   <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/70 text-[10px] font-mono text-white/90">
                     {frame.id}
                   </div>
-                  {frame.photoId && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteCloudFrame(frame);
-                      }}
-                      className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-red-600/85 hover:bg-red-600 text-white text-[10px] font-mono font-bold flex items-center gap-1 shadow-md opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-all cursor-pointer z-10"
-                      title="Remove frame"
-                    >
-                      <span>🗑️</span>
-                    </button>
-                  )}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteFrame(frame);
+                    }}
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-red-600 text-white text-xs flex items-center justify-center shadow-md transition-all cursor-pointer z-20"
+                    title="Remove frame"
+                  >
+                    🗑️
+                  </button>
                   {/* Vintage vignette corner */}
                   <div className="absolute inset-0 pointer-events-none" style={{
                     boxShadow: 'inset 0 0 40px rgba(0,0,0,0.3)',
@@ -530,15 +589,13 @@ export default function FilmstripScroller() {
                   FRAME {selectedFrame.id} · YAJAT &amp; NUSH
                 </p>
 
-                {selectedFrame.photoId && (
-                  <button
-                    onClick={() => handleDeleteCloudFrame(selectedFrame)}
-                    className="mt-3 px-4 py-2 rounded-xl bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 hover:border-red-600 text-xs font-mono font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer mx-auto"
-                  >
-                    <span>🗑️</span>
-                    <span>Remove This Frame</span>
-                  </button>
-                )}
+                <button
+                  onClick={() => handleDeleteFrame(selectedFrame)}
+                  className="mt-3 px-4 py-2 rounded-xl bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 hover:border-red-600 text-xs font-mono font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer mx-auto"
+                >
+                  <span>🗑️</span>
+                  <span>Remove This Photo</span>
+                </button>
               </div>
             </motion.div>
           </motion.div>

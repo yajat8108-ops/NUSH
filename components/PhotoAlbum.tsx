@@ -62,6 +62,55 @@ const compressImageToDataUrl = (file: File): Promise<string> => {
   });
 };
 
+// Pre-compression for fast mobile uploads to Cloudinary (under ~500KB)
+const prepareImageForUpload = (file: File): Promise<Blob | File> => {
+  return new Promise((resolve) => {
+    if (file.size <= 500 * 1024) {
+      resolve(file);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 1600;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(file);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else resolve(file);
+          },
+          'image/jpeg',
+          0.85
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => resolve(file);
+    reader.readAsDataURL(file);
+  });
+};
+
 export default function PhotoAlbum() {
   const [photos, setPhotos] = useState<CloudPhoto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -129,21 +178,25 @@ export default function PhotoAlbum() {
     reader.readAsDataURL(file);
   };
 
-  const uploadToCloudinary = async (file: File): Promise<string | null> => {
+  const uploadToCloudinary = async (file: File | Blob): Promise<string | null> => {
     if (!CLOUDINARY_CONFIGURED) return null;
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
     formData.append('folder', 'nush_album');
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25000);
     try {
       const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`,
-        { method: 'POST', body: formData }
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        { method: 'POST', body: formData, signal: controller.signal }
       );
-      if (!res.ok) throw new Error('Upload failed');
+      clearTimeout(timeout);
+      if (!res.ok) throw new Error(`Cloudinary ${res.status}`);
       const data = await res.json();
       return data.secure_url as string;
     } catch (e) {
+      clearTimeout(timeout);
       console.error('Cloudinary error:', e);
       return null;
     }
@@ -155,7 +208,8 @@ export default function PhotoAlbum() {
     try {
       let finalUrl = '';
       if (CLOUDINARY_CONFIGURED) {
-        const cloudUrl = await uploadToCloudinary(selectedFile);
+        const prepared = await prepareImageForUpload(selectedFile);
+        const cloudUrl = await uploadToCloudinary(prepared);
         if (cloudUrl) finalUrl = cloudUrl;
       }
 
@@ -179,11 +233,20 @@ export default function PhotoAlbum() {
       setPreview(null);
       SoundEngine.confettiPop();
 
-      await fetch('/api/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'photos', action: 'add', item: newPhoto }),
-      });
+      window.dispatchEvent(new CustomEvent('photo-added', { detail: newPhoto }));
+
+      const syncController = new AbortController();
+      const syncTimeout = setTimeout(() => syncController.abort(), 20000);
+      try {
+        await fetch('/api/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'photos', action: 'add', item: newPhoto }),
+          signal: syncController.signal,
+        });
+      } finally {
+        clearTimeout(syncTimeout);
+      }
     } catch (err) {
       console.error('Photo upload error:', err);
       alert('Could not save photo. Please try again.');
@@ -274,11 +337,10 @@ export default function PhotoAlbum() {
               </div>
               <button
                 onClick={(e) => { e.stopPropagation(); deletePhoto(photo.id); }}
-                className="absolute top-2 right-2 px-2.5 py-1 rounded-full bg-black/70 hover:bg-red-600 text-white text-[11px] font-mono font-bold flex items-center gap-1 shadow-md opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-all cursor-pointer z-10"
+                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-red-600 text-white text-sm flex items-center justify-center shadow-md transition-all cursor-pointer z-10"
                 title="Remove photo"
               >
-                <span>🗑️</span>
-                <span className="hidden sm:inline">Delete</span>
+                🗑️
               </button>
             </motion.div>
           ))}
