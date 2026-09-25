@@ -33,6 +33,52 @@ const STATIC_FRAMES: Frame[] = [
   { id: 'F16', src: '/photos/photo-14.jpg', caption: 'month two, same us ❤️' },
 ];
 
+const CLD_CLOUD = 'fxq1fsm9';
+const CLD_PRESET = 'nush_photos';
+
+async function prepareImage(file: File): Promise<Blob | File> {
+  if (file.size <= 500 * 1024) return file;
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+        const max = 1600;
+        if (width > max || height > max) {
+          if (width > height) { height = Math.round(height * max / width); width = max; }
+          else { width = Math.round(width * max / height); height = max; }
+        }
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) { resolve(file); return; }
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((b) => resolve(b ?? file), 'image/jpeg', 0.85);
+      };
+      img.onerror = () => resolve(file);
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => resolve(file);
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadToCloudinary(file: File | Blob): Promise<string | null> {
+  const fd = new FormData();
+  fd.append('file', file, 'memory.jpg');
+  fd.append('upload_preset', CLD_PRESET);
+  fd.append('folder', 'nush_album');
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 25000);
+  try {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`, { method: 'POST', body: fd, signal: ctrl.signal });
+    clearTimeout(t);
+    if (!res.ok) throw new Error(`Cloudinary ${res.status}`);
+    return ((await res.json()) as { secure_url: string }).secure_url;
+  } catch { clearTimeout(t); return null; }
+}
+
 export default function FilmstripScroller() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [cloudFrames, setCloudFrames] = useState<Frame[]>([]);
@@ -42,7 +88,15 @@ export default function FilmstripScroller() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progressPercent, setProgressPercent] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+
+  // ── Inline upload modal state ──
   const [showAddModal, setShowAddModal] = useState(false);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const [uploadCaption, setUploadCaption] = useState('');
+  const [uploadStatus, setUploadStatus] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const uploadInputRef = useRef<HTMLInputElement>(null);
 
   // Load hidden frames from localStorage
   useEffect(() => {
@@ -180,6 +234,61 @@ export default function FilmstripScroller() {
     } catch {}
   };
 
+  // ── Inline upload handler ──
+  const handleUploadFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setUploadPreview(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const handleAddFrame = async () => {
+    if (!uploadFile) return;
+    setIsUploading(true);
+    try {
+      setUploadStatus('Optimizing image... ⚡');
+      const prepared = await prepareImage(uploadFile);
+
+      setUploadStatus('Uploading to cloud... ☁️');
+      const cloudUrl = await uploadToCloudinary(prepared);
+
+      setUploadStatus('Saving memory... ✨');
+      const newPhoto: CloudPhoto = {
+        id: `film-${Date.now()}`,
+        author: 'yajat',
+        url: cloudUrl ?? uploadPreview ?? '',
+        caption: uploadCaption.trim() || '💕',
+        uploadedAt: new Date().toISOString(),
+      };
+
+      const ctrl2 = new AbortController();
+      const t2 = setTimeout(() => ctrl2.abort(), 20000);
+      await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'photos', action: 'add', item: newPhoto }),
+        signal: ctrl2.signal,
+      });
+      clearTimeout(t2);
+
+      window.dispatchEvent(new CustomEvent('photo-added', { detail: newPhoto }));
+
+      // Close & reset
+      setShowAddModal(false);
+      setUploadFile(null);
+      setUploadPreview(null);
+      setUploadCaption('');
+      setUploadStatus('');
+    } catch (err) {
+      console.error('Frame upload failed:', err);
+      setUploadStatus('Upload failed 😢 Try again?');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   // Handle native scroll & wheel lock
   const handleScroll = () => {
     if (!scrollContainerRef.current) return;
@@ -206,7 +315,6 @@ export default function FilmstripScroller() {
         const delta = e.deltaY * 1.6;
         scrollContainerRef.current.scrollBy({ left: delta, behavior: 'auto' });
         scrollVelocity.set(delta * 5);
-        // Decay velocity
         setTimeout(() => scrollVelocity.set(0), 150);
       }
     }
@@ -229,7 +337,7 @@ export default function FilmstripScroller() {
     const dx = lastTouchXRef.current - touchX;
 
     if (dt > 0) {
-      velocityRef.current = dx / dt * 16; // px per frame
+      velocityRef.current = dx / dt * 16;
       scrollVelocity.set(velocityRef.current * 50);
     }
 
@@ -240,7 +348,6 @@ export default function FilmstripScroller() {
 
   const handleTouchEnd = useCallback(() => {
     setIsDragging(false);
-    // Apply momentum with friction
     const friction = 0.95;
     const minVelocity = 0.5;
 
@@ -344,7 +451,7 @@ export default function FilmstripScroller() {
         <SectionHead
           eyebrow="reel one · 35mm vintage filmstrip"
           title="Days Since Day One"
-          subtitle="drag, scroll, swipe, or hit auto-play to glide through all 16 memories 🎞️❤️"
+          subtitle="drag, scroll, swipe, or hit auto-play to glide through all our memories 🎞️❤️"
         />
       </div>
 
@@ -417,14 +524,11 @@ export default function FilmstripScroller() {
             </button>
           )}
 
+          {/* Add Frame — opens inline modal */}
           <button
-            onClick={() => {
-              const el = document.getElementById('photo-album');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-              window.dispatchEvent(new CustomEvent('open-photo-upload'));
-            }}
+            onClick={() => setShowAddModal(true)}
             className="px-3 py-1 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white font-mono text-[11px] sm:text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
-            title="Upload a photo to our cloud album"
+            title="Add a photo to our filmstrip"
           >
             <span>📷</span>
             <span>Add Frame +</span>
@@ -455,7 +559,6 @@ export default function FilmstripScroller() {
           {Array.from({ length: 42 }).map((_, i) => (
             <div key={`sprocket-top-${i}`} className="w-2.5 h-4 bg-white/15 rounded-[2px] mx-1 flex-shrink-0 shadow-inner border border-white/5" />
           ))}
-          {/* Film edge notch markers */}
           <div className="absolute left-0 top-0 bottom-0 w-1 bg-white/10" />
           <div className="absolute right-0 top-0 bottom-0 w-1 bg-white/10" />
         </div>
@@ -530,6 +633,25 @@ export default function FilmstripScroller() {
               </div>
             </motion.div>
           ))}
+
+          {/* Add Frame card — always last in the strip */}
+          <motion.div
+            whileHover={{ scale: 1.03, y: -4 }}
+            className="flex-shrink-0 snap-center"
+          >
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="bg-[#18181b] border-2 border-dashed border-white/20 hover:border-[var(--pink)] rounded-xl flex flex-col items-center justify-center gap-3 h-[360px] w-[230px] sm:h-[400px] sm:w-[270px] transition-all group cursor-pointer"
+            >
+              <div className="w-14 h-14 rounded-full bg-white/10 group-hover:bg-[var(--pink-deep)]/30 flex items-center justify-center text-2xl transition-all">
+                📷
+              </div>
+              <div className="text-center px-4">
+                <p className="font-mono text-sm text-white/70 group-hover:text-white font-bold transition-colors">Add a Frame</p>
+                <p className="font-caveat text-[var(--pink)] text-base mt-1">+ add your memory</p>
+              </div>
+            </button>
+          </motion.div>
         </div>
 
         {/* Bottom Sprockets Line */}
@@ -545,9 +667,119 @@ export default function FilmstripScroller() {
       {/* Drag hint */}
       <div className="max-w-7xl mx-auto mt-3 flex justify-center">
         <span className="text-[10px] font-mono text-gray-400 bg-white/60 px-3 py-1 rounded-full border border-gray-200">
-          💡 Click & drag to scrub · Scroll wheel rolls the filmstrip · Swipe on mobile with momentum
+          💡 Click &amp; drag to scrub · Scroll wheel rolls the filmstrip · Swipe on mobile with momentum
         </span>
       </div>
+
+      {/* ── Inline Add Frame Modal ── */}
+      <AnimatePresence>
+        {showAddModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center bg-black/70 p-0 sm:p-6 backdrop-blur-md"
+            onClick={() => { if (!isUploading) { setShowAddModal(false); setUploadFile(null); setUploadPreview(null); setUploadCaption(''); setUploadStatus(''); } }}
+          >
+            <motion.div
+              initial={{ y: 80, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 80, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+              className="relative w-full sm:max-w-md bg-[#0f0f12] border border-white/10 rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h3 className="font-mono text-white font-bold text-base">Add to Filmstrip 🎞️</h3>
+                  <p className="text-white/40 text-xs font-mono mt-0.5">your photo → Cloudinary → our filmstrip</p>
+                </div>
+                <button
+                  onClick={() => { setShowAddModal(false); setUploadFile(null); setUploadPreview(null); setUploadCaption(''); setUploadStatus(''); }}
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-lg cursor-pointer transition-colors"
+                  disabled={isUploading}
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* File picker / preview */}
+              <input
+                ref={uploadInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleUploadFileChange}
+              />
+
+              {uploadPreview ? (
+                <div className="relative w-full h-52 rounded-xl overflow-hidden mb-4 bg-black">
+                  <img src={uploadPreview} alt="preview" className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => { setUploadFile(null); setUploadPreview(null); if (uploadInputRef.current) uploadInputRef.current.value = ''; }}
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-red-600 text-white text-sm flex items-center justify-center cursor-pointer"
+                  >
+                    ×
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => uploadInputRef.current?.click()}
+                  className="w-full h-40 border-2 border-dashed border-white/20 hover:border-[var(--pink)] rounded-xl flex flex-col items-center justify-center gap-2 mb-4 transition-all cursor-pointer group"
+                >
+                  <span className="text-3xl group-hover:scale-110 transition-transform">📷</span>
+                  <span className="text-white/60 text-sm font-mono group-hover:text-white transition-colors">tap to choose photo</span>
+                </button>
+              )}
+
+              {/* Caption input */}
+              <input
+                type="text"
+                placeholder="caption for this memory... 💕"
+                value={uploadCaption}
+                onChange={(e) => setUploadCaption(e.target.value)}
+                maxLength={80}
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 font-caveat text-lg focus:outline-none focus:border-[var(--pink)] mb-4 transition-colors"
+              />
+
+              {/* Upload button */}
+              <button
+                onClick={uploadFile ? handleAddFrame : () => uploadInputRef.current?.click()}
+                disabled={isUploading}
+                className={`w-full py-3 rounded-xl font-mono font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                  isUploading
+                    ? 'bg-white/10 text-white/50 cursor-not-allowed'
+                    : uploadFile
+                    ? 'bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white hover:opacity-90 active:scale-[0.98]'
+                    : 'bg-white/10 text-white/70 hover:bg-white/20'
+                }`}
+              >
+                {isUploading ? (
+                  <>
+                    <span className="animate-spin">⏳</span>
+                    <span>{uploadStatus || 'Uploading...'}</span>
+                  </>
+                ) : uploadFile ? (
+                  <>
+                    <span>📽️</span>
+                    <span>Add to Filmstrip</span>
+                  </>
+                ) : (
+                  <>
+                    <span>📷</span>
+                    <span>Choose a Photo</span>
+                  </>
+                )}
+              </button>
+
+              {uploadStatus && !isUploading && (
+                <p className="text-center text-xs font-mono text-red-400 mt-3">{uploadStatus}</p>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Lightbox Modal */}
       <AnimatePresence>
