@@ -131,6 +131,13 @@ interface UniverseStore {
   setLibraryBookOpen: (open: boolean) => void;
   isVideoCallOpen: boolean;
   setVideoCallOpen: (open: boolean) => void;
+  isStealthMode: boolean;
+  setStealthMode: (val: boolean) => void;
+  toggleStealthMode: () => void;
+  isStargazingOpen: boolean;
+  setStargazingOpen: (open: boolean) => void;
+  isYearWrappedOpen: boolean;
+  setYearWrappedOpen: (open: boolean) => void;
 
   // Daily Streak & Countdown
   streakCount: number;
@@ -164,6 +171,11 @@ const INITIAL_ACHIEVEMENTS: Achievement[] = [
   { id: 'secret_room', title: 'Secret Room Explorer', desc: 'Unlocked the hidden developer memory vault (5+ secrets)', icon: '🚪', unlockedAt: null, secret: true },
   { id: 'universe_100', title: '100% Relationship Master', desc: 'Explored every corner of our 3-month universe', icon: '💖', unlockedAt: null, secret: true },
   { id: 'perfect_match', title: 'Perfect Match 💫', desc: 'Scored 90%+ on the Compatibility Test — cosmically aligned', icon: '💫', unlockedAt: null },
+  { id: 'stargazer_cosmic', title: 'Stargazing Soulmates 🌌', desc: 'Explored our sacred constellations under the open night sky', icon: '🌌', unlockedAt: null },
+  { id: 'heartbeat_synced', title: 'Telepathic Touch 💓', desc: 'Held and sent a live synchronized heartbeat', icon: '💓', unlockedAt: null },
+  { id: 'stealth_agent', title: 'Cover Disguise Master 🕵️‍♂️', desc: 'Used the scientific calculator panic disguise', icon: '🧮', unlockedAt: null, secret: true },
+  { id: 'year_one_legend', title: '365 Days of Forever 👑', desc: 'Unlocked the 1-Year Anniversary Master Suite', icon: '👑', unlockedAt: null },
+  { id: 'reasons_explorer', title: 'Love Jar Collector 💌', desc: 'Discovered folded notes from the 365 Reasons Jar', icon: '🏺', unlockedAt: null },
 ];
 
 export const useUniverseStore = create<UniverseStore>()(
@@ -451,6 +463,13 @@ export const useUniverseStore = create<UniverseStore>()(
       setLibraryBookOpen: (open) => set({ isLibraryBookOpen: open }),
       isVideoCallOpen: false,
       setVideoCallOpen: (open) => set({ isVideoCallOpen: open }),
+      isStealthMode: true,
+      setStealthMode: (val) => set({ isStealthMode: val }),
+      toggleStealthMode: () => set((s) => ({ isStealthMode: !s.isStealthMode })),
+      isStargazingOpen: false,
+      setStargazingOpen: (open) => set({ isStargazingOpen: open }),
+      isYearWrappedOpen: false,
+      setYearWrappedOpen: (open) => set({ isYearWrappedOpen: open }),
 
       // Daily Streak & Countdown
       streakCount: 7,

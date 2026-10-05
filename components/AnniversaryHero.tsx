@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { SoundEngine } from '@/lib/audio';
 import { useLiveMoment } from '@/lib/useLiveMoment';
+import { useUniverseStore } from '@/lib/universeStore';
 
 export default function AnniversaryHero() {
   const liveMoment = useLiveMoment();
@@ -252,6 +253,93 @@ export default function AnniversaryHero() {
           <p className="font-caveat text-xl md:text-2xl text-[var(--plum)] font-bold mt-2 leading-snug">
             &ldquo;{liveMoment.combinedFlourish}&rdquo;
           </p>
+        </div>
+      </motion.div>
+
+      {/* ─── GRAND 1-YEAR MASTER SUITE & PRIVATE SANCTUARY BANNER ─── */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ delay: 0.35, duration: 0.7 }}
+        className="mt-6 sm:mt-8 w-full max-w-2xl mx-auto p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-[#241335] via-[#1a0e2e] to-[#2b122c] border-2 border-amber-400/60 shadow-[0_0_40px_rgba(251,191,36,0.25)] text-white text-center relative overflow-hidden select-none font-nunito"
+      >
+        <div className="absolute top-0 right-0 w-36 h-36 bg-gradient-to-bl from-amber-400/20 to-transparent rounded-bl-full pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-36 h-36 bg-gradient-to-tr from-pink-500/20 to-transparent rounded-tr-full pointer-events-none" />
+
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/20 border border-amber-300/40 text-[11px] font-mono text-amber-300 font-bold mb-3 shadow">
+          <span>👑</span>
+          <span>1-YEAR ANNIVERSARY &middot; 365 DAYS OF US MASTER SUITE</span>
+          <span>✨</span>
+        </div>
+
+        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold font-mono tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-pink-300 to-white">
+          Our Private Sanctuary Portal
+        </h3>
+
+        <p className="text-xs sm:text-sm text-zinc-300 max-w-lg mx-auto mt-2 leading-relaxed font-serif">
+          From our acoustic guitar origin &amp; fake dating pact to 365 days of forever. Jump straight into any sacred room:
+        </p>
+
+        {/* Prominent Quick-Jump Action Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mt-5">
+          <button
+            onClick={() => {
+              SoundEngine.chime();
+              useUniverseStore.getState().setYearWrappedOpen(true);
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-white font-mono text-xs font-bold shadow-lg transition-transform hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
+          >
+            <span>👑</span>
+            <span>Year 1 Wrapped</span>
+          </button>
+
+          <button
+            onClick={() => {
+              SoundEngine.click();
+              const el = document.getElementById('stargazing-sky');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-mono text-xs font-bold shadow-lg transition-transform hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
+          >
+            <span>🌌</span>
+            <span>Stargazing Sky</span>
+          </button>
+
+          <button
+            onClick={() => {
+              SoundEngine.pop();
+              const el = document.getElementById('reasons-365-jar');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-pink-200 font-mono text-xs font-bold shadow transition-transform hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
+          >
+            <span>🏺</span>
+            <span>365 Love Jar</span>
+          </button>
+
+          <button
+            onClick={() => {
+              SoundEngine.click();
+              const el = document.getElementById('dream-sanctuary-room');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-amber-200 font-mono text-xs font-bold shadow transition-transform hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
+          >
+            <span>🏡</span>
+            <span>Dream Room</span>
+          </button>
+
+          <button
+            onClick={() => {
+              SoundEngine.click();
+              const el = document.getElementById('open-when-vault');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-emerald-200 font-mono text-xs font-bold shadow transition-transform hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
+          >
+            <span>💌</span>
+            <span>Open When Letters</span>
+          </button>
         </div>
       </motion.div>
 
