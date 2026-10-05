@@ -1,13 +1,13 @@
 {
   "nush": {
     "role": "nush",
-    "status": "Curled in blanket missing you \ud83e\udd7a",
+    "status": "Curled in blanket missing you 🥺",
     "heartbeat": false,
-    "timestamp": 0
+    "timestamp": 1791228081085
   },
   "yajat": {
     "role": "yajat",
-    "status": "Coding in room \ud83d\udcbb",
+    "status": "Coding in room 💻",
     "heartbeat": false,
     "timestamp": 0
   }
