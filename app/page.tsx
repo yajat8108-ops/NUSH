@@ -50,6 +50,22 @@ const CinematicEnding      = dynamic(() => import('@/components/CinematicEnding'
 const QrFooter             = dynamic(() => import('@/components/QrFooter'),             { ssr: false });
 const LockedSection        = dynamic(() => import('@/components/LockedSection'),        { ssr: false });
 
+// ── Private Sanctuary & 1-Year Master Suite Components ───────────────
+const StealthGate          = dynamic(() => import('@/components/privacy/StealthGate'),          { ssr: false });
+const PanicButton          = dynamic(() => import('@/components/privacy/PanicButton'),          { ssr: false });
+const CelestialAurora      = dynamic(() => import('@/components/presence/CelestialAurora'),      { ssr: false });
+const StargazingSky        = dynamic(() => import('@/components/stargazing/StargazingSky'),        { ssr: false });
+const OpenWhenVault        = dynamic(() => import('@/components/comfort/OpenWhenVault'),        { ssr: false });
+const YearOneWrapped       = dynamic(() => import('@/components/anniversary/YearOneWrapped'),   { ssr: false });
+const FourSeasonsOdyssey   = dynamic(() => import('@/components/anniversary/FourSeasonsOdyssey'), { ssr: false });
+const Reasons365Jar        = dynamic(() => import('@/components/anniversary/Reasons365Jar'),     { ssr: false });
+const DualKeyVault         = dynamic(() => import('@/components/anniversary/DualKeyVault'),     { ssr: false });
+const DreamSanctuaryRoom   = dynamic(() => import('@/components/anniversary/DreamSanctuaryRoom'),{ ssr: false });
+const ForeverVowsScroll    = dynamic(() => import('@/components/anniversary/ForeverVowsScroll'), { ssr: false });
+const VoiceRecorder        = dynamic(() => import('@/components/audio/VoiceRecorder'),          { ssr: false });
+const CassetteRadio        = dynamic(() => import('@/components/audio/CassetteRadio'),          { ssr: false });
+const MemoryOfTheDay       = dynamic(() => import('@/components/MemoryOfTheDay'),               { ssr: false });
+
 import { useUniverseStore } from '@/lib/universeStore';
 
 export default function Home() {
@@ -68,6 +84,11 @@ export default function Home() {
 
   return (
     <>
+      {/* 0. STEALTH & DISGUISE CAMOUFLAGE GATEWAYS */}
+      <StealthGate />
+      <PanicButton />
+      <YearOneWrapped />
+
       {/* 1. CINEMATIC ANIMATED ENTRANCE PROLOGUE */}
       <UniverseEntrance />
 
@@ -78,12 +99,19 @@ export default function Home() {
       <NushSecret />
       <AmbientEffects />
       <ScrollProgress />
+      {/* Persistent floating elements */}
+      <MemoryOfTheDay />
+      <CassetteRadio />
+
       <ThemeToggle />
       <CamcorderViewfinder />
       <TimeMachineVault />
       <FloatingBottomDock />
 
       <main className="anniversary-body">
+        {/* 2.5 LIVE TELEPATHIC PRESENCE & STATUS BEACON */}
+        <CelestialAurora />
+
         {/* 3. HERO — 3D Hearts + 90-Day Dynamic Counter */}
         <AnniversaryHero />
 
@@ -94,6 +122,9 @@ export default function Home() {
 
         {/* 5. THE KISS TIMELINE — 23 Smooch & 22 August Actual Kiss Collision */}
         <TheKissMilestone />
+
+        {/* 5.2 OUR #1 UNDISPUTED DREAM DATE: STARGAZING SANCTUARY */}
+        <StargazingSky />
 
         <SectionDivider variant="heartbeat" />
 
@@ -144,6 +175,9 @@ export default function Home() {
 
         {/* 13. NUSH'S RECIPROCAL TWO-WAY VAULT & MOOD PAD */}
         <TwoWayVault />
+
+        {/* 13.2 EMERGENCY EMOTIONAL CARE: OPEN WHEN LETTERS */}
+        <OpenWhenVault />
 
         {/* 13.5 HANDWRITTEN LETTER CANVAS (Phase 3 Reveal) */}
         <LockedSection
@@ -215,6 +249,10 @@ export default function Home() {
           unlockDay={7}
         >
           <VoiceMemories />
+          <div className="mt-8 space-y-6">
+            <VoiceRecorder />
+            <CassetteRadio />
+          </div>
         </LockedSection>
 
         {/* 17.5 TIME CAPSULE LETTERS (Day 8 Reveal) */}
@@ -257,11 +295,21 @@ export default function Home() {
           <RelationshipDashboard />
         </LockedSection>
 
-        {/* 20.5 OFFICIAL CERTIFICATE OF EXCELLENCE (Day 14 - Sep 22nd Grand Finale) */}
+        {/* 20.8 THE 1-YEAR ANNIVERSARY MASTER SUITE (365 DAYS OF US) */}
+        <SectionDivider variant="stars" />
+        <div id="year-one-master-suite" className="space-y-12">
+          <FourSeasonsOdyssey />
+          <Reasons365Jar />
+          <DreamSanctuaryRoom />
+          <DualKeyVault />
+          <ForeverVowsScroll />
+        </div>
+
+        {/* 20.9 OFFICIAL CERTIFICATE OF EXCELLENCE (Grand Finale) */}
         <LockedSection
           minProgress={95}
           sectionName="Certificate of Excellence"
-          tip="Our Grand September 22nd Anniversary Finale & Official Award!"
+          tip="Our Grand Anniversary Finale & Official Award!"
           unlockDay={14}
         >
           <CertificateSection />
