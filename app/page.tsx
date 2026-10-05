@@ -65,6 +65,7 @@ const ForeverVowsScroll    = dynamic(() => import('@/components/anniversary/Fore
 const VoiceRecorder        = dynamic(() => import('@/components/audio/VoiceRecorder'),          { ssr: false });
 const CassetteRadio        = dynamic(() => import('@/components/audio/CassetteRadio'),          { ssr: false });
 const MemoryOfTheDay       = dynamic(() => import('@/components/MemoryOfTheDay'),               { ssr: false });
+const DormRoom             = dynamic(() => import('@/components/DormRoom'),                      { ssr: false });
 
 import { useUniverseStore } from '@/lib/universeStore';
 
@@ -300,10 +301,12 @@ export default function Home() {
         <div id="year-one-master-suite" className="space-y-12">
           <FourSeasonsOdyssey />
           <Reasons365Jar />
+          <DormRoom />
           <DreamSanctuaryRoom />
           <DualKeyVault />
           <ForeverVowsScroll />
         </div>
+
 
         {/* 20.9 OFFICIAL CERTIFICATE OF EXCELLENCE (Grand Finale) */}
         <LockedSection
