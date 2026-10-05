@@ -66,6 +66,7 @@ const VoiceRecorder        = dynamic(() => import('@/components/audio/VoiceRecor
 const CassetteRadio        = dynamic(() => import('@/components/audio/CassetteRadio'),          { ssr: false });
 const MemoryOfTheDay       = dynamic(() => import('@/components/MemoryOfTheDay'),               { ssr: false });
 const DormRoom             = dynamic(() => import('@/components/DormRoom'),                      { ssr: false });
+const PresenceOverlay      = dynamic(() => import('@/components/presence/PresenceOverlay'),      { ssr: false });
 
 import { useUniverseStore } from '@/lib/universeStore';
 
@@ -103,6 +104,7 @@ export default function Home() {
       {/* Persistent floating elements */}
       <MemoryOfTheDay />
       <CassetteRadio />
+      <PresenceOverlay />
 
       <ThemeToggle />
       <CamcorderViewfinder />

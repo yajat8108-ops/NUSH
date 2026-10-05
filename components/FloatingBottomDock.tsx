@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useUniverseStore } from '@/lib/universeStore';
 import { SoundEngine } from '@/lib/audio';
+import HeartbeatBeacon from '@/components/presence/HeartbeatBeacon';
 
 export default function FloatingBottomDock() {
   const {
@@ -16,6 +17,7 @@ export default function FloatingBottomDock() {
     setCamcorderOn,
     setLibraryBookOpen,
     setVideoCallOpen,
+    setStealthMode,
     unlockSecret,
     unlockAchievement,
     addExplorationPoint,
@@ -86,6 +88,33 @@ export default function FloatingBottomDock() {
           {/* Divider */}
           <div className="w-px h-8 bg-white/15 mx-0.5" />
 
+          {/* Stargazing Shortcut */}
+          <button
+            onClick={() => {
+              SoundEngine.click();
+              const el = document.getElementById('stargazing-sky');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="flex flex-col items-center justify-center w-12 h-12 rounded-xl gap-0.5 text-pink-300 hover:bg-white/10 transition-all active:scale-90 cursor-pointer"
+            title="Stargazing Sanctuary"
+          >
+            <span className="text-lg leading-none">🌌</span>
+            <span className="text-[9px] font-mono tracking-wide">Stars</span>
+          </button>
+
+          {/* 1-Year Wrapped */}
+          <button
+            onClick={() => {
+              SoundEngine.click();
+              useUniverseStore.getState().setYearWrappedOpen(true);
+            }}
+            className="flex flex-col items-center justify-center w-12 h-12 rounded-xl gap-0.5 text-amber-300 hover:bg-white/10 transition-all active:scale-90 cursor-pointer"
+            title="1-Year Anniversary Wrapped"
+          >
+            <span className="text-lg leading-none">👑</span>
+            <span className="text-[9px] font-mono tracking-wide">Year 1</span>
+          </button>
+
           {/* Time Machine */}
           <button
             onClick={() => { SoundEngine.click(); setTimeMachineOpen(true); }}
@@ -108,6 +137,12 @@ export default function FloatingBottomDock() {
             <span className="text-[9px] font-mono tracking-wide">Secrets</span>
           </button>
 
+          {/* Live Heartbeat Touch Beacon */}
+          <div className="flex flex-col items-center justify-center scale-90 -my-1">
+            <HeartbeatBeacon />
+          </div>
+
+
           {/* Achievements */}
           <button
             onClick={() => { SoundEngine.click(); setAchievementsOpen(true); }}
@@ -121,7 +156,12 @@ export default function FloatingBottomDock() {
       </div>
 
       {/* ─── DESKTOP LEFT CORNER (md+) ───────────────────────────── */}
-      <div className="hidden md:flex fixed bottom-6 left-6 z-40 items-center gap-2.5 print:hidden select-none">
+      <div className="hidden md:flex fixed bottom-6 left-6 z-40 items-center gap-3 print:hidden select-none">
+        {/* Live Heartbeat Touch Beacon */}
+        <div className="p-1 rounded-full bg-black/70 backdrop-blur-xl border border-pink-500/30 shadow-xl">
+          <HeartbeatBeacon />
+        </div>
+
         {/* VHS Camcorder Toggle */}
         <button
           onClick={() => { SoundEngine.click(); setCamcorderOn(!isCamcorderOn); }}
@@ -157,6 +197,36 @@ export default function FloatingBottomDock() {
 
       {/* ─── DESKTOP RIGHT CORNER (md+) ─────────────────────────── */}
       <div className="hidden md:flex fixed bottom-6 right-6 z-40 flex-col items-end gap-2.5 print:hidden select-none">
+        {/* 1-Year Wrapped & Stargazing shortcuts */}
+        <div className="flex items-center gap-2">
+          <motion.button
+            onClick={() => {
+              SoundEngine.click();
+              const el = document.getElementById('stargazing-sky');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-black/70 hover:bg-black/90 text-pink-300 px-3.5 py-1.5 rounded-full border border-pink-400/40 font-mono text-xs font-bold backdrop-blur flex items-center gap-1.5 shadow-lg cursor-pointer"
+          >
+            <span>🌌</span>
+            <span>Stargazing</span>
+          </motion.button>
+
+          <motion.button
+            onClick={() => {
+              SoundEngine.click();
+              useUniverseStore.getState().setYearWrappedOpen(true);
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-gradient-to-r from-amber-500 to-rose-500 text-white px-3.5 py-1.5 rounded-full border border-amber-300/40 font-mono text-xs font-bold backdrop-blur flex items-center gap-1.5 shadow-lg cursor-pointer"
+          >
+            <span>👑</span>
+            <span>Year 1 Wrapped</span>
+          </motion.button>
+        </div>
+
         {/* Time Machine */}
         <motion.button
           onClick={() => { SoundEngine.click(); setTimeMachineOpen(true); }}
@@ -168,8 +238,20 @@ export default function FloatingBottomDock() {
           <span>Time Machine (5 Sites)</span>
         </motion.button>
 
-        {/* Secrets + Achievements row */}
+        {/* Secrets + Achievements + Camouflage row */}
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              SoundEngine.click();
+              setStealthMode(true);
+            }}
+            className="bg-black/80 hover:bg-black text-zinc-300 hover:text-white px-3.5 py-2 rounded-full font-mono text-xs font-bold shadow-xl border border-white/20 backdrop-blur flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+            title="Instant Camouflage / Calculator (Esc)"
+          >
+            <span>🛡️</span>
+            <span>Camouflage</span>
+          </button>
+
           <button
             onClick={() => { SoundEngine.pop(); setSecretsPickerOpen(!isSecretsPickerOpen); }}
             className="bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white px-3.5 py-2 rounded-full font-mono text-xs font-bold shadow-xl border border-white/30 backdrop-blur flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-transform cursor-pointer"
