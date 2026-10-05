@@ -487,25 +487,30 @@ export const useUniverseStore = create<UniverseStore>()(
         let localStreak = Math.max(streakCount || 1, 1);
         if (!lastVisitDate) {
           set({ lastVisitDate: todayStr, streakCount: localStreak });
-        } else if (lastVisitDate !== todayStr) {
-          const [y1, m1, d1] = lastVisitDate.split('-').map(Number);
-          const [y2, m2, d2] = todayStr.split('-').map(Number);
-          const diffDays = Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86400000);
+        } else if (typeof lastVisitDate === 'string' && lastVisitDate !== todayStr && lastVisitDate.includes('-')) {
+          try {
+            const [y1, m1, d1] = lastVisitDate.split('-').map(Number);
+            const [y2, m2, d2] = todayStr.split('-').map(Number);
+            const diffDays = Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86400000);
 
-          if (diffDays === 1) {
-            localStreak += 1;
-            set({ lastVisitDate: todayStr, streakCount: localStreak });
-            if (localStreak >= 3) {
-              unlockAchievement('countdown_streak');
+            if (diffDays === 1) {
+              localStreak += 1;
+              set({ lastVisitDate: todayStr, streakCount: localStreak });
+              if (localStreak >= 3) {
+                unlockAchievement('countdown_streak');
+              }
+            } else if (diffDays <= 2) {
+              // Forgive a 1-day gap: keep streak active
+              set({ lastVisitDate: todayStr });
+            } else {
+              localStreak = 1;
+              set({ lastVisitDate: todayStr, streakCount: 1 });
             }
-          } else if (diffDays <= 2) {
-            // Forgive a 1-day gap: keep streak active
-            set({ lastVisitDate: todayStr });
-          } else {
-            localStreak = 1;
+          } catch (e) {
             set({ lastVisitDate: todayStr, streakCount: 1 });
           }
         }
+
 
         // Global sync with server so Nush and Yajat share the exact same streak!
         if (typeof window !== 'undefined') {

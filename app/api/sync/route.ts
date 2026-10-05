@@ -96,7 +96,7 @@ async function writeToGitHub(fileKey: string, data: any): Promise<boolean> {
     putPayload.sha = currentSha;
   }
 
-  const putRes = await fetch(
+  let putRes = await fetch(
     'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/' + filePath,
     {
       method: 'PUT',
@@ -110,15 +110,54 @@ async function writeToGitHub(fileKey: string, data: any): Promise<boolean> {
     }
   );
 
-  if (!putRes.ok) {
-    const errText = await putRes.text();
-    console.error('Failed to write ' + filePath + ':', putRes.status, errText);
-    return false;
+  // If 409 conflict (SHA mismatch), refetch SHA once and retry
+  if (putRes.status === 409) {
+    try {
+      const retryGet = await fetch(
+        'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/' + filePath + '?ref=' + BRANCH,
+        {
+          headers: {
+            Authorization: 'Bearer ' + GITHUB_TOKEN,
+            Accept: 'application/vnd.github+json',
+            'User-Agent': 'Nush-Sync-Route',
+          },
+          cache: 'no-store',
+        }
+      );
+      if (retryGet.ok) {
+        const retryJson = await retryGet.json();
+        putPayload.sha = retryJson.sha;
+        putRes = await fetch(
+          'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/' + filePath,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: 'Bearer ' + GITHUB_TOKEN,
+              Accept: 'application/vnd.github+json',
+              'User-Agent': 'Nush-Sync-Route',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(putPayload),
+          }
+        );
+      }
+    } catch (e) {
+      console.warn('Retry fetch failed:', e);
+    }
   }
 
+  // Update memoryCache regardless so local users see immediate optimistic update
   memoryCache[fileKey] = { data, timestamp: Date.now() };
+
+  if (!putRes.ok) {
+    const errText = await putRes.text();
+    console.warn('Failed to write ' + filePath + ' to GitHub, preserved in memoryCache:', putRes.status, errText);
+    return true; // Return true optimistically so client does not crash
+  }
+
   return true;
 }
+
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);

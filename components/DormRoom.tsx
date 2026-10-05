@@ -9,6 +9,8 @@ import { BlendFunction } from 'postprocessing';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUniverseStore } from '@/lib/universeStore';
+import ThreeErrorBoundary from '@/components/ThreeErrorBoundary';
+
 
 // ─── Teddy quotes ───────────────────────────────────────────────────────────
 const TEDDY_QUOTES = [
@@ -350,14 +352,17 @@ export default function DormRoom() {
 
       {/* 3D Canvas */}
       <div className="relative w-full mx-auto max-w-4xl" style={{ height: 'min(75vh, 600px)' }}>
-        <Canvas
-          shadows
-          gl={{ antialias: true, alpha: true }}
-          className="rounded-3xl overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, #0f0a1a 0%, #1a0a30 100%)' }}
-        >
-          <DormScene onTeddyTap={handleTeddyTap} />
-        </Canvas>
+        <ThreeErrorBoundary>
+          <Canvas
+            shadows
+            gl={{ antialias: true, alpha: true }}
+            className="rounded-3xl overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, #0f0a1a 0%, #1a0a30 100%)' }}
+          >
+            <DormScene onTeddyTap={handleTeddyTap} />
+          </Canvas>
+        </ThreeErrorBoundary>
+
 
         {/* UI overlays */}
         <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between pointer-events-none">
