@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SoundEngine } from '@/lib/audio';
 
 // ─── Teddy quotes ────────────────────────────────────────────────────────────
 const TEDDY_QUOTES = [
@@ -159,61 +160,60 @@ function buildFairyLights(scene: THREE.Scene) {
 }
 
 // ─── Real photo frames on back wall ──────────────────────────────────────────
-const COUPLE_PHOTOS = [
-  '/photos/photo-new-1.jpg',
-  '/photos/photo-new-2.jpg',
-  '/photos/photo-new-3.jpg',
-  '/photos/photo-2.jpg',
-  '/photos/photo-6.jpg',
+const PHOTO_DATA = [
+  { url: '/photos/photo-new-1.jpg', caption: 'Our favorite evening walk together 🌆💖' },
+  { url: '/photos/photo-new-2.jpg', caption: 'Your radiant smile that lights up my whole universe ✨' },
+  { url: '/photos/photo-new-3.jpg', caption: 'Quiet study dates at Central Library 📚🥰' },
+  { url: '/photos/photo-2.jpg',     caption: 'That unforgettable spark on Day 1 💫' },
+  { url: '/photos/photo-6.jpg',     caption: 'Three months of pure magic with my Queen 👑' },
 ];
 
-function buildPhotoFrames(scene: THREE.Scene) {
+function buildPhotoFrames(scene: THREE.Scene): THREE.Mesh[] {
   const txLoader = new THREE.TextureLoader();
+  const clickablePhotoMeshes: THREE.Mesh[] = [];
+
   const framePositions: Array<[number, number, number]> = [
-    [-1.1, 1.62, -2.88],
-    [-0.35, 1.88, -2.88],
-    [0.38, 1.62, -2.88],
-    [1.1, 1.88, -2.88],
-    [1.8, 1.62, -2.88],
+    [-1.35, 1.80, -3.17],
+    [-0.68, 2.10, -3.17],
+    [ 0.00, 1.80, -3.17],
+    [ 0.68, 2.10, -3.17],
+    [ 1.35, 1.80, -3.17],
   ];
 
   framePositions.forEach(([px, py, pz], i) => {
-    const photo = COUPLE_PHOTOS[i % COUPLE_PHOTOS.length];
-    const frameMat = new THREE.MeshStandardMaterial({ color: 0x2d1a0e, roughness: 0.8, metalness: 0.1 });
+    const item = PHOTO_DATA[i % PHOTO_DATA.length];
+    const frameMat = new THREE.MeshStandardMaterial({
+      color: 0x2b1509,
+      roughness: 0.8,
+      metalness: 0.1,
+    });
 
-    // Frame border
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.26, 0.025), frameMat);
+    // Outer wooden frame (larger & clearly visible from across room)
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.50, 0.40, 0.03), frameMat);
     frame.position.set(px, py, pz);
+    frame.castShadow = true;
     scene.add(frame);
 
-    // Photo surface with texture
-    const photoMat = new THREE.MeshStandardMaterial({
+    // Inner photo canvas with true, vivid colors (MeshBasicMaterial prevents light wash-out glare)
+    const photoMat = new THREE.MeshBasicMaterial({
       color: 0xffffff,
-      roughness: 0.6,
-      emissive: 0x111111,
-      emissiveIntensity: 0.05,
+      toneMapped: true,
     });
-    const photoMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.26, 0.20), photoMat);
-    photoMesh.position.set(px, py, pz + 0.014);
+    const photoMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.44, 0.34), photoMat);
+    photoMesh.position.set(px, py, pz + 0.016);
+    photoMesh.userData = { isPhoto: true, item };
     scene.add(photoMesh);
+    clickablePhotoMeshes.push(photoMesh);
 
-    // Load texture
-    txLoader.load(photo, (tex) => {
+    // Load actual couple photograph texture
+    txLoader.load(item.url, (tex) => {
       tex.colorSpace = THREE.SRGBColorSpace;
       photoMat.map = tex;
       photoMat.needsUpdate = true;
-    }, undefined, () => {
-      // Fallback gradient colour
-      const fallbackColors = [0xff6b9d, 0xc084fc, 0xfbbf24, 0x34d399, 0xf87171];
-      photoMat.color.setHex(fallbackColors[i % fallbackColors.length]);
-      photoMat.emissiveIntensity = 0.15;
     });
-
-    // Tiny warm glow per frame
-    const glow = new THREE.PointLight(0xfff0e0, 0.4, 0.6);
-    glow.position.set(px, py, pz + 0.15);
-    scene.add(glow);
   });
+
+  return clickablePhotoMeshes;
 }
 
 // ─── Heart particles ──────────────────────────────────────────────────────────
@@ -233,6 +233,7 @@ function spawnHeart(scene: THREE.Scene, origin: THREE.Vector3): Particle {
 export default function DormRoom() {
   const mountRef   = useRef<HTMLDivElement>(null);
   const [quote,    setQuote]   = useState<string | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<{ url: string; caption: string } | null>(null);
   const [quoteIdx, setIdx]     = useState(0);
   const [loading,  setLoading] = useState(true);
 
@@ -377,7 +378,7 @@ export default function DormRoom() {
     buildFairyLights(scene);
 
     // ── Photo frames (real couple photos) ───────────────────────────────────
-    buildPhotoFrames(scene);
+    const photoMeshes = buildPhotoFrames(scene);
 
     // ── Shelf with plants — left wall ────────────────────────────────────────
     const shelf = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.07, 0.2),
@@ -488,8 +489,23 @@ export default function DormRoom() {
       mouse.x = ((cx - rect.left) / rect.width)  *  2 - 1;
       mouse.y = ((cy - rect.top)  / rect.height) * -2 + 1;
       raycaster.setFromCamera(mouse, camera);
+
+      // 1. Teddy tap
       const hits = raycaster.intersectObjects([hitSphere, ...teddy.children], true);
-      if (hits.length > 0) tapTeddy(particles, scene, teddyHead);
+      if (hits.length > 0) {
+        tapTeddy(particles, scene, teddyHead);
+        return;
+      }
+
+      // 2. Photo frame tap (enlarge picture)
+      const photoHits = raycaster.intersectObjects(photoMeshes, false);
+      if (photoHits.length > 0) {
+        const item = photoHits[0].object.userData?.item;
+        if (item) {
+          SoundEngine.pop();
+          setSelectedPhoto(item);
+        }
+      }
     };
     renderer.domElement.addEventListener('click', onPointerDown);
     renderer.domElement.addEventListener('touchend', onPointerDown, { passive: true });
@@ -601,11 +617,47 @@ export default function DormRoom() {
 
         {/* Hint bar */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none">
-          <div className="bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-[10px] font-mono text-white/60 whitespace-nowrap">
-            🖱️ drag to orbit · scroll to zoom · tap 🧸 Teddy Yajat for love notes
+          <div className="bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-[10px] font-mono text-white/70 whitespace-nowrap">
+            🖱️ drag to orbit · scroll to zoom · tap 🧸 Teddy or 🖼️ Wall Photos
           </div>
         </div>
       </div>
+
+      {/* Photo Frame Modal */}
+      <AnimatePresence>
+        {selectedPhoto && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+            onClick={() => setSelectedPhoto(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.85, y: 30 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.85, y: 30 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+              className="bg-[#181028] border-2 border-pink-500/50 rounded-3xl p-5 max-w-sm w-full shadow-[0_0_60px_rgba(236,72,153,0.4)] text-center cursor-pointer select-none"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-4 border border-white/10 shadow-lg bg-black/40">
+                <img
+                  src={selectedPhoto.url}
+                  alt="Couple Memory"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <p className="text-white font-nunito text-sm font-bold leading-relaxed">
+                &ldquo;{selectedPhoto.caption}&rdquo;
+              </p>
+              <p className="text-pink-300/70 text-[11px] font-mono mt-3">
+                ✦ Tap anywhere to return to room ✦
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Quote popup */}
       <AnimatePresence>
