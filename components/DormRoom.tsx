@@ -159,13 +159,25 @@ function buildFairyLights(scene: THREE.Scene) {
   scene.add(new THREE.Line(wireGeo, new THREE.LineBasicMaterial({ color: 0x3a2d1a })));
 }
 
-// ─── Real photo frames on back wall ──────────────────────────────────────────
-const PHOTO_DATA = [
-  { url: '/photos/photo-new-1.jpg', caption: 'Our favorite evening walk together 🌆💖' },
-  { url: '/photos/photo-new-2.jpg', caption: 'Your radiant smile that lights up my whole universe ✨' },
-  { url: '/photos/photo-new-3.jpg', caption: 'Quiet study dates at Central Library 📚🥰' },
-  { url: '/photos/photo-2.jpg',     caption: 'That unforgettable spark on Day 1 💫' },
-  { url: '/photos/photo-6.jpg',     caption: 'Three months of pure magic with my Queen 👑' },
+// ─── Real photo frames on back wall (exact photograph aspect ratios) ──────────
+interface PhotoItem {
+  url: string;
+  w: number;
+  h: number;
+  caption: string;
+}
+
+const PHOTO_DATA: PhotoItem[] = [
+  // photo-new-1: 899x1599 (9:16 portrait)
+  { url: '/photos/photo-new-1.jpg', w: 0.28, h: 0.50, caption: 'The way you look at me 💖' },
+  // photo-new-2: 1080x1920 (9:16 portrait)
+  { url: '/photos/photo-new-2.jpg', w: 0.28, h: 0.50, caption: 'Your radiant smile that lights up my whole universe ✨' },
+  // photo-new-3: 1200x1600 (3:4 portrait)
+  { url: '/photos/photo-new-3.jpg', w: 0.36, h: 0.48, caption: 'Carrying my Queen in my arms forever 👑🥰' },
+  // photo-2: 675x900 (3:4 portrait)
+  { url: '/photos/photo-2.jpg',     w: 0.36, h: 0.48, caption: 'That unforgettable spark on Day 1 💫' },
+  // photo-6: 675x900 (3:4 portrait, Anushka with Teddy Yajat!)
+  { url: '/photos/photo-6.jpg',     w: 0.36, h: 0.48, caption: 'Hugging Teddy Yajat tightly in campus 🧸🤍' },
 ];
 
 function buildPhotoFrames(scene: THREE.Scene): THREE.Mesh[] {
@@ -173,34 +185,45 @@ function buildPhotoFrames(scene: THREE.Scene): THREE.Mesh[] {
   const clickablePhotoMeshes: THREE.Mesh[] = [];
 
   const framePositions: Array<[number, number, number]> = [
-    [-1.35, 1.80, -3.17],
-    [-0.68, 2.10, -3.17],
-    [ 0.00, 1.80, -3.17],
-    [ 0.68, 2.10, -3.17],
-    [ 1.35, 1.80, -3.17],
+    [-1.40, 1.82, -3.17],
+    [-0.70, 2.14, -3.17],
+    [ 0.00, 1.82, -3.17],
+    [ 0.70, 2.14, -3.17],
+    [ 1.40, 1.82, -3.17],
   ];
 
   framePositions.forEach(([px, py, pz], i) => {
     const item = PHOTO_DATA[i % PHOTO_DATA.length];
+
+    // Frame outer wood dimensions matching the photo's exact aspect ratio
+    const frameW = item.w + 0.05;
+    const frameH = item.h + 0.05;
+
     const frameMat = new THREE.MeshStandardMaterial({
-      color: 0x2b1509,
-      roughness: 0.8,
+      color: 0x2e170a, // rich walnut wood
+      roughness: 0.75,
       metalness: 0.1,
     });
 
-    // Outer wooden frame (larger & clearly visible from across room)
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.50, 0.40, 0.03), frameMat);
+    // Outer wooden frame
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(frameW, frameH, 0.03), frameMat);
     frame.position.set(px, py, pz);
     frame.castShadow = true;
     scene.add(frame);
 
-    // Inner photo canvas with true, vivid colors (MeshBasicMaterial prevents light wash-out glare)
+    // Elegant inner white matting (passe-partout)
+    const mattingMat = new THREE.MeshBasicMaterial({ color: 0xf5eedd });
+    const matting = new THREE.Mesh(new THREE.PlaneGeometry(item.w + 0.016, item.h + 0.016), mattingMat);
+    matting.position.set(px, py, pz + 0.015);
+    scene.add(matting);
+
+    // Inner photo canvas with true, vivid colors matching exact aspect ratio
     const photoMat = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       toneMapped: true,
     });
-    const photoMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.44, 0.34), photoMat);
-    photoMesh.position.set(px, py, pz + 0.016);
+    const photoMesh = new THREE.Mesh(new THREE.PlaneGeometry(item.w, item.h), photoMat);
+    photoMesh.position.set(px, py, pz + 0.017);
     photoMesh.userData = { isPhoto: true, item };
     scene.add(photoMesh);
     clickablePhotoMeshes.push(photoMesh);
