@@ -26,14 +26,14 @@ export default function PresenceOverlay() {
   const [showAlignmentToast, setShowAlignmentToast] = useState(false);
   const [alignmentDismissed, setAlignmentDismissed] = useState(false);
 
-  // Sync polling every 3.5s when active tab
+  // Sync polling every 6.5s when active tab (reduces background CPU & eliminates scroll stutter)
   useEffect(() => {
     syncPresence();
     const interval = setInterval(() => {
       if (typeof document !== 'undefined' && !document.hidden) {
         syncPresence();
       }
-    }, 3500);
+    }, 6500);
     return () => clearInterval(interval);
   }, [syncPresence]);
 
