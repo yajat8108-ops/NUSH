@@ -138,9 +138,7 @@ export default function FloatingBottomDock() {
           </button>
 
           {/* Live Heartbeat Touch Beacon */}
-          <div className="flex flex-col items-center justify-center scale-90 -my-1">
-            <HeartbeatBeacon />
-          </div>
+          <HeartbeatBeacon variant="icon" />
 
 
           {/* Achievements */}
@@ -158,9 +156,7 @@ export default function FloatingBottomDock() {
       {/* ─── DESKTOP LEFT CORNER (md+) ───────────────────────────── */}
       <div className="hidden md:flex fixed bottom-6 left-6 z-40 items-center gap-3 print:hidden select-none">
         {/* Live Heartbeat Touch Beacon */}
-        <div className="p-1 rounded-full bg-black/70 backdrop-blur-xl border border-pink-500/30 shadow-xl">
-          <HeartbeatBeacon />
-        </div>
+        <HeartbeatBeacon variant="pill" />
 
         {/* VHS Camcorder Toggle */}
         <button
