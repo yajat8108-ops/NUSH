@@ -16,580 +16,487 @@ const TEDDY_QUOTES = [
   "Sometimes she whispers your name before sleeping 💫",
 ];
 
-// ─── Build a procedural teddy bear from geometry ────────────────────────────
+// ─── Procedural teddy — always used (no GLB dependency) ──────────────────────
 function buildProceduralTeddy(): THREE.Group {
   const group = new THREE.Group();
-  const mat = new THREE.MeshStandardMaterial({
-    color: 0xc8956c,
-    roughness: 0.85,
-    metalness: 0.0,
-  });
-  const darkMat = new THREE.MeshStandardMaterial({
-    color: 0x8b5e3c,
-    roughness: 0.9,
-  });
-  const noseMat = new THREE.MeshStandardMaterial({ color: 0x3a1f0f, roughness: 0.7 });
-  const eyeMat = new THREE.MeshStandardMaterial({
-    color: 0x1a0a0a,
-    roughness: 0.3,
-    emissive: 0x220000,
-    emissiveIntensity: 0.3,
-  });
+  const bodyMat  = new THREE.MeshStandardMaterial({ color: 0xc8956c, roughness: 0.75, emissive: 0x7a4a20, emissiveIntensity: 0.15 });
+  const darkMat  = new THREE.MeshStandardMaterial({ color: 0x8b5e3c, roughness: 0.85, emissive: 0x3a2010, emissiveIntensity: 0.1 });
+  const noseMat  = new THREE.MeshStandardMaterial({ color: 0x2d1209, roughness: 0.6 });
+  const eyeMat   = new THREE.MeshStandardMaterial({ color: 0x0a0505, roughness: 0.2, emissive: 0x220005, emissiveIntensity: 0.5 });
+  const shineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.5 });
+  const heartMat = new THREE.MeshStandardMaterial({ color: 0xff3370, emissive: 0xff1040, emissiveIntensity: 0.9, roughness: 0.3 });
 
   // Body
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.18, 14, 14), mat);
-  body.scale.y = 1.15;
-  body.position.y = 0.15;
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), bodyMat);
+  body.scale.y = 1.1;
+  body.position.y = 0.18;
   body.castShadow = true;
   group.add(body);
 
   // Belly patch
-  const belly = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12), darkMat);
-  belly.scale.z = 0.4;
-  belly.position.set(0, 0.15, 0.165);
+  const belly = new THREE.Mesh(new THREE.SphereGeometry(0.135, 12, 12), darkMat);
+  belly.scale.z = 0.35;
+  belly.position.set(0, 0.18, 0.21);
   group.add(belly);
 
   // Head
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.135, 14, 14), mat);
-  head.position.set(0, 0.37, 0);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.165, 16, 16), bodyMat);
+  head.position.y = 0.44;
   head.castShadow = true;
   group.add(head);
 
   // Snout
-  const snout = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), darkMat);
-  snout.scale.set(1, 0.7, 0.65);
-  snout.position.set(0, 0.35, 0.115);
+  const snout = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 12), darkMat);
+  snout.scale.set(1, 0.65, 0.6);
+  snout.position.set(0, 0.415, 0.145);
   group.add(snout);
 
   // Nose
-  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 8), noseMat);
-  nose.position.set(0, 0.375, 0.175);
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 8), noseMat);
+  nose.position.set(0, 0.445, 0.218);
   group.add(nose);
 
   // Eyes
-  [-0.045, 0.045].forEach((x) => {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.016, 8, 8), eyeMat);
-    eye.position.set(x, 0.405, 0.12);
+  [-0.055, 0.055].forEach((x) => {
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 8), eyeMat);
+    eye.position.set(x, 0.478, 0.15);
     group.add(eye);
-    // Shine
-    const shine = new THREE.Mesh(new THREE.SphereGeometry(0.005, 6, 6),
-      new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1 }));
-    shine.position.set(x + 0.008, 0.41, 0.133);
+    const shine = new THREE.Mesh(new THREE.SphereGeometry(0.007, 6, 6), shineMat);
+    shine.position.set(x + 0.01, 0.485, 0.168);
     group.add(shine);
   });
 
   // Ears
-  [-0.1, 0.1].forEach((x) => {
-    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 10), mat);
-    ear.position.set(x, 0.475, 0.01);
+  [-0.125, 0.125].forEach((x) => {
+    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.065, 10, 10), bodyMat);
+    ear.position.set(x, 0.565, 0.01);
     ear.castShadow = true;
     group.add(ear);
-    const innerEar = new THREE.Mesh(new THREE.SphereGeometry(0.032, 8, 8), darkMat);
-    innerEar.scale.z = 0.4;
-    innerEar.position.set(x, 0.477, 0.05);
-    group.add(innerEar);
+    const inner = new THREE.Mesh(new THREE.SphereGeometry(0.038, 8, 8), darkMat);
+    inner.scale.z = 0.35;
+    inner.position.set(x, 0.567, 0.055);
+    group.add(inner);
   });
 
   // Arms
-  [-0.19, 0.19].forEach((x, i) => {
-    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.055, 0.1, 6, 8), mat);
-    arm.rotation.z = x < 0 ? 0.5 : -0.5;
-    arm.position.set(x, 0.18, 0.04);
+  [-0.235, 0.235].forEach((x) => {
+    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.11, 6, 8), bodyMat);
+    arm.rotation.z = x < 0 ? 0.55 : -0.55;
+    arm.position.set(x, 0.22, 0.04);
     arm.castShadow = true;
     group.add(arm);
   });
 
   // Legs
-  [-0.09, 0.09].forEach((x) => {
-    const leg = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.07, 6, 8), mat);
-    leg.position.set(x, 0.01, 0.06);
+  [-0.1, 0.1].forEach((x) => {
+    const leg = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.06, 6, 8), bodyMat);
+    leg.position.set(x, 0.0, 0.07);
     leg.castShadow = true;
     group.add(leg);
   });
 
-  // Small pink heart on chest
-  const heartMat = new THREE.MeshStandardMaterial({
-    color: 0xff6b9d,
-    emissive: 0xff2070,
-    emissiveIntensity: 0.5,
-    roughness: 0.4,
-  });
-  const heartSphere = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 8), heartMat);
-  heartSphere.position.set(0, 0.28, 0.175);
-  group.add(heartSphere);
+  // Heart on chest ❤️
+  const heart = new THREE.Mesh(new THREE.SphereGeometry(0.028, 8, 8), heartMat);
+  heart.position.set(0, 0.32, 0.222);
+  group.add(heart);
 
   return group;
 }
 
-// ─── Build a fairy-light string ──────────────────────────────────────────────
+// ─── Fairy lights ─────────────────────────────────────────────────────────────
 function buildFairyLights(scene: THREE.Scene) {
   const bulbMat = new THREE.MeshStandardMaterial({
-    color: 0xfff3b0,
-    emissive: 0xffe066,
-    emissiveIntensity: 2.5,
-    roughness: 0.2,
+    color: 0xfff3b0, emissive: 0xffe066, emissiveIntensity: 3.0, roughness: 0.1,
   });
-  const bulbGeo = new THREE.SphereGeometry(0.025, 8, 8);
-
-  const wireMat = new THREE.LineBasicMaterial({ color: 0x3a2d1a });
-  const wirePoints: THREE.Vector3[] = [];
-
-  const count = 22;
+  const wirePts: THREE.Vector3[] = [];
+  const count = 20;
   for (let i = 0; i < count; i++) {
     const t = i / (count - 1);
-    const x = -2.6 + t * 5.2;
-    const y = 2.18 + Math.sin(t * Math.PI) * -0.08 + Math.sin(i * 1.3) * 0.04;
-    const z = -2.7;
-    wirePoints.push(new THREE.Vector3(x, y, z));
-
-    const b = new THREE.Mesh(bulbGeo, bulbMat);
+    const x = -2.4 + t * 4.8;
+    const y = 2.25 + Math.sin(t * Math.PI) * -0.06 + Math.sin(i * 1.4) * 0.035;
+    const z = -2.85;
+    wirePts.push(new THREE.Vector3(x, y, z));
+    const b = new THREE.Mesh(new THREE.SphereGeometry(0.028, 8, 8), bulbMat);
     b.position.set(x, y, z);
     scene.add(b);
-
-    if (i % 3 === 0) {
-      const glow = new THREE.PointLight(0xffdd88, 0.6, 1.2);
-      glow.position.set(x, y, z + 0.1);
+    if (i % 4 === 0) {
+      const glow = new THREE.PointLight(0xffdd88, 0.7, 1.4);
+      glow.position.set(x, y, z + 0.15);
       scene.add(glow);
     }
   }
-
-  // Wire
-  const wireGeo = new THREE.BufferGeometry().setFromPoints(wirePoints);
-  scene.add(new THREE.Line(wireGeo, wireMat));
+  const wireGeo = new THREE.BufferGeometry().setFromPoints(wirePts);
+  scene.add(new THREE.Line(wireGeo, new THREE.LineBasicMaterial({ color: 0x3a2d1a })));
 }
 
-// ─── Build photo frames on wall ──────────────────────────────────────────────
+// ─── Real photo frames on back wall ──────────────────────────────────────────
+const COUPLE_PHOTOS = [
+  '/photos/photo-new-1.jpg',
+  '/photos/photo-new-2.jpg',
+  '/photos/photo-new-3.jpg',
+  '/photos/photo-2.jpg',
+  '/photos/photo-6.jpg',
+];
+
 function buildPhotoFrames(scene: THREE.Scene) {
-  const frameData = [
-    { pos: [-0.5, 1.55, -2.72] as [number,number,number], color: 0xff6b9d },
-    { pos: [0.1, 1.85, -2.72] as [number,number,number], color: 0xc084fc },
-    { pos: [0.65, 1.55, -2.72] as [number,number,number], color: 0xfbbf24 },
+  const txLoader = new THREE.TextureLoader();
+  const framePositions: Array<[number, number, number]> = [
+    [-1.1, 1.62, -2.88],
+    [-0.35, 1.88, -2.88],
+    [0.38, 1.62, -2.88],
+    [1.1, 1.88, -2.88],
+    [1.8, 1.62, -2.88],
   ];
 
-  frameData.forEach(({ pos, color }) => {
-    const frameMat = new THREE.MeshStandardMaterial({
-      color: 0x3a2a1a,
-      roughness: 0.7,
-    });
-    const photoMat = new THREE.MeshStandardMaterial({
-      color,
-      roughness: 0.5,
-      emissive: color,
-      emissiveIntensity: 0.08,
-    });
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.22, 0.02), frameMat);
-    frame.position.set(...pos);
+  framePositions.forEach(([px, py, pz], i) => {
+    const photo = COUPLE_PHOTOS[i % COUPLE_PHOTOS.length];
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0x2d1a0e, roughness: 0.8, metalness: 0.1 });
+
+    // Frame border
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.26, 0.025), frameMat);
+    frame.position.set(px, py, pz);
     scene.add(frame);
 
-    const photo = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.16), photoMat);
-    photo.position.set(pos[0], pos[1], pos[2] + 0.011);
-    scene.add(photo);
-
-    // Tiny heart on photo
-    const heartMat = new THREE.MeshStandardMaterial({
-      color: 0xff2060,
-      emissive: 0xff1040,
-      emissiveIntensity: 0.8,
+    // Photo surface with texture
+    const photoMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.6,
+      emissive: 0x111111,
+      emissiveIntensity: 0.05,
     });
-    const heart = new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 6), heartMat);
-    heart.position.set(pos[0], pos[1], pos[2] + 0.022);
-    scene.add(heart);
+    const photoMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.26, 0.20), photoMat);
+    photoMesh.position.set(px, py, pz + 0.014);
+    scene.add(photoMesh);
+
+    // Load texture
+    txLoader.load(photo, (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace;
+      photoMat.map = tex;
+      photoMat.needsUpdate = true;
+    }, undefined, () => {
+      // Fallback gradient colour
+      const fallbackColors = [0xff6b9d, 0xc084fc, 0xfbbf24, 0x34d399, 0xf87171];
+      photoMat.color.setHex(fallbackColors[i % fallbackColors.length]);
+      photoMat.emissiveIntensity = 0.15;
+    });
+
+    // Tiny warm glow per frame
+    const glow = new THREE.PointLight(0xfff0e0, 0.4, 0.6);
+    glow.position.set(px, py, pz + 0.15);
+    scene.add(glow);
   });
 }
 
-// ─── Floating hearts particle system ────────────────────────────────────────
-interface Particle {
-  mesh: THREE.Mesh;
-  vel: THREE.Vector3;
-  life: number;
-  maxLife: number;
-}
+// ─── Heart particles ──────────────────────────────────────────────────────────
+interface Particle { mesh: THREE.Mesh; vel: THREE.Vector3; life: number; maxLife: number; }
 
-function createHeartParticle(scene: THREE.Scene, origin: THREE.Vector3): Particle {
-  const colors = [0xff6b9d, 0xfbbf24, 0xc084fc, 0xff4d6d, 0xffd6e7];
-  const col = colors[Math.floor(Math.random() * colors.length)];
-  const mat = new THREE.MeshStandardMaterial({
-    color: col,
-    emissive: col,
-    emissiveIntensity: 0.6,
-    transparent: true,
-    opacity: 0.9,
-  });
-  const geo = new THREE.SphereGeometry(0.025 + Math.random() * 0.02, 6, 6);
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.position.copy(origin).add(
-    new THREE.Vector3((Math.random() - 0.5) * 1.5, 0, (Math.random() - 0.5) * 1.0)
-  );
+function spawnHeart(scene: THREE.Scene, origin: THREE.Vector3): Particle {
+  const cols = [0xff6b9d, 0xfbbf24, 0xc084fc, 0xff4d6d];
+  const col = cols[Math.floor(Math.random() * cols.length)];
+  const mat = new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.7, transparent: true, opacity: 0.9 });
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.022 + Math.random() * 0.018, 6, 6), mat);
+  mesh.position.copy(origin).add(new THREE.Vector3((Math.random() - 0.5) * 1.2, 0, (Math.random() - 0.5) * 0.8));
   scene.add(mesh);
-  const maxLife = 2.5 + Math.random() * 2;
-  return {
-    mesh,
-    vel: new THREE.Vector3((Math.random() - 0.5) * 0.3, 0.2 + Math.random() * 0.3, (Math.random() - 0.5) * 0.2),
-    life: 0,
-    maxLife,
-  };
+  return { mesh, vel: new THREE.Vector3((Math.random() - 0.5) * 0.25, 0.22 + Math.random() * 0.28, 0), life: 0, maxLife: 2.5 + Math.random() * 2 };
 }
 
-// ─── Main Component ──────────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function DormRoom() {
-  const mountRef = useRef<HTMLDivElement>(null);
-  const [teddyQuote, setTeddyQuote] = useState<string | null>(null);
-  const [quoteIdx, setQuoteIdx] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [modelStatus, setModelStatus] = useState('Loading our room...');
-  const teddyObjRef = useRef<THREE.Group | null>(null);
+  const mountRef   = useRef<HTMLDivElement>(null);
+  const [quote,    setQuote]   = useState<string | null>(null);
+  const [quoteIdx, setIdx]     = useState(0);
+  const [loading,  setLoading] = useState(true);
 
-  const handleTeddyTap = () => {
-    setTeddyQuote(TEDDY_QUOTES[quoteIdx % TEDDY_QUOTES.length]);
-    setQuoteIdx((i) => i + 1);
+  const tapTeddy = (particles: Particle[], scene: THREE.Scene, origin: THREE.Vector3) => {
+    setQuote(TEDDY_QUOTES[quoteIdx % TEDDY_QUOTES.length]);
+    setIdx(i => i + 1);
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-      try { navigator.vibrate([60, 40, 60]); } catch (e) {}
+      try { navigator.vibrate([60, 40, 60]); } catch (_) {}
     }
+    for (let i = 0; i < 10; i++) particles.push(spawnHeart(scene, origin));
   };
 
-  const hour = new Date().getHours();
+  const hour    = new Date().getHours();
   const isNight = hour < 6 || hour >= 20;
-  const timeLabel = isNight ? '🌙 Night mode' : '☀️ Day mode';
+  const timeLbl = isNight ? '🌙 Night mode' : '☀️ Day mode';
 
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
-
     let animId: number;
-    const W = container.clientWidth || 700;
-    const H = container.clientHeight || 500;
+    const W = container.clientWidth  || 700;
+    const H = container.clientHeight || 520;
 
-    // ── Scene ──
+    // ── Scene ──────────────────────────────────────────────────────────────
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x0c0817, 0.045);
+    scene.fog = new THREE.FogExp2(0x0c0817, 0.038);
 
-    // ── Camera ──
-    const camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 60);
-    // Position: slightly right and front, eye level — looking INTO the room at the bed
-    camera.position.set(1.2, 1.6, 4.2);
+    // ── Camera ─────────────────────────────────────────────────────────────
+    const camera = new THREE.PerspectiveCamera(48, W / H, 0.1, 60);
+    // Front-facing, eye-level: slightly left-of-centre, looking at bed + back wall
+    camera.position.set(-0.3, 1.55, 4.8);
 
-    // ── Renderer ──
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    // ── Renderer ────────────────────────────────────────────────────────────
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(W, H);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+    renderer.toneMappingExposure = 1.15;
     renderer.setClearColor(0x0c0817);
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
-    // ── Controls ──
+    // ── Controls ────────────────────────────────────────────────────────────
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.06;
-    controls.target.set(-0.2, 0.65, -1.2); // look at bed / teddy area
-    controls.maxPolarAngle = Math.PI / 2.15;  // can't go below floor
-    controls.minPolarAngle = Math.PI / 4;     // can't go overhead / ceiling
-    controls.minDistance = 2.2;
-    controls.maxDistance = 6.0;
-    controls.autoRotate = false; // off — user controls the view
+    controls.enableDamping   = true;
+    controls.dampingFactor   = 0.06;
+    controls.target.set(-0.3, 0.9, -1.2); // aim at centre of bed/teddy
+    controls.maxPolarAngle   = Math.PI / 2.1;   // can't go below floor
+    controls.minPolarAngle   = Math.PI / 4;     // can't look straight down from top
+    controls.minDistance     = 2.5;
+    controls.maxDistance     = 6.5;
+    controls.autoRotate      = false;
 
-    // ── Lights ──
-    // Ambient — boosted so room furniture is visible
-    const ambient = new THREE.AmbientLight(0x3d2b5a, 2.0);
-    scene.add(ambient);
+    // ── Lights ──────────────────────────────────────────────────────────────
+    // Global ambient
+    scene.add(new THREE.AmbientLight(0x4a3566, 2.2));
 
-    // Moon light from window
-    const moonLight = new THREE.DirectionalLight(0x8ba7ff, 2.2);
-    moonLight.position.set(-3, 5, -1);
-    moonLight.castShadow = true;
-    moonLight.shadow.mapSize.set(2048, 2048);
-    moonLight.shadow.camera.near = 0.1;
-    moonLight.shadow.camera.far = 20;
-    moonLight.shadow.camera.left = -5;
-    moonLight.shadow.camera.right = 5;
-    moonLight.shadow.camera.top = 5;
-    moonLight.shadow.camera.bottom = -5;
-    moonLight.shadow.bias = -0.001;
-    scene.add(moonLight);
+    // Main directional (moon / cool window light)
+    const moonDir = new THREE.DirectionalLight(0x9ab4ff, 2.0);
+    moonDir.position.set(-2, 6, 2);
+    moonDir.castShadow = true;
+    moonDir.shadow.mapSize.set(2048, 2048);
+    moonDir.shadow.camera.left  = -6; moonDir.shadow.camera.right = 6;
+    moonDir.shadow.camera.top   =  6; moonDir.shadow.camera.bottom = -6;
+    moonDir.shadow.bias = -0.001;
+    scene.add(moonDir);
 
-    // Warm bedside pink glow
-    const pinkGlow = new THREE.PointLight(0xff5c8e, 3.5, 3.8);
-    pinkGlow.position.set(0.5, 1.1, -0.5);
+    // Warm pink bedside
+    const pinkGlow = new THREE.PointLight(0xff4d8a, 4.2, 4.5);
+    pinkGlow.position.set(0.6, 1.2, -0.6);
     scene.add(pinkGlow);
 
-    // ★ Dedicated Teddy spotlight — always illuminates the bear
-    const teddyLight = new THREE.SpotLight(0xffb3d4, 4.0, 3.5, Math.PI / 5, 0.4, 1.5);
-    teddyLight.position.set(0.3, 2.5, -0.5);
-    teddyLight.target.position.set(0.0, 0.65, -1.5);
-    scene.add(teddyLight);
-    scene.add(teddyLight.target);
+    // Purple fill
+    scene.add(Object.assign(new THREE.PointLight(0x9b5de5, 1.6, 7), { position: new THREE.Vector3(-3, 2.8, 0.5) }));
 
-    // Soft purple fill
-    const purpleFill = new THREE.PointLight(0x9b5de5, 1.8, 6);
-    purpleFill.position.set(-2, 2.5, 0);
-    scene.add(purpleFill);
+    // Desk warm
+    scene.add(Object.assign(new THREE.PointLight(0xffcd7a, 2.5, 3), { position: new THREE.Vector3(1.8, 1.3, -1.8) }));
 
-    // Warm desk lamp
-    const deskLamp = new THREE.PointLight(0xffd580, 2.2, 2.5);
-    deskLamp.position.set(1.6, 1.15, -1.4);
-    scene.add(deskLamp);
+    // ★ Teddy spotlight — always lit
+    const tSpot = new THREE.SpotLight(0xffcce0, 5.0, 4.0, Math.PI / 6, 0.45, 1.0);
+    tSpot.position.set(-0.3, 3.2, 0.5);
+    tSpot.target.position.set(-0.3, 0.85, -1.55);
+    scene.add(tSpot);
+    scene.add(tSpot.target);
 
-    // ── Room Shell ──
+    // ── Room Shell ──────────────────────────────────────────────────────────
     // Floor
-    const floorMat = new THREE.MeshStandardMaterial({ color: 0x1a1025, roughness: 0.9 });
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 8), floorMat);
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x18102a, roughness: 0.92 });
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), floorMat);
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;
     scene.add(floor);
 
-    // Rug under bed
-    const rugMat = new THREE.MeshStandardMaterial({ color: 0x4a2060, roughness: 0.95 });
-    const rug = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 1.8), rugMat);
+    // Rug under bed area
+    const rug = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 2.2),
+      new THREE.MeshStandardMaterial({ color: 0x3b1d5e, roughness: 0.95 }));
     rug.rotation.x = -Math.PI / 2;
-    rug.position.set(-0.4, 0.002, -0.2);
+    rug.position.set(-0.4, 0.003, -1.2);
     scene.add(rug);
 
-    // Back wall
-    const wallMat = new THREE.MeshStandardMaterial({ color: 0x130b22, roughness: 1.0 });
-    const backWall = new THREE.Mesh(new THREE.PlaneGeometry(8, 5), wallMat);
-    backWall.position.set(0, 2.0, -3.0);
+    // Back wall (z = -3.2)
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0x120a1f, roughness: 1.0, side: THREE.FrontSide });
+    const backWall = new THREE.Mesh(new THREE.PlaneGeometry(10, 6), wallMat);
+    backWall.position.set(0, 2.5, -3.2);
     backWall.receiveShadow = true;
     scene.add(backWall);
 
-    // Left wall
-    const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(8, 5), wallMat);
+    // Left wall (x = -3.2)
+    const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(10, 6), wallMat);
     leftWall.rotation.y = Math.PI / 2;
-    leftWall.position.set(-3.0, 2.0, 0);
+    leftWall.position.set(-3.2, 2.5, 0);
     leftWall.receiveShadow = true;
     scene.add(leftWall);
 
-    // Ceiling tint
-    const ceilMat = new THREE.MeshStandardMaterial({ color: 0x0d091a, roughness: 1.0, side: THREE.BackSide });
-    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(8, 8), ceilMat);
+    // Right wall (x = 3.2)
+    const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(10, 6), wallMat);
+    rightWall.rotation.y = -Math.PI / 2;
+    rightWall.position.set(3.2, 2.5, 0);
+    rightWall.receiveShadow = true;
+    scene.add(rightWall);
+
+    // Ceiling
+    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(10, 10),
+      new THREE.MeshStandardMaterial({ color: 0x0d0918, roughness: 1, side: THREE.BackSide }));
     ceil.rotation.x = Math.PI / 2;
-    ceil.position.y = 3.2;
+    ceil.position.y = 3.5;
     scene.add(ceil);
 
-    // ── Wall accent stripe ──
-    const stripeMat = new THREE.MeshStandardMaterial({
-      color: 0x2d1a4a,
-      roughness: 0.9,
-    });
-    const stripe = new THREE.Mesh(new THREE.PlaneGeometry(8, 0.4), stripeMat);
-    stripe.position.set(0, 1.5, -2.99);
-    scene.add(stripe);
+    // Skirting stripe on back wall
+    const skirting = new THREE.Mesh(new THREE.PlaneGeometry(10, 0.35),
+      new THREE.MeshStandardMaterial({ color: 0x281640, roughness: 0.9 }));
+    skirting.position.set(0, 1.38, -3.19);
+    scene.add(skirting);
 
-    // ── Fairy lights ──
+    // ── Fairy lights on back wall top ───────────────────────────────────────
     buildFairyLights(scene);
 
-    // ── Photo frames on wall ──
+    // ── Photo frames (real couple photos) ───────────────────────────────────
     buildPhotoFrames(scene);
 
-    // ── Shelf with string lights ──
-    const shelfMat = new THREE.MeshStandardMaterial({ color: 0x3a2a14, roughness: 0.8 });
-    const shelf = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.06, 0.18), shelfMat);
-    shelf.position.set(-1.5, 1.4, -2.88);
+    // ── Shelf with plants — left wall ────────────────────────────────────────
+    const shelf = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.07, 0.2),
+      new THREE.MeshStandardMaterial({ color: 0x3a2a14, roughness: 0.8 }));
+    shelf.position.set(-3.1, 1.55, -0.4);
+    shelf.rotation.y = Math.PI / 2;
     shelf.castShadow = true;
     scene.add(shelf);
 
-    // Tiny plants on shelf
-    [0, 0.22].forEach((dx) => {
-      const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.03, 0.07, 8), 
-        new THREE.MeshStandardMaterial({ color: 0xc1440e, roughness: 0.8 }));
-      pot.position.set(-1.62 + dx, 1.465, -2.85);
+    [0, 0.25, -0.25].forEach((dz, idx) => {
+      const potH = 0.08 + idx * 0.015;
+      const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.028, potH, 8),
+        new THREE.MeshStandardMaterial({ color: idx === 1 ? 0xc1440e : 0x7a5c3c, roughness: 0.85 }));
+      pot.position.set(-3.06, 1.595 + potH / 2, -0.4 + dz);
       scene.add(pot);
-      const plant = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 8),
-        new THREE.MeshStandardMaterial({ color: 0x2d7a2d, roughness: 0.9 }));
-      plant.position.set(-1.62 + dx, 1.545, -2.85);
+      const plant = new THREE.Mesh(new THREE.SphereGeometry(0.048 + idx * 0.01, 8, 8),
+        new THREE.MeshStandardMaterial({ color: idx === 1 ? 0x1a6b1a : 0x2d8a2d, roughness: 0.9 }));
+      plant.position.set(-3.06, 1.595 + potH + 0.042, -0.4 + dz);
       scene.add(plant);
     });
 
-    // ── 2 AM Maggi bowl on nightstand ──
-    const nsStand = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.42),
-      new THREE.MeshStandardMaterial({ color: 0x1e1020, roughness: 0.85 }));
-    nsStand.position.set(0.85, 0.21, -0.7);
-    nsStand.castShadow = true;
-    scene.add(nsStand);
+    // ── Nightstand ───────────────────────────────────────────────────────────
+    const ns = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.45, 0.45),
+      new THREE.MeshStandardMaterial({ color: 0x1e1028, roughness: 0.85 }));
+    ns.position.set(0.85, 0.225, -0.75);
+    ns.castShadow = true;
+    scene.add(ns);
 
-    const bowlGeo = new THREE.CylinderGeometry(0.13, 0.09, 0.09, 16);
-    const bowlMat = new THREE.MeshStandardMaterial({ color: 0xf0c040, roughness: 0.35, metalness: 0.1 });
-    const bowl = new THREE.Mesh(bowlGeo, bowlMat);
-    bowl.position.set(0.85, 0.465, -0.7);
+    // Maggi bowl on nightstand
+    const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.09, 0.09, 16),
+      new THREE.MeshStandardMaterial({ color: 0xf0c040, roughness: 0.3, metalness: 0.15 }));
+    bowl.position.set(0.85, 0.472, -0.75);
     bowl.castShadow = true;
     scene.add(bowl);
-    const noodleMat = new THREE.MeshStandardMaterial({ color: 0xf5b041, roughness: 0.9 });
-    const noodle = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.03, 16), noodleMat);
-    noodle.position.set(0.85, 0.515, -0.7);
-    scene.add(noodle);
-    // Chopsticks
-    const chopMat = new THREE.MeshStandardMaterial({ color: 0x5a2d0c });
-    [-1, 1].forEach((s) => {
-      const c = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.22, 6), chopMat);
-      c.position.set(0.85 + s * 0.025, 0.55, -0.7);
-      c.rotation.z = -0.3 * s;
-      scene.add(c);
-    });
+    scene.add(Object.assign(
+      new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.03, 16),
+        new THREE.MeshStandardMaterial({ color: 0xf5b041, roughness: 0.9 })),
+      { position: new THREE.Vector3(0.85, 0.522, -0.75) }
+    ));
 
     // Lamp on nightstand
-    const lampBase = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.055, 0.15, 8),
-      new THREE.MeshStandardMaterial({ color: 0xc8a86b, roughness: 0.4, metalness: 0.5 }));
-    lampBase.position.set(0.55, 0.50, -0.75);
-    scene.add(lampBase);
-    const lampShade = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.14, 12, 1, true),
-      new THREE.MeshStandardMaterial({ color: 0xf9d58b, roughness: 0.7, side: THREE.DoubleSide }));
-    lampShade.position.set(0.55, 0.63, -0.75);
-    scene.add(lampShade);
+    const lampPost = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.025, 0.22, 8),
+      new THREE.MeshStandardMaterial({ color: 0xb8964e, roughness: 0.35, metalness: 0.6 }));
+    lampPost.position.set(0.55, 0.56, -0.78);
+    scene.add(lampPost);
+    const shade = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.15, 12, 1, true),
+      new THREE.MeshStandardMaterial({ color: 0xf8d07a, roughness: 0.6, side: THREE.DoubleSide }));
+    shade.position.set(0.55, 0.67, -0.78);
+    scene.add(shade);
 
-    // ── GLB Model Loader ──
+    // ── Load GLB models (bed, desk, guitar — NOT teddy) ─────────────────────
     const loader = new GLTFLoader();
-    let loadedCount = 0;
     const models = [
-      { url: '/models/bed.glb',       pos: [-0.5, 0, -1.5] as [number,number,number], scale: 0.85, rot: [0, 0, 0] as [number,number,number] },
-      { url: '/models/desk.glb',      pos: [1.7, 0, -2.1] as [number,number,number],  scale: 0.65, rot: [0, -Math.PI / 2, 0] as [number,number,number] },
-      { url: '/models/guitar.glb',    pos: [-2.6, 0, -0.4] as [number,number,number], scale: 0.6,  rot: [0, Math.PI / 6, 0] as [number,number,number] },
-      { url: '/models/corkboard.glb', pos: [1.0, 1.3, -2.94] as [number,number,number], scale: 0.55, rot: [0, 0, 0] as [number,number,number] },
-      { url: '/models/window.glb',    pos: [-1.6, 1.1, -2.94] as [number,number,number], scale: 0.65, rot: [0, 0, 0] as [number,number,number] },
+      { url: '/models/bed.glb',    pos: [-0.5,  0,  -1.6] as [number,number,number], scale: 0.85, rot: [0, 0, 0]              as [number,number,number] },
+      { url: '/models/desk.glb',   pos: [ 2.0,  0,  -2.2] as [number,number,number], scale: 0.68, rot: [0, -Math.PI/2, 0]    as [number,number,number] },
+      { url: '/models/guitar.glb', pos: [-2.8,  0,  -0.5] as [number,number,number], scale: 0.58, rot: [0, Math.PI/5, 0]     as [number,number,number] },
+      // corkboard on back wall, visible from front
+      { url: '/models/corkboard.glb', pos: [1.5, 1.4, -3.15] as [number,number,number], scale: 0.58, rot: [0, 0, 0]          as [number,number,number] },
+      // window on LEFT WALL (rotated to face right)
+      { url: '/models/window.glb', pos: [-3.15, 1.2, -1.0] as [number,number,number], scale: 0.65, rot: [0, Math.PI/2, 0]   as [number,number,number] },
     ];
 
-    models.forEach((m) => {
+    models.forEach(m => {
       loader.load(m.url, (gltf) => {
         const obj = gltf.scene;
         obj.position.set(...m.pos);
         obj.scale.setScalar(m.scale);
         obj.rotation.set(...m.rot);
-        obj.traverse((c) => {
-          if ((c as THREE.Mesh).isMesh) {
-            c.castShadow = true;
-            c.receiveShadow = true;
-          }
+        obj.traverse(c => {
+          if ((c as THREE.Mesh).isMesh) { c.castShadow = true; c.receiveShadow = true; }
         });
         scene.add(obj);
-        loadedCount++;
-        setModelStatus(`Loaded ${loadedCount}/${models.length + 1} models...`);
-      }, undefined, (err) => {
-        console.warn('Model skip:', m.url);
-        loadedCount++;
-      });
+      }, undefined, () => { /* silently skip */ });
     });
 
-    // ── Teddy Bear — GLB with procedural fallback ──
-    let teddyObj: THREE.Group | null = null;
+    // ── Procedural Teddy Bear (always visible, no GLB) ───────────────────────
+    const teddy = buildProceduralTeddy();
+    // Sit on bed, well above mattress, facing camera
+    teddy.position.set(-0.3, 1.0, -1.55);
+    teddy.scale.setScalar(0.52);
+    teddy.rotation.y = 0.15; // slight angle toward viewer
+    scene.add(teddy);
+    setLoading(false);
 
-    const placeTeddy = (group: THREE.Group) => {
-      teddyObj = group;
-      teddyObjRef.current = group;
-      // Sit well above bed surface so it's clearly visible (y=0.95)
-      teddyObj.position.set(0.0, 0.95, -1.5);
-      teddyObj.scale.setScalar(0.48);
-      teddyObj.rotation.y = 0.2;
-      teddyObj.traverse((c) => {
-        if ((c as THREE.Mesh).isMesh) {
-          c.castShadow = true;
-          const mat = (c as THREE.Mesh).material as THREE.MeshStandardMaterial;
-          if (mat && mat.isMeshStandardMaterial) {
-            mat.emissive = new THREE.Color(0xc8956c);
-            mat.emissiveIntensity = 0.12;
-          }
-        }
-      });
-      scene.add(teddyObj);
-      setIsLoading(false);
-      setModelStatus('');
-    };
-
-    loader.load(
-      '/models/teddy.glb',
-      (gltf) => {
-        console.log('✓ teddy.glb loaded');
-        placeTeddy(gltf.scene);
-      },
-      (progress) => {
-        if (progress.total > 0) {
-          const pct = Math.round((progress.loaded / progress.total) * 100);
-          setModelStatus(`Loading Teddy Yajat... ${pct}%`);
-        }
-      },
-      (err) => {
-        console.warn('teddy.glb failed, using procedural teddy:', err);
-        const procTeddy = buildProceduralTeddy();
-        placeTeddy(procTeddy);
-      }
-    );
-
-    // ── Heart-particle system ──
+    // ── Heart particles ───────────────────────────────────────────────────────
     const particles: Particle[] = [];
-    let particleTimer = 0;
-    const particleOrigin = new THREE.Vector3(0.0, 1.4, -1.5); // above teddy
+    const teddyHead = new THREE.Vector3(-0.3, 1.32, -1.55); // above teddy head
+    let pTimer = 0;
 
-    // ── Raycaster for Teddy click ──
+    // ── Raycaster for clicking teddy ─────────────────────────────────────────
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
+    // Larger invisible hit-sphere for easy tapping
+    const hitSphere = new THREE.Mesh(
+      new THREE.SphereGeometry(0.35, 8, 8),
+      new THREE.MeshBasicMaterial({ visible: false })
+    );
+    hitSphere.position.copy(teddy.position).setY(teddy.position.y + 0.1 * teddy.scale.x);
+    scene.add(hitSphere);
+
     const onPointerDown = (e: MouseEvent | TouchEvent) => {
       const rect = renderer.domElement.getBoundingClientRect();
-      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-      mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
-
+      const cx = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const cy = 'touches' in e ? e.touches[0].clientY : e.clientY;
+      mouse.x = ((cx - rect.left) / rect.width)  *  2 - 1;
+      mouse.y = ((cy - rect.top)  / rect.height) * -2 + 1;
       raycaster.setFromCamera(mouse, camera);
-      if (teddyObj) {
-        const hits = raycaster.intersectObjects(teddyObj.children.length > 0 ? teddyObj.children : [teddyObj], true);
-        if (hits.length > 0) {
-          handleTeddyTap();
-          // Burst hearts
-          for (let i = 0; i < 8; i++) {
-            particles.push(createHeartParticle(scene, particleOrigin));
-          }
-        }
-      }
+      const hits = raycaster.intersectObjects([hitSphere, ...teddy.children], true);
+      if (hits.length > 0) tapTeddy(particles, scene, teddyHead);
     };
     renderer.domElement.addEventListener('click', onPointerDown);
-    renderer.domElement.addEventListener('touchstart', onPointerDown, { passive: true });
+    renderer.domElement.addEventListener('touchend', onPointerDown, { passive: true });
 
-    // ── Animation Loop ──
+    // ── Animation ─────────────────────────────────────────────────────────────
     const clock = new THREE.Clock();
+    const baseY = teddy.position.y;
+
     const animate = () => {
       animId = requestAnimationFrame(animate);
-      const elapsed = clock.getElapsedTime();
-      const delta = clock.getDelta ? 0.016 : 0.016;
+      const t = clock.getElapsedTime();
 
-      // Teddy idle bob + breathe
-      if (teddyObj) {
-        teddyObj.rotation.y = 0.2 + Math.sin(elapsed * 0.6) * 0.12;
-        teddyObj.position.y = 0.95 + Math.sin(elapsed * 1.3) * 0.012;
-      }
+      // Teddy gentle idle
+      teddy.rotation.y = 0.15 + Math.sin(t * 0.55) * 0.10;
+      teddy.position.y = baseY  + Math.sin(t * 1.25) * 0.013;
 
-      // Fairy light shimmer
-      scene.children.forEach((c) => {
+      // Pulse pink glow
+      pinkGlow.intensity = 3.8 + Math.sin(t * 1.7) * 0.55;
+
+      // Fairy flicker
+      scene.children.forEach(c => {
         if (c instanceof THREE.PointLight && c.color.r > 0.9 && c.color.g > 0.85) {
-          c.intensity = 0.45 + Math.sin(elapsed * 3 + c.position.x) * 0.15;
+          c.intensity = 0.5 + Math.sin(t * 3.5 + c.position.x * 7) * 0.2;
         }
       });
 
-      // Pink bedside glow pulse
-      pinkGlow.intensity = 3.2 + Math.sin(elapsed * 1.8) * 0.5;
-
-      // Particle update
-      particleTimer += 0.016;
-      if (particleTimer > 3.5) {
-        particleTimer = 0;
-        if (particles.length < 12) {
-          particles.push(createHeartParticle(scene, particleOrigin));
-        }
+      // Heart particles
+      pTimer += 0.016;
+      if (pTimer > 4 && particles.length < 10) {
+        particles.push(spawnHeart(scene, teddyHead));
+        pTimer = 0;
       }
-
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.life += 0.016;
-        const t = p.life / p.maxLife;
+        const ratio = p.life / p.maxLife;
         p.mesh.position.addScaledVector(p.vel, 0.016);
-        p.mesh.position.y += 0.008;
-        p.mesh.scale.setScalar(1 - t * 0.5);
-        (p.mesh.material as THREE.MeshStandardMaterial).opacity = 1 - t;
-        p.mesh.rotation.z += 0.04;
-        if (p.life >= p.maxLife) {
-          scene.remove(p.mesh);
-          particles.splice(i, 1);
-        }
+        p.mesh.position.y += 0.007;
+        p.mesh.scale.setScalar(1 - ratio * 0.5);
+        (p.mesh.material as THREE.MeshStandardMaterial).opacity = 1 - ratio;
+        p.mesh.rotation.z += 0.035;
+        if (p.life >= p.maxLife) { scene.remove(p.mesh); particles.splice(i, 1); }
       }
 
       controls.update();
@@ -597,22 +504,19 @@ export default function DormRoom() {
     };
     animate();
 
-    // ── Resize ──
-    const handleResize = () => {
+    const onResize = () => {
       if (!container) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
+      const w = container.clientWidth, h = container.clientHeight;
+      camera.aspect = w / h; camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', onResize);
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', onResize);
       renderer.domElement.removeEventListener('click', onPointerDown);
-      renderer.domElement.removeEventListener('touchstart', onPointerDown);
+      renderer.domElement.removeEventListener('touchend', onPointerDown);
       renderer.dispose();
       if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
     };
@@ -622,12 +526,9 @@ export default function DormRoom() {
     <section id="dorm-room" className="relative w-full font-nunito select-none py-14 px-4 max-w-5xl mx-auto">
       {/* Header */}
       <div className="text-center mb-8">
-        <p className="text-[11px] font-mono text-pink-400 uppercase tracking-widest mb-2 font-bold">
-          ✦ our cozy universe ✦
-        </p>
+        <p className="text-[11px] font-mono text-pink-400 uppercase tracking-widest mb-2 font-bold">✦ our cozy universe ✦</p>
         <h2 className="text-3xl sm:text-4xl font-bold text-white font-mono flex items-center justify-center gap-2">
-          <span>Nush's Dorm Room</span>
-          <span>🏠</span>
+          <span>Nush's Dorm Room</span><span>🏠</span>
         </h2>
         <p className="text-zinc-400 text-xs sm:text-sm mt-2 max-w-md mx-auto">
           Our private 3D sanctuary. Tap Teddy Yajat 🧸 for love notes. Drag to explore.
@@ -635,78 +536,55 @@ export default function DormRoom() {
       </div>
 
       {/* 3D Canvas */}
-      <div className="relative w-full h-[500px] sm:h-[600px] rounded-3xl overflow-hidden border border-pink-500/20 shadow-[0_0_80px_rgba(236,72,153,0.2),0_0_120px_rgba(155,93,229,0.1)] bg-[#0c0817]">
+      <div className="relative w-full h-[520px] sm:h-[620px] rounded-3xl overflow-hidden border border-pink-500/20 shadow-[0_0_80px_rgba(236,72,153,0.18),0_0_120px_rgba(155,93,229,0.1)] bg-[#0c0817]">
         <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
-        {/* Top-left badge */}
+        {/* Badges */}
         <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-mono text-zinc-300 pointer-events-none">
           <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse" />
           <span>Interactive 3D Sanctuary</span>
         </div>
-
-        {/* Time badge */}
         <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-mono text-pink-300 pointer-events-none">
-          {timeLabel}
+          {timeLbl}
         </div>
 
-        {/* Loading overlay */}
+        {/* Loading */}
         <AnimatePresence>
-          {isLoading && (
-            <motion.div
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.6 }}
-              className="absolute inset-0 flex flex-col items-center justify-center bg-[#0c0817]/90 backdrop-blur-sm z-10"
-            >
-              <div className="text-4xl mb-3 animate-bounce">🧸</div>
-              <p className="text-pink-300 font-mono text-sm">{modelStatus || 'Setting up our room...'}</p>
+          {loading && (
+            <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}
+              className="absolute inset-0 flex flex-col items-center justify-center bg-[#0c0817]/95 z-10">
+              <div className="text-5xl mb-3 animate-bounce">🧸</div>
+              <p className="text-pink-300 font-mono text-sm">Setting up our cozy room...</p>
               <div className="mt-4 flex gap-1.5">
-                {[0,1,2].map(i => (
-                  <span key={i} className="w-2 h-2 rounded-full bg-pink-400 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+                {[0,1,2].map(i=>(
+                  <span key={i} className="w-2 h-2 rounded-full bg-pink-400 animate-pulse" style={{animationDelay:`${i*0.2}s`}} />
                 ))}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Bottom hint */}
+        {/* Hint bar */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none">
           <div className="bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-[10px] font-mono text-white/60 whitespace-nowrap">
-            🖱️ drag to orbit · scroll to zoom · tap 🧸 for love notes
+            🖱️ drag to orbit · scroll to zoom · tap 🧸 Teddy Yajat for love notes
           </div>
         </div>
       </div>
 
-      {/* Teddy Quote Popup */}
+      {/* Quote popup */}
       <AnimatePresence>
-        {teddyQuote && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+        {quote && (
+          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
             className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm"
-            onClick={() => setTeddyQuote(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, y: 30 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.8, y: 30 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              className="bg-[#180e2a] border-2 border-pink-500/60 backdrop-blur-2xl rounded-3xl p-7 max-w-sm w-full shadow-[0_0_60px_rgba(236,72,153,0.5),0_0_120px_rgba(155,93,229,0.3)] text-center cursor-pointer select-none"
-              onClick={(e) => e.stopPropagation()}
-            >
+            onClick={()=>setQuote(null)}>
+            <motion.div initial={{scale:0.8,y:30}} animate={{scale:1,y:0}} exit={{scale:0.8,y:30}}
+              transition={{type:'spring',stiffness:380,damping:24}}
+              className="bg-[#180e2a] border-2 border-pink-500/60 rounded-3xl p-7 max-w-sm w-full shadow-[0_0_60px_rgba(236,72,153,0.5)] text-center cursor-pointer"
+              onClick={e=>e.stopPropagation()}>
               <div className="text-5xl mb-4 animate-bounce">🧸</div>
-              <p className="text-white font-nunito text-base leading-relaxed font-bold">
-                &ldquo;{teddyQuote}&rdquo;
-              </p>
-              <p className="text-pink-300/70 text-[11px] font-mono mt-4">
-                — Teddy Yajat · tap anywhere to close
-              </p>
-              <div className="flex justify-center gap-1.5 mt-3">
-                {['💕','🌙','✨'].map((e, i) => (
-                  <span key={i} className="text-base opacity-60">{e}</span>
-                ))}
-              </div>
+              <p className="text-white font-nunito text-base leading-relaxed font-bold">&ldquo;{quote}&rdquo;</p>
+              <p className="text-pink-300/70 text-[11px] font-mono mt-4">— Teddy Yajat · tap anywhere to close</p>
             </motion.div>
           </motion.div>
         )}
