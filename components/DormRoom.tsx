@@ -279,10 +279,14 @@ export default function DormRoom() {
     scene.add(pinkGlow);
 
     // Purple fill
-    scene.add(Object.assign(new THREE.PointLight(0x9b5de5, 1.6, 7), { position: new THREE.Vector3(-3, 2.8, 0.5) }));
+    const purpleFill = new THREE.PointLight(0x9b5de5, 1.6, 7);
+    purpleFill.position.set(-3, 2.8, 0.5);
+    scene.add(purpleFill);
 
     // Desk warm
-    scene.add(Object.assign(new THREE.PointLight(0xffcd7a, 2.5, 3), { position: new THREE.Vector3(1.8, 1.3, -1.8) }));
+    const deskWarm = new THREE.PointLight(0xffcd7a, 2.5, 3);
+    deskWarm.position.set(1.8, 1.3, -1.8);
+    scene.add(deskWarm);
 
     // ★ Teddy spotlight — always lit
     const tSpot = new THREE.SpotLight(0xffcce0, 5.0, 4.0, Math.PI / 6, 0.45, 1.0);
@@ -379,11 +383,12 @@ export default function DormRoom() {
     bowl.position.set(0.85, 0.472, -0.75);
     bowl.castShadow = true;
     scene.add(bowl);
-    scene.add(Object.assign(
-      new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.03, 16),
-        new THREE.MeshStandardMaterial({ color: 0xf5b041, roughness: 0.9 })),
-      { position: new THREE.Vector3(0.85, 0.522, -0.75) }
-    ));
+    const noodle = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.1, 0.1, 0.03, 16),
+      new THREE.MeshStandardMaterial({ color: 0xf5b041, roughness: 0.9 })
+    );
+    noodle.position.set(0.85, 0.522, -0.75);
+    scene.add(noodle);
 
     // Lamp on nightstand
     const lampPost = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.025, 0.22, 8),
