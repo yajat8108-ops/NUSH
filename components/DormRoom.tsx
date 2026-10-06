@@ -311,6 +311,8 @@ export default function DormRoom() {
     controls.minDistance     = 2.5;
     controls.maxDistance     = 6.5;
     controls.autoRotate      = false;
+    controls.enableZoom      = false; // allow mouse wheel to scroll the page naturally!
+    renderer.domElement.style.touchAction = 'pan-y'; // allow mobile page scrolling through canvas!
 
     // ── Lights ──────────────────────────────────────────────────────────────
     // Global ambient
