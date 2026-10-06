@@ -264,8 +264,9 @@ export default function DormRoom() {
     scene.fog = new THREE.FogExp2(0x0c0817, 0.045);
 
     // ── Camera ──
-    const camera = new THREE.PerspectiveCamera(52, W / H, 0.1, 60);
-    camera.position.set(2.8, 2.4, 3.6);
+    const camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 60);
+    // Position: slightly right and front, eye level — looking INTO the room at the bed
+    camera.position.set(1.2, 1.6, 4.2);
 
     // ── Renderer ──
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
@@ -283,21 +284,20 @@ export default function DormRoom() {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.06;
-    controls.target.set(0, 0.8, -0.5);
-    controls.maxPolarAngle = Math.PI / 2.05;
-    controls.minPolarAngle = Math.PI / 8;
-    controls.minDistance = 2.0;
-    controls.maxDistance = 6.5;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.4;
+    controls.target.set(-0.2, 0.65, -1.2); // look at bed / teddy area
+    controls.maxPolarAngle = Math.PI / 2.15;  // can't go below floor
+    controls.minPolarAngle = Math.PI / 4;     // can't go overhead / ceiling
+    controls.minDistance = 2.2;
+    controls.maxDistance = 6.0;
+    controls.autoRotate = false; // off — user controls the view
 
     // ── Lights ──
-    // Ambient
-    const ambient = new THREE.AmbientLight(0x3d2b5a, 1.2);
+    // Ambient — boosted so room furniture is visible
+    const ambient = new THREE.AmbientLight(0x3d2b5a, 2.0);
     scene.add(ambient);
 
     // Moon light from window
-    const moonLight = new THREE.DirectionalLight(0x8ba7ff, 1.8);
+    const moonLight = new THREE.DirectionalLight(0x8ba7ff, 2.2);
     moonLight.position.set(-3, 5, -1);
     moonLight.castShadow = true;
     moonLight.shadow.mapSize.set(2048, 2048);
@@ -314,6 +314,13 @@ export default function DormRoom() {
     const pinkGlow = new THREE.PointLight(0xff5c8e, 3.5, 3.8);
     pinkGlow.position.set(0.5, 1.1, -0.5);
     scene.add(pinkGlow);
+
+    // ★ Dedicated Teddy spotlight — always illuminates the bear
+    const teddyLight = new THREE.SpotLight(0xffb3d4, 4.0, 3.5, Math.PI / 5, 0.4, 1.5);
+    teddyLight.position.set(0.3, 2.5, -0.5);
+    teddyLight.target.position.set(0.0, 0.65, -1.5);
+    scene.add(teddyLight);
+    scene.add(teddyLight.target);
 
     // Soft purple fill
     const purpleFill = new THREE.PointLight(0x9b5de5, 1.8, 6);
@@ -469,12 +476,19 @@ export default function DormRoom() {
     const placeTeddy = (group: THREE.Group) => {
       teddyObj = group;
       teddyObjRef.current = group;
-      // Place on bed — slightly to right of center on bed surface
-      teddyObj.position.set(0.28, 0.52, -1.15);
-      teddyObj.scale.setScalar(0.32);
-      teddyObj.rotation.y = -0.4;
+      // Sit well above bed surface so it's clearly visible (y=0.95)
+      teddyObj.position.set(0.0, 0.95, -1.5);
+      teddyObj.scale.setScalar(0.48);
+      teddyObj.rotation.y = 0.2;
       teddyObj.traverse((c) => {
-        if ((c as THREE.Mesh).isMesh) c.castShadow = true;
+        if ((c as THREE.Mesh).isMesh) {
+          c.castShadow = true;
+          const mat = (c as THREE.Mesh).material as THREE.MeshStandardMaterial;
+          if (mat && mat.isMeshStandardMaterial) {
+            mat.emissive = new THREE.Color(0xc8956c);
+            mat.emissiveIntensity = 0.12;
+          }
+        }
       });
       scene.add(teddyObj);
       setIsLoading(false);
@@ -503,7 +517,7 @@ export default function DormRoom() {
     // ── Heart-particle system ──
     const particles: Particle[] = [];
     let particleTimer = 0;
-    const particleOrigin = new THREE.Vector3(0.28, 0.85, -1.15);
+    const particleOrigin = new THREE.Vector3(0.0, 1.4, -1.5); // above teddy
 
     // ── Raycaster for Teddy click ──
     const raycaster = new THREE.Raycaster();
@@ -540,8 +554,8 @@ export default function DormRoom() {
 
       // Teddy idle bob + breathe
       if (teddyObj) {
-        teddyObj.rotation.y = -0.4 + Math.sin(elapsed * 0.6) * 0.12;
-        teddyObj.position.y = 0.52 + Math.sin(elapsed * 1.3) * 0.01;
+        teddyObj.rotation.y = 0.2 + Math.sin(elapsed * 0.6) * 0.12;
+        teddyObj.position.y = 0.95 + Math.sin(elapsed * 1.3) * 0.012;
       }
 
       // Fairy light shimmer
