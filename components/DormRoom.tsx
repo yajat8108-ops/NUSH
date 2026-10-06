@@ -17,88 +17,117 @@ const TEDDY_QUOTES = [
 ];
 
 // ─── Procedural teddy — always used (no GLB dependency) ──────────────────────
+// ─── Procedural Teddy Bear — Adorable Sitting Plush ──────────────────────────
 function buildProceduralTeddy(): THREE.Group {
   const group = new THREE.Group();
-  const bodyMat  = new THREE.MeshStandardMaterial({ color: 0xc8956c, roughness: 0.75, emissive: 0x7a4a20, emissiveIntensity: 0.15 });
-  const darkMat  = new THREE.MeshStandardMaterial({ color: 0x8b5e3c, roughness: 0.85, emissive: 0x3a2010, emissiveIntensity: 0.1 });
-  const noseMat  = new THREE.MeshStandardMaterial({ color: 0x2d1209, roughness: 0.6 });
-  const eyeMat   = new THREE.MeshStandardMaterial({ color: 0x0a0505, roughness: 0.2, emissive: 0x220005, emissiveIntensity: 0.5 });
-  const shineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.5 });
-  const heartMat = new THREE.MeshStandardMaterial({ color: 0xff3370, emissive: 0xff1040, emissiveIntensity: 0.9, roughness: 0.3 });
 
-  // Body
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), bodyMat);
-  body.scale.y = 1.1;
-  body.position.y = 0.18;
+  // Cozy honey-brown plush fur materials
+  const furMat   = new THREE.MeshStandardMaterial({ color: 0xa86e3b, roughness: 0.9, metalness: 0.0, emissive: 0x42260e, emissiveIntensity: 0.1 });
+  const snoutMat = new THREE.MeshStandardMaterial({ color: 0xdfb482, roughness: 0.92, metalness: 0.0 });
+  const noseMat  = new THREE.MeshStandardMaterial({ color: 0x22110c, roughness: 0.5 });
+  const eyeMat   = new THREE.MeshStandardMaterial({ color: 0x0f0705, roughness: 0.15, emissive: 0x2b0f0a, emissiveIntensity: 0.4 });
+  const shineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 2.0 });
+  const bowMat   = new THREE.MeshStandardMaterial({ color: 0xe11d48, roughness: 0.35, emissive: 0x880e28, emissiveIntensity: 0.2 });
+  const heartMat = new THREE.MeshStandardMaterial({ color: 0xff2462, emissive: 0xff0d48, emissiveIntensity: 0.85, roughness: 0.3 });
+
+  // 1. Plump Body (sitting)
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.24, 18, 18), furMat);
+  body.scale.set(1.08, 1.15, 0.98);
+  body.position.set(0, 0.18, 0);
   body.castShadow = true;
   group.add(body);
 
-  // Belly patch
-  const belly = new THREE.Mesh(new THREE.SphereGeometry(0.135, 12, 12), darkMat);
-  belly.scale.z = 0.35;
-  belly.position.set(0, 0.18, 0.21);
+  // Soft belly patch
+  const belly = new THREE.Mesh(new THREE.SphereGeometry(0.145, 14, 14), snoutMat);
+  belly.scale.set(1.0, 1.1, 0.4);
+  belly.position.set(0, 0.17, 0.21);
   group.add(belly);
 
-  // Head
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.165, 16, 16), bodyMat);
-  head.position.y = 0.44;
+  // 2. Cute Rounded Head
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.185, 18, 18), furMat);
+  head.position.set(0, 0.44, 0.02);
   head.castShadow = true;
   group.add(head);
 
-  // Snout
-  const snout = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 12), darkMat);
-  snout.scale.set(1, 0.65, 0.6);
-  snout.position.set(0, 0.415, 0.145);
+  // Snout (cute rounded muzzle)
+  const snout = new THREE.Mesh(new THREE.SphereGeometry(0.085, 14, 14), snoutMat);
+  snout.scale.set(1.1, 0.75, 0.7);
+  snout.position.set(0, 0.41, 0.17);
   group.add(snout);
 
-  // Nose
-  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 8), noseMat);
-  nose.position.set(0, 0.445, 0.218);
+  // Nose (little button)
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.025, 10, 10), noseMat);
+  nose.scale.set(1.2, 0.8, 0.7);
+  nose.position.set(0, 0.438, 0.245);
   group.add(nose);
 
-  // Eyes
-  [-0.055, 0.055].forEach((x) => {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 8), eyeMat);
-    eye.position.set(x, 0.478, 0.15);
+  // Eyes with glistening catchlights
+  [-0.062, 0.062].forEach((x) => {
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.024, 10, 10), eyeMat);
+    eye.position.set(x, 0.475, 0.165);
     group.add(eye);
     const shine = new THREE.Mesh(new THREE.SphereGeometry(0.007, 6, 6), shineMat);
-    shine.position.set(x + 0.01, 0.485, 0.168);
+    shine.position.set(x + 0.008, 0.485, 0.184);
     group.add(shine);
   });
 
-  // Ears
-  [-0.125, 0.125].forEach((x) => {
-    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.065, 10, 10), bodyMat);
-    ear.position.set(x, 0.565, 0.01);
+  // Big cute rounded ears with inner pads
+  [-0.145, 0.145].forEach((x) => {
+    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 12), furMat);
+    ear.position.set(x, 0.58, 0.02);
     ear.castShadow = true;
     group.add(ear);
-    const inner = new THREE.Mesh(new THREE.SphereGeometry(0.038, 8, 8), darkMat);
-    inner.scale.z = 0.35;
-    inner.position.set(x, 0.567, 0.055);
-    group.add(inner);
+    const innerEar = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 10), snoutMat);
+    innerEar.scale.set(0.9, 0.9, 0.35);
+    innerEar.position.set(x, 0.58, 0.07);
+    group.add(innerEar);
   });
 
-  // Arms
-  [-0.235, 0.235].forEach((x) => {
-    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.11, 6, 8), bodyMat);
-    arm.rotation.z = x < 0 ? 0.55 : -0.55;
-    arm.position.set(x, 0.22, 0.04);
+  // 3. Cute Red Satin Bowtie at the neck
+  const bowL = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.06, 6), bowMat);
+  bowL.rotation.z = Math.PI / 2;
+  bowL.position.set(-0.035, 0.33, 0.20);
+  group.add(bowL);
+  const bowR = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.06, 6), bowMat);
+  bowR.rotation.z = -Math.PI / 2;
+  bowR.position.set(0.035, 0.33, 0.20);
+  group.add(bowR);
+  const knot = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 8), bowMat);
+  knot.position.set(0, 0.33, 0.215);
+  group.add(knot);
+
+  // 4. Little glowing love heart held at chest ❤️
+  const heart = new THREE.Mesh(new THREE.SphereGeometry(0.032, 10, 10), heartMat);
+  heart.position.set(0, 0.23, 0.23);
+  group.add(heart);
+
+  // 5. Sitting Arms (curved gently around the belly/heart)
+  [-0.22, 0.22].forEach((x) => {
+    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.12, 8, 8), furMat);
+    arm.rotation.x = -0.65;
+    arm.rotation.z = x < 0 ? 0.45 : -0.45;
+    arm.rotation.y = x < 0 ? 0.35 : -0.35;
+    arm.position.set(x, 0.22, 0.11);
     arm.castShadow = true;
     group.add(arm);
   });
 
-  // Legs
-  [-0.1, 0.1].forEach((x) => {
-    const leg = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.06, 6, 8), bodyMat);
-    leg.position.set(x, 0.0, 0.07);
+  // 6. Sitting Legs (laid flat forward across the bed comforter!)
+  [-0.12, 0.12].forEach((x) => {
+    const leg = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.14, 8, 8), furMat);
+    leg.rotation.x = -Math.PI / 2.15;
+    leg.rotation.z = x < 0 ? 0.15 : -0.15;
+    leg.position.set(x, 0.05, 0.18);
     leg.castShadow = true;
     group.add(leg);
-  });
 
-  // Heart on chest ❤️
-  const heart = new THREE.Mesh(new THREE.SphereGeometry(0.028, 8, 8), heartMat);
-  heart.position.set(0, 0.32, 0.222);
-  group.add(heart);
+    // Cute foot paw pads
+    const pad = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), snoutMat);
+    pad.rotation.x = -Math.PI / 2.15;
+    pad.rotation.z = x < 0 ? 0.15 : -0.15;
+    pad.position.set(x, 0.06, 0.27);
+    group.add(pad);
+  });
 
   return group;
 }
@@ -289,9 +318,9 @@ export default function DormRoom() {
     scene.add(deskWarm);
 
     // ★ Teddy spotlight — always lit
-    const tSpot = new THREE.SpotLight(0xffcce0, 5.0, 4.0, Math.PI / 6, 0.45, 1.0);
-    tSpot.position.set(-0.3, 3.2, 0.5);
-    tSpot.target.position.set(-0.3, 0.85, -1.55);
+    const tSpot = new THREE.SpotLight(0xffcce0, 4.5, 4.5, Math.PI / 6, 0.45, 1.0);
+    tSpot.position.set(-0.35, 2.6, 0.2);
+    tSpot.target.position.set(-0.35, 0.48, -1.25);
     scene.add(tSpot);
     scene.add(tSpot.target);
 
@@ -427,28 +456,29 @@ export default function DormRoom() {
 
     // ── Procedural Teddy Bear (always visible, no GLB) ───────────────────────
     const teddy = buildProceduralTeddy();
-    // Sit on bed, well above mattress, facing camera
-    teddy.position.set(-0.3, 1.0, -1.55);
-    teddy.scale.setScalar(0.52);
-    teddy.rotation.y = 0.15; // slight angle toward viewer
+    // Sit snugly on the bed comforter in front of the pillows
+    teddy.position.set(-0.35, 0.42, -1.25);
+    teddy.scale.setScalar(0.48);
+    teddy.rotation.x = -0.08; // slight comfortable lean back against pillows
+    teddy.rotation.y = 0.2;   // turned slightly towards camera
     scene.add(teddy);
     setLoading(false);
 
     // ── Heart particles ───────────────────────────────────────────────────────
     const particles: Particle[] = [];
-    const teddyHead = new THREE.Vector3(-0.3, 1.32, -1.55); // above teddy head
+    const teddyHead = new THREE.Vector3(-0.35, 0.76, -1.25); // right above sitting teddy's head
     let pTimer = 0;
 
     // ── Raycaster for clicking teddy ─────────────────────────────────────────
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
-    // Larger invisible hit-sphere for easy tapping
+    // Invisible hit-sphere covering the sitting teddy for easy tapping
     const hitSphere = new THREE.Mesh(
-      new THREE.SphereGeometry(0.35, 8, 8),
+      new THREE.SphereGeometry(0.38, 8, 8),
       new THREE.MeshBasicMaterial({ visible: false })
     );
-    hitSphere.position.copy(teddy.position).setY(teddy.position.y + 0.1 * teddy.scale.x);
+    hitSphere.position.set(-0.35, 0.60, -1.25);
     scene.add(hitSphere);
 
     const onPointerDown = (e: MouseEvent | TouchEvent) => {
@@ -473,8 +503,8 @@ export default function DormRoom() {
       const t = clock.getElapsedTime();
 
       // Teddy gentle idle
-      teddy.rotation.y = 0.15 + Math.sin(t * 0.55) * 0.10;
-      teddy.position.y = baseY  + Math.sin(t * 1.25) * 0.013;
+      teddy.rotation.y = 0.2 + Math.sin(t * 0.55) * 0.06;
+      teddy.position.y = baseY + Math.sin(t * 1.25) * 0.005;
 
       // Pulse pink glow
       pinkGlow.intensity = 3.8 + Math.sin(t * 1.7) * 0.55;
