@@ -234,7 +234,7 @@ export default function Calculator() {
     let overrideResult: string | null = null;
     let overrideValue: number | null = null;
 
-    if (['2208', '2307', '365', '90', '143', '2206', 'nush', 'yajat', 'love'].includes(lowerExpr)) {
+    if (['chintapakdamdam', '2208', '2307', '365', '90', '143', '2206', 'nush', 'yajat', 'love'].includes(lowerExpr) || lowerExpr.includes('chintapakdamdam')) {
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('unlock-universe-portal'));
       }

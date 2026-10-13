@@ -14,10 +14,18 @@ export default function StealthGate() {
   const [isWarping, setIsWarping] = useState(false);
 
   useEffect(() => {
+    let keyBuffer = '';
     const handleGlobalKey = (e: KeyboardEvent) => {
       if (!isStealthMode || isWarping) return;
       if (e.key === 'Enter') {
-        checkSecretCode(passcode);
+        checkSecretCode(passcode || keyBuffer);
+        keyBuffer = '';
+      } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-30);
+        if (keyBuffer.includes('chintapakdamdam')) {
+          triggerUnlockSuccess();
+          keyBuffer = '';
+        }
       }
     };
     const handleCustomPortal = () => {
@@ -53,7 +61,7 @@ export default function StealthGate() {
 
   const checkSecretCode = (code: string) => {
     const cleaned = code.trim().toLowerCase();
-    if (['2208', '2307', '365', '90', '143', '2206', 'nush', 'yajat', 'love'].includes(cleaned)) {
+    if (['chintapakdamdam', 'chinta pak dam dam', '2208', '2307', '365', '90', '143', '2206', 'nush', 'yajat', 'love'].includes(cleaned) || cleaned.includes('chintapakdamdam')) {
       triggerUnlockSuccess();
     } else {
       setUnlockError(true);
