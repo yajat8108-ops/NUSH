@@ -181,7 +181,7 @@ const INITIAL_ACHIEVEMENTS: Achievement[] = [
 export const useUniverseStore = create<UniverseStore>()(
   persist(
     (set, get) => ({
-      enteredUniverse: false,
+      enteredUniverse: true,
       setEnteredUniverse: (val) => set({ enteredUniverse: val }),
       explorationPoints: {},
       

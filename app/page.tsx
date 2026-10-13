@@ -4,7 +4,6 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 
 // ── Above-fold: load eagerly (user sees these immediately) ──────────
-import UniverseEntrance      from '@/components/UniverseEntrance';
 import UniverseProgressHUD   from '@/components/UniverseProgressHUD';
 import AmbientEffects        from '@/components/AmbientEffects';
 import ScrollProgress        from '@/components/ScrollProgress';
@@ -91,9 +90,6 @@ export default function Home() {
       <StealthGate />
       <PanicButton />
       <YearOneWrapped />
-
-      {/* 1. CINEMATIC ANIMATED ENTRANCE PROLOGUE */}
-      <UniverseEntrance />
 
       {/* 2. PERSISTENT GLOBAL HUDs & CONTROLLERS */}
       <UniverseProgressHUD />
