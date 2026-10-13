@@ -26,7 +26,7 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "NUSH_BASE_URL", "\"https://nush.vercel.app\"")
+        buildConfigField("String", "NUSH_BASE_URL", "\"https://nush-iota.vercel.app\"")
         buildConfigField("String", "PUSH_SHARED_SECRET", "\"nush_heartbeat_secret_2026\"")
     }
 
