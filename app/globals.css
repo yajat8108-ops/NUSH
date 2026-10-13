@@ -240,7 +240,7 @@ body {
   50% { transform: translate3d(0, 8px, 0); }
 }
 
-/* Hero & symbol — pure CSS animation runs on compositor, zero JS cost */
+/* Hero & symbol â€” pure CSS animation runs on compositor, zero JS cost */
 @keyframes hero-heartbeat {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.15); }
@@ -256,7 +256,7 @@ body {
   padding: 3rem 1rem;
   max-width: 1080px;
   margin: 0 auto;
-  /* Skip layout & paint for off-screen sections — huge scroll perf win */
+  /* Skip layout & paint for off-screen sections â€” huge scroll perf win */
   content-visibility: auto;
   contain-intrinsic-size: 0 600px;
 }
