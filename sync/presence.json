@@ -1,14 +1,14 @@
 {
   "nush": {
     "role": "nush",
-    "status": "Need an emergency forehead kiss 🫦",
-    "heartbeat": true,
-    "timestamp": 1791896229226
+    "status": "Curled in blanket missing you 🥺",
+    "heartbeat": false,
+    "timestamp": 1791896178165
   },
   "yajat": {
     "role": "yajat",
-    "status": "Curled in blanket missing you 🥺",
+    "status": "Coding in room 💻",
     "heartbeat": false,
-    "timestamp": 1791896218043
+    "timestamp": 0
   }
 }
