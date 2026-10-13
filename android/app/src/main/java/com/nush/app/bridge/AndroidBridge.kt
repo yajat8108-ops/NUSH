@@ -36,9 +36,18 @@ class AndroidBridge @Inject constructor(
     private val pushRepository: PushRepository,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    var onHeartbeatPulseListener: (() -> Unit)? = null
 
     companion object {
         private const val TAG = "AndroidBridge"
+    }
+
+    /** Called by web app when partner or self heartbeat is pulsed */
+    @JavascriptInterface
+    fun onHeartbeatPulse() {
+        scope.launch(Dispatchers.Main) {
+            onHeartbeatPulseListener?.invoke()
+        }
     }
 
     /** Called by the website to trigger native haptic feedback.

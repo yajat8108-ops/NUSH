@@ -96,6 +96,24 @@ class MainActivity : ComponentActivity() {
         var pageProgress by remember { mutableIntStateOf(0) }
         var showPermissionRationale by remember { mutableStateOf(false) }
         var webViewInstance by remember { mutableStateOf<WebView?>(null) }
+        var isAuthenticated by remember { mutableStateOf(false) }
+        var showAuroraHeart by remember { mutableStateOf(false) }
+
+        LaunchedEffect(Unit) {
+            androidBridge.onHeartbeatPulseListener = {
+                showAuroraHeart = true
+            }
+        }
+
+        // If not authenticated via the secret codeword "chintapakdamdam", display the Calculator screen
+        if (!isAuthenticated) {
+            com.nush.app.ui.components.CalculatorAuthScreen(
+                onUnlocked = {
+                    isAuthenticated = true
+                }
+            )
+            return
+        }
 
         // Ask for Notification permission on API 33+
         LaunchedEffect(Unit) {
@@ -216,6 +234,12 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+
+            // Romantic native aurora pulse overlay on partner heartbeat
+            com.nush.app.ui.components.AuroraHeartOverlay(
+                isActive = showAuroraHeart,
+                onDismiss = { showAuroraHeart = false }
+            )
         }
     }
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NUSH</string>
+    <string name="app_name">Calculator</string>
     <string name="shortcut_heartbeat">Send Heartbeat</string>
     <string name="shortcut_heartbeat_long">Send an instant heartbeat pulse 💓</string>
     <string name="shortcut_room">3D Dorm Room</string>

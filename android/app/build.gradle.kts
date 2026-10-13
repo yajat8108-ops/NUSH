@@ -35,13 +35,13 @@ android {
         create("nush") {
             dimension = "role"
             applicationIdSuffix = ".nush"
-            manifestPlaceholders["appName"] = "Nush 💖"
+            manifestPlaceholders["appName"] = "Calculator"
             buildConfigField("String", "DEFAULT_ROLE", "\"nush\"")
         }
         create("yajat") {
             dimension = "role"
             applicationIdSuffix = ".yajat"
-            manifestPlaceholders["appName"] = "Nush & Yajat"
+            manifestPlaceholders["appName"] = "Calculator"
             buildConfigField("String", "DEFAULT_ROLE", "\"yajat\"")
         }
     }

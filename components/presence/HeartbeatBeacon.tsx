@@ -36,6 +36,12 @@ export default function HeartbeatBeacon({ variant = 'pill' }: HeartbeatBeaconPro
   }, [syncPresence]);
 
   const triggerHaptic = () => {
+    if (typeof window !== 'undefined' && (window as any).AndroidBridge?.haptic) {
+      try {
+        (window as any).AndroidBridge.haptic('60,40,80,200');
+        (window as any).AndroidBridge.onHeartbeatPulse?.();
+      } catch (_) {}
+    }
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       try {
         navigator.vibrate([60, 40, 80, 200]);
