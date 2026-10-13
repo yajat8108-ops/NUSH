@@ -139,19 +139,20 @@ function buildFairyLights(scene: THREE.Scene) {
     color: 0xfff3b0, emissive: 0xffe066, emissiveIntensity: 3.0, roughness: 0.1,
   });
   const wirePts: THREE.Vector3[] = [];
-  const count = 20;
+  const count = 22;
   for (let i = 0; i < count; i++) {
     const t = i / (count - 1);
-    const x = -2.4 + t * 4.8;
-    const y = 2.25 + Math.sin(t * Math.PI) * -0.06 + Math.sin(i * 1.4) * 0.035;
-    const z = -2.85;
+    const x = -2.3 + t * 4.6;
+    // Positioned up near the top of the wall
+    const y = 2.62 + Math.sin(t * Math.PI) * -0.08 + Math.sin(i * 1.4) * 0.025;
+    const z = -2.95;
     wirePts.push(new THREE.Vector3(x, y, z));
-    const b = new THREE.Mesh(new THREE.SphereGeometry(0.028, 8, 8), bulbMat);
+    const b = new THREE.Mesh(new THREE.SphereGeometry(0.026, 8, 8), bulbMat);
     b.position.set(x, y, z);
     scene.add(b);
     if (i % 4 === 0) {
-      const glow = new THREE.PointLight(0xffdd88, 0.7, 1.4);
-      glow.position.set(x, y, z + 0.15);
+      const glow = new THREE.PointLight(0xffdd88, 0.6, 1.2);
+      glow.position.set(x, y, z + 0.12);
       scene.add(glow);
     }
   }
@@ -169,27 +170,28 @@ interface PhotoItem {
 
 const PHOTO_DATA: PhotoItem[] = [
   // photo-new-1: 899x1599 (9:16 portrait)
-  { url: '/photos/photo-new-1.jpg', w: 0.28, h: 0.50, caption: 'The way you look at me 💖' },
+  { url: '/photos/photo-new-1.jpg', w: 0.28, h: 0.46, caption: 'The way you look at me 💖' },
   // photo-new-2: 1080x1920 (9:16 portrait)
-  { url: '/photos/photo-new-2.jpg', w: 0.28, h: 0.50, caption: 'Your radiant smile that lights up my whole universe ✨' },
+  { url: '/photos/photo-new-2.jpg', w: 0.28, h: 0.46, caption: 'Your radiant smile that lights up my whole universe ✨' },
   // photo-new-3: 1200x1600 (3:4 portrait)
-  { url: '/photos/photo-new-3.jpg', w: 0.36, h: 0.48, caption: 'Carrying my Queen in my arms forever 👑🥰' },
+  { url: '/photos/photo-new-3.jpg', w: 0.34, h: 0.45, caption: 'Carrying my Queen in my arms forever 👑🥰' },
   // photo-2: 675x900 (3:4 portrait)
-  { url: '/photos/photo-2.jpg',     w: 0.36, h: 0.48, caption: 'That unforgettable spark on Day 1 💫' },
+  { url: '/photos/photo-2.jpg',     w: 0.34, h: 0.45, caption: 'That unforgettable spark on Day 1 💫' },
   // photo-6: 675x900 (3:4 portrait, Anushka with Teddy Yajat!)
-  { url: '/photos/photo-6.jpg',     w: 0.36, h: 0.48, caption: 'Hugging Teddy Yajat tightly in campus 🧸🤍' },
+  { url: '/photos/photo-6.jpg',     w: 0.34, h: 0.45, caption: 'Hugging Teddy Yajat tightly in campus 🧸🤍' },
 ];
 
 function buildPhotoFrames(scene: THREE.Scene): THREE.Mesh[] {
   const txLoader = new THREE.TextureLoader();
   const clickablePhotoMeshes: THREE.Mesh[] = [];
 
+  // Raised up cleanly beneath the fairy lights (center y around 2.15 - 2.25)
   const framePositions: Array<[number, number, number]> = [
-    [-1.40, 1.82, -3.17],
-    [-0.70, 2.14, -3.17],
-    [ 0.00, 1.82, -3.17],
-    [ 0.70, 2.14, -3.17],
-    [ 1.40, 1.82, -3.17],
+    [-1.50, 2.12, -3.17],
+    [-0.75, 2.24, -3.17],
+    [ 0.00, 2.12, -3.17],
+    [ 0.75, 2.24, -3.17],
+    [ 1.50, 2.12, -3.17],
   ];
 
   framePositions.forEach(([px, py, pz], i) => {
@@ -343,26 +345,28 @@ function buildSorryBanner(scene: THREE.Scene): { group: THREE.Group; hitMesh: TH
   texture.minFilter = THREE.LinearFilter;
   texture.magFilter = THREE.LinearFilter;
 
-  // 2. Wide banner covering the span of fairy lights (-2.4 to +2.4 = 4.8m)
-  // We use bannerW = 4.4m and bannerH = 1.1m (matching 4:1 aspect ratio)
+  // 2. Wide banner covering the span of fairy lights (-2.2 to +2.2 = 4.4m)
+  // Dimensions tailored so it fills the wall width while resting below the photos
   const bannerW = 4.4;
-  const bannerH = 1.1;
+  const bannerH = 0.82;
   const bannerGeo = new THREE.PlaneGeometry(bannerW, bannerH, 48, 16);
 
-  // Gentle fabric ripple folds
+  // Subtle fabric ripple folds
   const pos = bannerGeo.attributes.position;
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i);
     const y = pos.getY(i);
-    const wave = Math.sin((x / bannerW) * Math.PI * 6.0) * 0.008 + Math.cos((y / bannerH) * Math.PI * 2.5) * 0.005;
+    const wave = Math.sin((x / bannerW) * Math.PI * 6.0) * 0.005 + Math.cos((y / bannerH) * Math.PI * 2.5) * 0.003;
     pos.setZ(i, wave);
   }
   bannerGeo.computeVertexNormals();
 
-  // 100% matte material: roughness = 1.0, metalness = 0.0, zero specular reflection
-  // MeshLambertMaterial or MeshStandardMaterial with roughness 1.0 eliminates hot-spot reflection
+  // Pure matte with self-illumination (emissive map) so text stays 100% visible and punchy regardless of shadows
   const bannerMat = new THREE.MeshStandardMaterial({
     map: texture,
+    emissiveMap: texture,
+    emissive: 0xffffff,
+    emissiveIntensity: 0.22,
     roughness: 1.0,
     metalness: 0.0,
     side: THREE.FrontSide,
@@ -395,28 +399,17 @@ function buildSorryBanner(scene: THREE.Scene): { group: THREE.Group; hitMesh: TH
     group.add(finial);
   });
 
-  // 4. Brass wall hooks & cord supports across the wide rod
+  // 4. Brass wall mounting brackets on the rod (no cords cutting across the photo area above)
   const brassMat = new THREE.MeshStandardMaterial({
     color: 0xc89e30,
     roughness: 0.4,
     metalness: 0.7,
   });
-
-  // Dual hanging cords for wide tapestry
-  const cordMat = new THREE.LineBasicMaterial({ color: 0xdfcfb8, linewidth: 2 });
-  [-1.2, 1.2].forEach((pinX) => {
+  [-1.8, -0.6, 0.6, 1.8].forEach((pinX) => {
     const wallPin = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.012, 0.04, 10), brassMat);
     wallPin.rotation.x = Math.PI / 2;
-    wallPin.position.set(pinX, 0.26, -0.01);
+    wallPin.position.set(pinX, 0.02, -0.01);
     group.add(wallPin);
-
-    const cordPts = [
-      new THREE.Vector3(pinX - 0.7, 0, 0.012),
-      new THREE.Vector3(pinX, 0.26, 0.008),
-      new THREE.Vector3(pinX + 0.7, 0, 0.012),
-    ];
-    const cordGeo = new THREE.BufferGeometry().setFromPoints(cordPts);
-    group.add(new THREE.Line(cordGeo, cordMat));
   });
 
   // 5. Hanging tassels along bottom edge
@@ -427,10 +420,12 @@ function buildSorryBanner(scene: THREE.Scene): { group: THREE.Group; hitMesh: TH
     group.add(tassel);
   });
 
-  // 6. Mount centered on back wall beneath the fairy lights (fairy lights y ~ 2.22)
-  // Back wall z = -3.2. Hang at z = -3.15, y = 1.95 so rod sits right under fairy lights
-  const baseY = 1.95;
-  group.position.set(0.0, baseY, -3.15);
+  // 6. Mount centered on back wall cleanly BELOW the photo frames
+  // Photo frames sit at y = 2.12 - 2.24 with bottom edge at ~ y = 1.88.
+  // Tapestry rod at y = 1.65 hangs down to y = 0.83 (above bed skirting).
+  // No overlap with photos, perfectly framed and unblocked.
+  const baseY = 1.65;
+  group.position.set(0.0, baseY, -3.14);
   scene.add(group);
 
   return { group, hitMesh, baseY };
