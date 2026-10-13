@@ -31,10 +31,10 @@ class NotificationHelper @Inject constructor(
         // Heartbeat channel — high importance, custom vibration, pink LED
         val heartbeatChannel = NotificationChannel(
             CHANNEL_HEARTBEAT,
-            "Heartbeat 🩷",
+            "Calculator",
             NotificationManager.IMPORTANCE_HIGH,
         ).apply {
-            description = "Notifications when your partner is thinking of you"
+            description = "Calculator notifications"
             enableLights(true)
             lightColor = Color.parseColor("#FF5C8E")
             enableVibration(true)

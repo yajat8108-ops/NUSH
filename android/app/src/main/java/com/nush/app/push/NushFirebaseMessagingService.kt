@@ -47,10 +47,10 @@ class NushFirebaseMessagingService : FirebaseMessagingService() {
 
         val title = message.notification?.title
             ?: message.data["title"]
-            ?: "NUSH 🩷"
+            ?: "Calculator"
         val body  = message.notification?.body
             ?: message.data["body"]
-            ?: "Someone is thinking of you"
+            ?: "Calculator is yearning for you 🩷"
         val type  = message.data["type"] ?: "heartbeat"
 
         if (type == "heartbeat") {

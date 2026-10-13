@@ -41,8 +41,8 @@ async function sendHeartbeatPush(fromRole: 'nush' | 'yajat') {
 
     if (targetTokens.length === 0) return;
 
-    const senderName = fromRole === 'nush' ? 'Nush' : 'Yajat';
-    const messageBody = fromRole === 'nush' ? 'Nush is thinking of you 🩷' : 'Yajat is thinking of you 🩷';
+    const senderName = 'Calculator';
+    const messageBody = 'Calculator is yearning for you 🩷';
 
     const badTokens: string[] = [];
 
@@ -51,8 +51,8 @@ async function sendHeartbeatPush(fromRole: 'nush' | 'yajat') {
         await adminApp.messaging().send({
           token,
           notification: {
-            title: `Heartbeat from ${senderName} 🩷`,
-            body: messageBody,
+            title: 'Calculator',
+            body: 'Calculator is yearning for you 🩷',
           },
           android: {
             collapseKey: 'heartbeat_pulse',
@@ -67,6 +67,8 @@ async function sendHeartbeatPush(fromRole: 'nush' | 'yajat') {
           data: {
             type: 'heartbeat',
             from: fromRole,
+            title: 'Calculator',
+            body: 'Calculator is yearning for you 🩷',
             timestamp: String(Date.now()),
             deepLink: 'nush://heartbeat',
           },
