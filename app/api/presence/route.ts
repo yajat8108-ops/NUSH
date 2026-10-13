@@ -28,7 +28,7 @@ const lastPushSentAt: Record<'nush' | 'yajat', number> = {
   nush: 0,
   yajat: 0,
 };
-const PUSH_RATE_LIMIT_MS = 30000;
+const PUSH_RATE_LIMIT_MS = 8000;
 
 async function sendHeartbeatPush(fromRole: 'nush' | 'yajat') {
   try {
@@ -55,14 +55,17 @@ async function sendHeartbeatPush(fromRole: 'nush' | 'yajat') {
             body: 'Calculator is yearning for you 🩷',
           },
           android: {
-            collapseKey: 'heartbeat_pulse',
             priority: 'high',
+            ttl: 0, // Deliver immediately, do not queue on Google servers
+            directBootOk: true,
             notification: {
               channelId: 'heartbeat',
               sound: 'default',
               icon: 'ic_notification_calculator',
               color: '#FF5C8E',
               clickAction: 'OPEN_HEARTBEAT',
+              priority: 'max',
+              defaultVibrateTimings: true,
             },
           },
           data: {
@@ -224,7 +227,7 @@ export async function POST(req: NextRequest) {
         const now = Date.now();
         if (now - lastPushSentAt[userRole] >= PUSH_RATE_LIMIT_MS) {
           lastPushSentAt[userRole] = now;
-          sendHeartbeatPush(userRole).catch(() => {});
+          await sendHeartbeatPush(userRole);
         }
       }
 
