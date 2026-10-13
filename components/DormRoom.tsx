@@ -252,113 +252,120 @@ function spawnHeart(scene: THREE.Scene, origin: THREE.Vector3): Particle {
   return { mesh, vel: new THREE.Vector3((Math.random() - 0.5) * 0.25, 0.22 + Math.random() * 0.28, 0), life: 0, maxLife: 2.5 + Math.random() * 2 };
 }
 
-// ─── 3D "I am sorry" Banner (Realistic Handcrafted Wall Tapestry) ───────────────
+// ─── 3D "I am sorry" Banner (Wide Tapestry Covering Fairy Lights Span) ────────
 function buildSorryBanner(scene: THREE.Scene): { group: THREE.Group; hitMesh: THREE.Mesh; baseY: number } {
   const group = new THREE.Group();
 
-  // 1. High-resolution canvas texture for realistic woven linen fabric
+  // 1. Ultra-crisp high-res canvas (4096 x 1024) for wide wall tapestry
   const canvas = document.createElement('canvas');
-  canvas.width = 2048;
-  canvas.height = 800;
+  canvas.width = 4096;
+  canvas.height = 1024;
   const ctx = canvas.getContext('2d');
   if (ctx) {
-    // Warm natural ivory/cream canvas fabric base
-    ctx.fillStyle = '#FFF8F2';
-    ctx.fillRect(0, 0, 2048, 800);
+    // Warm rich ivory canvas fabric base with subtle soft gradient
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, 1024);
+    bgGrad.addColorStop(0, '#FFFBF8');
+    bgGrad.addColorStop(0.5, '#FFF5EF');
+    bgGrad.addColorStop(1, '#FEEDF4');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, 4096, 1024);
 
-    // Subtle fabric woven texture pattern
-    ctx.fillStyle = 'rgba(210, 185, 170, 0.08)';
-    for (let x = 0; x < 2048; x += 6) {
-      ctx.fillRect(x, 0, 2, 800);
+    // Fine woven fabric texture
+    ctx.fillStyle = 'rgba(215, 175, 190, 0.08)';
+    for (let x = 0; x < 4096; x += 8) {
+      ctx.fillRect(x, 0, 3, 1024);
     }
-    for (let y = 0; y < 800; y += 6) {
-      ctx.fillRect(0, y, 2048, 2);
+    for (let y = 0; y < 1024; y += 8) {
+      ctx.fillRect(0, y, 4096, 3);
     }
 
-    // Soft dusty-rose inner framed panel
-    const innerGrad = ctx.createLinearGradient(0, 40, 0, 760);
-    innerGrad.addColorStop(0, '#FFE8F0');
-    innerGrad.addColorStop(1, '#FFF2F6');
-    ctx.fillStyle = innerGrad;
+    // Inner decorative framed border
+    const borderInset = 40;
+    ctx.lineWidth = 14;
+    ctx.strokeStyle = '#D9487D';
     if (typeof (ctx as any).roundRect === 'function') {
-      (ctx as any).roundRect(40, 40, 1968, 720, 28);
+      (ctx as any).roundRect(borderInset, borderInset, 4096 - borderInset * 2, 1024 - borderInset * 2, 36);
     } else {
-      ctx.rect(40, 40, 1968, 720);
+      ctx.rect(borderInset, borderInset, 4096 - borderInset * 2, 1024 - borderInset * 2);
     }
-    ctx.fill();
-
-    // Elegant stitched border
-    ctx.lineWidth = 8;
-    ctx.strokeStyle = '#E092B0';
     ctx.stroke();
 
-    ctx.lineWidth = 4;
-    ctx.setLineDash([16, 12]);
-    ctx.strokeStyle = '#B86588';
+    // Inner stitched dashed line
+    ctx.lineWidth = 6;
+    ctx.setLineDash([28, 18]);
+    ctx.strokeStyle = '#B85078';
+    if (typeof (ctx as any).roundRect === 'function') {
+      (ctx as any).roundRect(borderInset + 20, borderInset + 20, 4096 - (borderInset + 20) * 2, 1024 - (borderInset + 20) * 2, 28);
+    } else {
+      ctx.rect(borderInset + 20, borderInset + 20, 4096 - (borderInset + 20) * 2, 1024 - (borderInset + 20) * 2);
+    }
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Decorative corner bows / hearts
-    ctx.fillStyle = '#D9487D';
-    ctx.font = '48px sans-serif';
-    ctx.fillText('🌸', 80, 120);
-    ctx.fillText('🌸', 1920, 120);
-    ctx.fillText('🤍', 80, 720);
-    ctx.fillText('🤍', 1920, 720);
-
-    // Top subtle header
-    ctx.fillStyle = '#A05278';
-    ctx.font = 'bold 36px Quicksand, sans-serif';
+    // Decorative corner stamps
+    ctx.font = '72px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.letterSpacing = '6px';
-    ctx.fillText('✦  A PROMISE FROM YAJAT  ✦', 1024, 160);
+    ctx.fillText('🌸', 160, 150);
+    ctx.fillText('🌸', 4096 - 160, 150);
+    ctx.fillText('🤍', 160, 1024 - 150);
+    ctx.fillText('🤍', 4096 - 160, 1024 - 150);
 
-    // Main romantic headline - sharp, deep plum/burgundy with clear contrast
-    ctx.fillStyle = '#3E1C38';
-    ctx.font = 'bold 88px Quicksand, sans-serif';
-    ctx.letterSpacing = '2px';
-    ctx.shadowColor = 'rgba(224, 146, 176, 0.4)';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetY = 3;
-    ctx.fillText("I'M SO SORRY, NUSH 🤍", 1024, 380);
+    // Top eyebrow line
+    ctx.fillStyle = '#A03868';
+    ctx.font = 'bold 56px Quicksand, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '12px';
+    ctx.fillText('✦  A PROMISE FROM YAJAT  ✦', 2048, 200);
 
-    // Bottom handwritten cursive promise
-    ctx.shadowColor = 'transparent';
-    ctx.fillStyle = '#7C345C';
-    ctx.font = 'italic 52px Nunito, sans-serif';
-    ctx.fillText('You are my first and only choice — always & forever ✨', 1024, 560);
+    // Main romantic headline — ultra bold, dark contrast plum/burgundy (#2A0824)
+    // No white glare/shine, perfectly legible in all room lighting
+    ctx.fillStyle = '#2A0824';
+    ctx.font = '900 150px Quicksand, "Arial Black", sans-serif';
+    ctx.letterSpacing = '4px';
+    ctx.fillText("I'M SO SORRY, NUSH 🤍", 2048, 490);
 
-    // Bottom decorative mini hearts divider
-    ctx.fillStyle = '#E092B0';
-    ctx.font = '28px sans-serif';
-    ctx.fillText('♡  •  ♡  •  ♡  •  ♡  •  ♡', 1024, 660);
+    // Subtitle promise — dark deep rose-plum (#5E183E)
+    ctx.fillStyle = '#5E183E';
+    ctx.font = 'italic 700 82px Nunito, sans-serif';
+    ctx.letterSpacing = '1px';
+    ctx.fillText('You are my first and only choice — always & forever ✨', 2048, 730);
+
+    // Bottom garland divider
+    ctx.fillStyle = '#C84C7A';
+    ctx.font = 'bold 50px sans-serif';
+    ctx.letterSpacing = '18px';
+    ctx.fillText('♡  •  ♡  •  ♡  •  ♡  •  ♡  •  ♡  •  ♡', 2048, 880);
   }
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
 
-  // 2. Realistic linen cloth mesh with subtle wave folds
-  const bannerW = 1.35;
-  const bannerH = 0.52;
-  const bannerGeo = new THREE.PlaneGeometry(bannerW, bannerH, 32, 16);
+  // 2. Wide banner covering the span of fairy lights (-2.4 to +2.4 = 4.8m)
+  // We use bannerW = 4.4m and bannerH = 1.1m (matching 4:1 aspect ratio)
+  const bannerW = 4.4;
+  const bannerH = 1.1;
+  const bannerGeo = new THREE.PlaneGeometry(bannerW, bannerH, 48, 16);
+
+  // Gentle fabric ripple folds
   const pos = bannerGeo.attributes.position;
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i);
     const y = pos.getY(i);
-    // Natural fabric ripples and gentle sag
-    const wave = Math.sin((x / bannerW) * Math.PI * 3.5) * 0.012 + Math.cos((y / bannerH) * Math.PI * 2) * 0.008;
+    const wave = Math.sin((x / bannerW) * Math.PI * 6.0) * 0.008 + Math.cos((y / bannerH) * Math.PI * 2.5) * 0.005;
     pos.setZ(i, wave);
   }
   bannerGeo.computeVertexNormals();
 
+  // 100% matte material: roughness = 1.0, metalness = 0.0, zero specular reflection
+  // MeshLambertMaterial or MeshStandardMaterial with roughness 1.0 eliminates hot-spot reflection
   const bannerMat = new THREE.MeshStandardMaterial({
     map: texture,
-    roughness: 0.88,
-    metalness: 0.02,
-    emissive: 0x301828,
-    emissiveIntensity: 0.15,
-    side: THREE.DoubleSide,
+    roughness: 1.0,
+    metalness: 0.0,
+    side: THREE.FrontSide,
   });
 
   const hitMesh = new THREE.Mesh(bannerGeo, bannerMat);
@@ -367,60 +374,63 @@ function buildSorryBanner(scene: THREE.Scene): { group: THREE.Group; hitMesh: TH
   hitMesh.userData = { isSorryBanner: true };
   group.add(hitMesh);
 
-  // 3. Wooden Dowel Rod across the top
+  // 3. Wooden dowel rod spanning the top
   const woodMat = new THREE.MeshStandardMaterial({
-    color: 0x4a2a16, // rich walnut wood
-    roughness: 0.72,
-    metalness: 0.08,
+    color: 0x3d2012, // dark rich wood
+    roughness: 0.85,
+    metalness: 0.05,
   });
-  const rodLength = bannerW + 0.12;
-  const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.013, rodLength, 16), woodMat);
+  const rodLength = bannerW + 0.24;
+  const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, rodLength, 20), woodMat);
   rod.rotation.z = Math.PI / 2;
-  rod.position.set(0, 0, 0.008);
+  rod.position.set(0, 0, 0.012);
   rod.castShadow = true;
   group.add(rod);
 
-  // Turned round wooden finial balls on both ends of the rod
+  // Finial balls on both rod tips
   [-rodLength / 2, rodLength / 2].forEach((x) => {
-    const finial = new THREE.Mesh(new THREE.SphereGeometry(0.022, 14, 14), woodMat);
-    finial.position.set(x, 0, 0.008);
+    const finial = new THREE.Mesh(new THREE.SphereGeometry(0.038, 16, 16), woodMat);
+    finial.position.set(x, 0, 0.012);
     finial.castShadow = true;
     group.add(finial);
   });
 
-  // 4. Brass mounting wall nail & hanging twine cord
+  // 4. Brass wall hooks & cord supports across the wide rod
   const brassMat = new THREE.MeshStandardMaterial({
-    color: 0xd4af37, // brass
-    roughness: 0.35,
-    metalness: 0.85,
+    color: 0xc89e30,
+    roughness: 0.4,
+    metalness: 0.7,
   });
-  const wallPin = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.01, 0.035, 10), brassMat);
-  wallPin.rotation.x = Math.PI / 2;
-  wallPin.position.set(0, 0.22, -0.01);
-  group.add(wallPin);
 
-  // Hanging cord lines meeting at the brass pin
-  const cordMat = new THREE.LineBasicMaterial({ color: 0xdfcfb8 });
-  const cordPts = [
-    new THREE.Vector3(-rodLength / 2 + 0.04, 0, 0.008),
-    new THREE.Vector3(0, 0.22, 0.005),
-    new THREE.Vector3(rodLength / 2 - 0.04, 0, 0.008),
-  ];
-  const cordGeo = new THREE.BufferGeometry().setFromPoints(cordPts);
-  group.add(new THREE.Line(cordGeo, cordMat));
+  // Dual hanging cords for wide tapestry
+  const cordMat = new THREE.LineBasicMaterial({ color: 0xdfcfb8, linewidth: 2 });
+  [-1.2, 1.2].forEach((pinX) => {
+    const wallPin = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.012, 0.04, 10), brassMat);
+    wallPin.rotation.x = Math.PI / 2;
+    wallPin.position.set(pinX, 0.26, -0.01);
+    group.add(wallPin);
 
-  // 5. Soft hanging yarn tassels at bottom left & right corners
-  const tasselMat = new THREE.MeshStandardMaterial({ color: 0xe0789b, roughness: 0.9 });
-  [-bannerW / 2 + 0.06, bannerW / 2 - 0.06].forEach((x) => {
-    const tassel = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.06, 8), tasselMat);
-    tassel.position.set(x, -bannerH - 0.03, 0.005);
+    const cordPts = [
+      new THREE.Vector3(pinX - 0.7, 0, 0.012),
+      new THREE.Vector3(pinX, 0.26, 0.008),
+      new THREE.Vector3(pinX + 0.7, 0, 0.012),
+    ];
+    const cordGeo = new THREE.BufferGeometry().setFromPoints(cordPts);
+    group.add(new THREE.Line(cordGeo, cordMat));
+  });
+
+  // 5. Hanging tassels along bottom edge
+  const tasselMat = new THREE.MeshStandardMaterial({ color: 0xd9487d, roughness: 0.95 });
+  [-bannerW / 2 + 0.15, -bannerW / 4, 0, bannerW / 4, bannerW / 2 - 0.15].forEach((x) => {
+    const tassel = new THREE.Mesh(new THREE.ConeGeometry(0.024, 0.08, 10), tasselMat);
+    tassel.position.set(x, -bannerH - 0.04, 0.008);
     group.add(tassel);
   });
 
-  // 6. Mount cleanly on back wall beneath the couple photo frames and above the bed
-  // Back wall is at z = -3.2. Photos are at y = 1.82 - 2.14. Skirting is at y = 1.38.
-  const baseY = 1.34;
-  group.position.set(-0.35, baseY, -3.14);
+  // 6. Mount centered on back wall beneath the fairy lights (fairy lights y ~ 2.22)
+  // Back wall z = -3.2. Hang at z = -3.15, y = 1.95 so rod sits right under fairy lights
+  const baseY = 1.95;
+  group.position.set(0.0, baseY, -3.15);
   scene.add(group);
 
   return { group, hitMesh, baseY };
