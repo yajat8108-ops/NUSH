@@ -17,15 +17,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,40 +41,43 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.nush.app.bridge.AndroidBridge
 import com.nush.app.data.PreferencesManager
 import com.nush.app.data.PushRepository
+import com.nush.app.ui.components.AuroraHeartOverlay
+import com.nush.app.ui.components.CalculatorAuthScreen
 import com.nush.app.ui.components.OfflineScreen
 import com.nush.app.ui.components.PermissionRationaleDialog
 import com.nush.app.ui.theme.NushTheme
 import com.nush.app.ui.theme.PinkPrimary
 import com.nush.app.ui.webview.NushWebChromeClient
 import com.nush.app.ui.webview.NushWebViewClient
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject lateinit var androidBridge: AndroidBridge
-    @Inject lateinit var preferencesManager: PreferencesManager
-    @Inject lateinit var pushRepository: PushRepository
+    // Dependencies — instantiated directly (no DI framework)
+    private val preferencesManager by lazy { PreferencesManager(applicationContext) }
+    private val pushRepository     by lazy { PushRepository() }
+    private val androidBridge      by lazy {
+        AndroidBridge(
+            context             = this,
+            preferencesManager  = preferencesManager,
+            pushRepository      = pushRepository,
+        )
+    }
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
 
     private val fileChooserLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (filePathCallback != null) {
-            val results = WebChromeClient.FileChooserParams.parseResult(result.resultCode, result.data)
-            filePathCallback?.onReceiveValue(results)
-            filePathCallback = null
-        }
+        filePathCallback?.onReceiveValue(
+            WebChromeClient.FileChooserParams.parseResult(result.resultCode, result.data)
+        )
+        filePathCallback = null
     }
 
-    private var requestNotificationPermissionLauncher = registerForActivityResult(
+    private val requestNotificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        if (isGranted) {
-            androidBridge.registerPush()
-        }
+        if (isGranted) androidBridge.registerPush()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,41 +98,37 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun MainContent(intent: Intent) {
-        var isOffline by remember { mutableStateOf(false) }
-        var pageProgress by remember { mutableIntStateOf(0) }
+        var isOffline             by remember { mutableStateOf(false) }
+        var pageProgress          by remember { mutableIntStateOf(0) }
         var showPermissionRationale by remember { mutableStateOf(false) }
-        var webViewInstance by remember { mutableStateOf<WebView?>(null) }
-        var isAuthenticated by remember { mutableStateOf(false) }
-        var showAuroraHeart by remember { mutableStateOf(false) }
+        var webViewInstance       by remember { mutableStateOf<WebView?>(null) }
+        var isAuthenticated       by remember { mutableStateOf(false) }
+        var showAuroraHeart       by remember { mutableStateOf(false) }
 
+        // Wire up native bridge listener to show aurora overlay on heartbeat
         LaunchedEffect(Unit) {
             androidBridge.onHeartbeatPulseListener = {
                 showAuroraHeart = true
             }
         }
 
-        // If not authenticated via the secret codeword "chintapakdamdam", display the Calculator screen
+        // ── Calculator disguise gate ──────────────────────────────────────────
         if (!isAuthenticated) {
-            com.nush.app.ui.components.CalculatorAuthScreen(
-                onUnlocked = {
-                    isAuthenticated = true
-                }
+            CalculatorAuthScreen(
+                onUnlocked = { isAuthenticated = true }
             )
             return
         }
 
-        // Ask for Notification permission on API 33+
+        // ── Notification permission on API 33+ ────────────────────────────────
         LaunchedEffect(Unit) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val hasPermission = ContextCompat.checkSelfPermission(
                     this@MainActivity,
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
-                if (!hasPermission) {
-                    showPermissionRationale = true
-                } else {
-                    androidBridge.registerPush()
-                }
+                if (!hasPermission) showPermissionRationale = true
+                else androidBridge.registerPush()
             } else {
                 androidBridge.registerPush()
             }
@@ -137,16 +139,16 @@ class MainActivity : ComponentActivity() {
                 onConfirm = {
                     showPermissionRationale = false
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        requestNotificationPermissionLauncher.launch(
+                            Manifest.permission.POST_NOTIFICATIONS
+                        )
                     }
                 },
-                onDismiss = {
-                    showPermissionRationale = false
-                }
+                onDismiss = { showPermissionRationale = false }
             )
         }
 
-        // Predictive back: history back first, else exit app
+        // Back-press: navigate WebView history first
         BackHandler(enabled = webViewInstance?.canGoBack() == true && !isOffline) {
             webViewInstance?.goBack()
         }
@@ -168,27 +170,23 @@ class MainActivity : ComponentActivity() {
                                 ViewGroup.LayoutParams.MATCH_PARENT
                             )
                             settings.apply {
-                                javaScriptEnabled = true
-                                domStorageEnabled = true
-                                databaseEnabled = true
-                                cacheMode = WebSettings.LOAD_DEFAULT
-                                mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
-                                safeBrowsingEnabled = true
+                                javaScriptEnabled              = true
+                                domStorageEnabled              = true
+                                databaseEnabled                = true
+                                cacheMode                      = WebSettings.LOAD_DEFAULT
+                                mixedContentMode               = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+                                safeBrowsingEnabled            = true
                                 mediaPlaybackRequiresUserGesture = false
-                                allowFileAccess = true
+                                allowFileAccess                = true
                                 setSupportZoom(false)
-                                displayZoomControls = false
+                                displayZoomControls            = false
                             }
-
-                            // Keep WebView clean without overscroll or pull to refresh
                             overScrollMode = WebView.OVER_SCROLL_NEVER
-
                             addJavascriptInterface(androidBridge, "AndroidBridge")
 
                             webViewClient = NushWebViewClient(
                                 context = this@MainActivity,
                                 onPageFinishedCallback = { _ ->
-                                    // Handle deep links when page finishes
                                     handleDeepLink(this, intent)
                                 },
                                 onErrorReceived = { error ->
@@ -203,12 +201,10 @@ class MainActivity : ComponentActivity() {
                                 onShowFileChooserCallback = { callback, params ->
                                     filePathCallback?.onReceiveValue(null)
                                     filePathCallback = callback
-                                    val chooserIntent = params?.createIntent()
                                     try {
-                                        if (chooserIntent != null) {
-                                            fileChooserLauncher.launch(chooserIntent)
-                                        }
-                                    } catch (e: Exception) {
+                                        val chooserIntent = params?.createIntent()
+                                        if (chooserIntent != null) fileChooserLauncher.launch(chooserIntent)
+                                    } catch (_: Exception) {
                                         filePathCallback = null
                                         return@NushWebChromeClient false
                                     }
@@ -223,21 +219,22 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize()
                 )
 
+                // Thin pink progress bar at top while page loads
                 if (pageProgress in 1..99) {
                     LinearProgressIndicator(
-                        progress = { pageProgress / 100f },
-                        modifier = Modifier
+                        progress      = { pageProgress / 100f },
+                        modifier      = Modifier
                             .fillMaxWidth()
                             .height(3.dp)
                             .align(Alignment.TopCenter),
-                        color = PinkPrimary,
+                        color         = PinkPrimary,
                     )
                 }
             }
 
-            // Romantic native aurora pulse overlay on partner heartbeat
-            com.nush.app.ui.components.AuroraHeartOverlay(
-                isActive = showAuroraHeart,
+            // ── Aurora heart overlay — triggered by partner heartbeat ──────────
+            AuroraHeartOverlay(
+                isActive  = showAuroraHeart,
                 onDismiss = { showAuroraHeart = false }
             )
         }
@@ -246,7 +243,6 @@ class MainActivity : ComponentActivity() {
     private fun handleDeepLink(webView: WebView, intent: Intent?) {
         val data = intent?.data ?: return
         if (data.scheme == "nush" && data.host == "heartbeat") {
-            // Scroll smoothly to presence aura on site
             webView.evaluateJavascript(
                 "document.getElementById('presence-aurora')?.scrollIntoView({behavior:'smooth'});",
                 null

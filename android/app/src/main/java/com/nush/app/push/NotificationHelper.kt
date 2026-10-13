@@ -5,21 +5,15 @@ import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.nush.app.R
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class NotificationHelper @Inject constructor(
-    @ApplicationContext private val context: Context,
-) {
+class NotificationHelper(private val context: Context) {
+
     companion object {
-        const val CHANNEL_HEARTBEAT = "heartbeat"
-        const val CHANNEL_MESSAGES  = "messages"
-        const val NOTIF_ID_HEARTBEAT = 1001
+        const val CHANNEL_HEARTBEAT      = "heartbeat"
+        const val CHANNEL_MESSAGES       = "messages"
+        const val NOTIF_ID_HEARTBEAT     = 1001
     }
 
     private val manager: NotificationManager =

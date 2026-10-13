@@ -74,7 +74,7 @@ class HeartbeatAppWidget : AppWidgetProvider() {
     private suspend fun triggerHeartbeat(context: Context) {
         try {
             val prefs = PreferencesManager(context)
-            val role = prefs.roleFlow.first().ifBlank { BuildConfig.PRESET_ROLE }.ifBlank { "nush" }
+            val role = prefs.roleFlow.first().ifBlank { BuildConfig.DEFAULT_ROLE }.ifBlank { "nush" }
 
             val url = URL("${BuildConfig.NUSH_BASE_URL}/api/presence")
             val conn = url.openConnection() as HttpURLConnection

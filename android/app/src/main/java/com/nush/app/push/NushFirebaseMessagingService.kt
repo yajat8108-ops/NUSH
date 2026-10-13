@@ -1,29 +1,22 @@
 package com.nush.app.push
 
-import android.app.PendingIntent
-import android.content.Intent
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.nush.app.MainActivity
 import com.nush.app.data.PreferencesManager
 import com.nush.app.data.PushRepository
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class NushFirebaseMessagingService : FirebaseMessagingService() {
 
-    @Inject lateinit var notificationHelper: NotificationHelper
-    @Inject lateinit var preferencesManager: PreferencesManager
-    @Inject lateinit var pushRepository: PushRepository
-
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val scope              = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val notificationHelper by lazy { NotificationHelper(this) }
+    private val preferencesManager by lazy { PreferencesManager(this) }
+    private val pushRepository     by lazy { PushRepository() }
 
     companion object {
         private const val TAG = "NushFCM"

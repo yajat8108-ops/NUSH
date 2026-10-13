@@ -7,25 +7,20 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.nush.app.BuildConfig
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
 private val Context.dataStore: DataStore<Preferences>
     by preferencesDataStore(name = "nush_prefs")
 
-@Singleton
-class PreferencesManager @Inject constructor(
-    @ApplicationContext private val context: Context,
-) {
+class PreferencesManager(private val context: Context) {
+
     companion object {
         private val KEY_ROLE      = stringPreferencesKey("role")
         private val KEY_FCM_TOKEN = stringPreferencesKey("fcm_token")
 
         /** Role pre-seeded by product flavor (may be empty string in generic build). */
-        val PRESET_ROLE: String = BuildConfig.PRESET_ROLE
+        val PRESET_ROLE: String = BuildConfig.DEFAULT_ROLE
     }
 
     /** Emits "nush", "yajat", or "" when no role chosen yet. */

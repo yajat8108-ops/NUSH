@@ -9,40 +9,38 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import android.util.Log
 import android.webkit.JavascriptInterface
-import android.webkit.WebView
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.graphics.toColorInt
-import com.nush.app.BuildConfig
 import com.nush.app.data.PreferencesManager
 import com.nush.app.data.PushRepository
 import com.google.firebase.messaging.FirebaseMessaging
-import dagger.hilt.android.qualifiers.ActivityContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
 /**
- * JS bridge injected only when the WebView is on our own origin.
- * Exposed to JS as window.AndroidBridge.
+ * JS bridge exposed to the WebView as window.AndroidBridge.
+ * Instantiated directly in MainActivity — no DI required.
  */
-class AndroidBridge @Inject constructor(
-    @ActivityContext private val context: Context,
+class AndroidBridge(
+    private val context: Context,
     private val preferencesManager: PreferencesManager,
     private val pushRepository: PushRepository,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
+    /** Set by MainActivity to trigger the Aurora heart overlay on heartbeat. */
     var onHeartbeatPulseListener: (() -> Unit)? = null
 
     companion object {
         private const val TAG = "AndroidBridge"
     }
 
-    /** Called by web app when partner or self heartbeat is pulsed */
+    /** Called by the website when a heartbeat pulse is triggered. */
     @JavascriptInterface
     fun onHeartbeatPulse() {
         scope.launch(Dispatchers.Main) {
@@ -50,7 +48,7 @@ class AndroidBridge @Inject constructor(
         }
     }
 
-    /** Called by the website to trigger native haptic feedback.
+    /** Native haptic feedback.
      *  pattern: comma-separated ms values e.g. "60,40,80,200" */
     @JavascriptInterface
     fun haptic(pattern: String) {
@@ -79,7 +77,7 @@ class AndroidBridge @Inject constructor(
         }
     }
 
-    /** Sets and persists the user's role ("nush" or "yajat"). */
+    /** Persists the user's role ("nush" or "yajat"). */
     @JavascriptInterface
     fun setRole(role: String) {
         if (role != "nush" && role != "yajat") {
@@ -88,7 +86,6 @@ class AndroidBridge @Inject constructor(
         }
         scope.launch {
             preferencesManager.setRole(role)
-            // Register token if we already have one
             val token = preferencesManager.fcmTokenFlow.first()
             if (!token.isNullOrBlank()) {
                 pushRepository.registerToken(role, token)
@@ -113,8 +110,7 @@ class AndroidBridge @Inject constructor(
         }
     }
 
-    /** Opens an external URL in Chrome Custom Tabs.
-     *  Only accepts http/https to prevent intent injection. */
+    /** Opens an external URL in Chrome Custom Tabs (http/https only). */
     @JavascriptInterface
     fun openExternal(url: String) {
         try {

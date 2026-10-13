@@ -7,13 +7,9 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class PushRepository @Inject constructor(
-    private val preferencesManager: PreferencesManager,
-) {
+class PushRepository {
+
     companion object {
         private const val TAG = "PushRepository"
     }
@@ -25,18 +21,18 @@ class PushRepository @Inject constructor(
     suspend fun registerToken(role: String, fcmToken: String): Boolean =
         withContext(Dispatchers.IO) {
             try {
-                val url = URL("${BuildConfig.NUSH_BASE_URL}/api/push/register")
+                val url  = URL("${BuildConfig.NUSH_BASE_URL}/api/push/register")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.apply {
                     requestMethod = "POST"
                     setRequestProperty("Content-Type", "application/json")
                     setRequestProperty("x-push-secret", BuildConfig.PUSH_SHARED_SECRET)
-                    doOutput = true
+                    doOutput      = true
                     connectTimeout = 10_000
-                    readTimeout = 10_000
+                    readTimeout    = 10_000
                 }
                 val body = JSONObject().apply {
-                    put("role", role)
+                    put("role",     role)
                     put("fcmToken", fcmToken)
                 }.toString()
                 conn.outputStream.use { it.write(body.toByteArray()) }
