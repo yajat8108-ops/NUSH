@@ -1,0 +1,10 @@
+<resources>
+    <color name="pink">#FF9EC9</color>
+    <color name="pink_deep">#FF5C8E</color>
+    <color name="lavender">#B9AEF5</color>
+    <color name="cream">#FFF4ED</color>
+    <color name="plum">#3B2245</color>
+    <color name="plum_soft">#6B4D78</color>
+    <color name="white">#FFFFFF</color>
+    <color name="dark_bg">#140E1E</color>
+</resources>

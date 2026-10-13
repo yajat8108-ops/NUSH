@@ -13,11 +13,81 @@ const REPO = 'NUSH';
 const BRANCH = 'data-sync';
 const FILE_PATH = 'sync/presence.json';
 
+import { fetchPushTokens, pruneInvalidTokens } from '@/lib/pushTokenStore';
+import { getFirebaseAdmin } from '@/lib/firebaseAdmin';
+
 interface UserPresence {
   role: 'nush' | 'yajat';
   status: string;
   heartbeat: boolean;
   timestamp: number;
+}
+
+// Rate limiting map: role -> timestamp of last sent push (30 seconds cooldown)
+const lastPushSentAt: Record<'nush' | 'yajat', number> = {
+  nush: 0,
+  yajat: 0,
+};
+const PUSH_RATE_LIMIT_MS = 30000;
+
+async function sendHeartbeatPush(fromRole: 'nush' | 'yajat') {
+  try {
+    const adminApp = getFirebaseAdmin();
+    if (!adminApp) return;
+
+    const targetRole: 'nush' | 'yajat' = fromRole === 'nush' ? 'yajat' : 'nush';
+    const tokensRegistry = await fetchPushTokens();
+    const targetTokens = tokensRegistry[targetRole]?.map((t) => t.token) || [];
+
+    if (targetTokens.length === 0) return;
+
+    const senderName = fromRole === 'nush' ? 'Nush' : 'Yajat';
+    const messageBody = fromRole === 'nush' ? 'Nush is thinking of you 🩷' : 'Yajat is thinking of you 🩷';
+
+    const badTokens: string[] = [];
+
+    for (const token of targetTokens) {
+      try {
+        await adminApp.messaging().send({
+          token,
+          notification: {
+            title: `Heartbeat from ${senderName} 🩷`,
+            body: messageBody,
+          },
+          android: {
+            collapseKey: 'heartbeat_pulse',
+            priority: 'high',
+            notification: {
+              channelId: 'heartbeat',
+              sound: 'default',
+              color: '#FF5C8E',
+              clickAction: 'OPEN_HEARTBEAT',
+            },
+          },
+          data: {
+            type: 'heartbeat',
+            from: fromRole,
+            timestamp: String(Date.now()),
+            deepLink: 'nush://heartbeat',
+          },
+        });
+      } catch (err: any) {
+        const code = err.code || err.errorInfo?.code;
+        if (
+          code === 'messaging/registration-token-not-registered' ||
+          code === 'messaging/invalid-argument'
+        ) {
+          badTokens.push(token);
+        }
+      }
+    }
+
+    if (badTokens.length > 0) {
+      await pruneInvalidTokens(targetRole, badTokens);
+    }
+  } catch (error) {
+    console.error('Error dispatching heartbeat push notification:', error);
+  }
 }
 
 let inMemoryPresence: {
@@ -145,6 +215,15 @@ export async function POST(req: NextRequest) {
         heartbeat: Boolean(heartbeat),
         timestamp: Date.now(),
       };
+
+      // Trigger push notification if heartbeat was pulsed and cooldown passed
+      if (Boolean(heartbeat)) {
+        const now = Date.now();
+        if (now - lastPushSentAt[userRole] >= PUSH_RATE_LIMIT_MS) {
+          lastPushSentAt[userRole] = now;
+          sendHeartbeatPush(userRole).catch(() => {});
+        }
+      }
 
       // Debounce write to GitHub so high frequency heartbeat holds don't hit rate limits
       if (pendingWriteTimeout) {

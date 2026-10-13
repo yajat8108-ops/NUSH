@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">NUSH</string>
+    <string name="shortcut_heartbeat">Send Heartbeat</string>
+    <string name="shortcut_heartbeat_long">Send an instant heartbeat pulse 💓</string>
+    <string name="shortcut_room">3D Dorm Room</string>
+    <string name="shortcut_room_long">Visit Nush\'s private 3D sanctuary 🏠</string>
+    <string name="shortcut_letter">Love Letter</string>
+    <string name="shortcut_letter_long">Read our anniversary letter 💌</string>
+
+    <string name="notification_channel_heartbeat">Heartbeat</string>
+    <string name="notification_channel_heartbeat_desc">Real-time heartbeat pulse alerts between Yajat and Nush</string>
+    <string name="notification_channel_messages">Messages</string>
+    <string name="notification_channel_messages_desc">Updates and romantic notes</string>
+
+    <string name="widget_description">Instant Heartbeat Pulse Home Screen Widget</string>
+    <string name="widget_title">Our Heartbeat</string>
+    <string name="widget_status_idle">Tap to pulse ❤️</string>
+    <string name="widget_status_pulsing">Pulsing… 💓</string>
+</resources>

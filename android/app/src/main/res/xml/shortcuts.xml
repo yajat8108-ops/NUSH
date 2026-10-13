@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="heartbeat"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_heart"
+        android:shortcutShortLabel="@string/shortcut_heartbeat"
+        android:shortcutLongLabel="@string/shortcut_heartbeat_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.nush.app"
+            android:targetClass="com.nush.app.MainActivity"
+            android:data="nush://heartbeat" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="room"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_room"
+        android:shortcutShortLabel="@string/shortcut_room"
+        android:shortcutLongLabel="@string/shortcut_room_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.nush.app"
+            android:targetClass="com.nush.app.MainActivity"
+            android:data="https://nush.vercel.app/#dorm-room" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="letter"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_letter"
+        android:shortcutShortLabel="@string/shortcut_letter"
+        android:shortcutLongLabel="@string/shortcut_letter_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.nush.app"
+            android:targetClass="com.nush.app.MainActivity"
+            android:data="https://nush.vercel.app/#letter" />
+    </shortcut>
+</shortcuts>
