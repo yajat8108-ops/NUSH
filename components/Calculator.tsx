@@ -229,12 +229,18 @@ export default function Calculator() {
     const fullExpr = autoCloseParen(expression + currentInput);
     if (!fullExpr.trim()) return;
 
-    // ANNIVERSARY MODE EASTER EGGS
+    // ANNIVERSARY MODE EASTER EGGS & UNIVERSE PORTAL UNLOCK
     const lowerExpr = fullExpr.toLowerCase().replace(/\s/g, '');
     let overrideResult: string | null = null;
     let overrideValue: number | null = null;
 
-    if (lowerExpr === 'daystogether()') {
+    if (['2208', '2307', '365', '90', '143', '2206', 'nush', 'yajat', 'love'].includes(lowerExpr)) {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('unlock-universe-portal'));
+      }
+      overrideResult = 'WELCOME HOME, NUSHI 👑💖';
+      overrideValue = 365;
+    } else if (lowerExpr === 'daystogether()') {
       const start = new Date('2026-06-22T00:00:00').getTime();
       const now = Date.now();
       const days = Math.max(0, Math.floor((now - start) / (1000 * 60 * 60 * 24)));

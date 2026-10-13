@@ -131,6 +131,13 @@ interface UniverseStore {
   setLibraryBookOpen: (open: boolean) => void;
   isVideoCallOpen: boolean;
   setVideoCallOpen: (open: boolean) => void;
+  isStealthMode: boolean;
+  setStealthMode: (val: boolean) => void;
+  toggleStealthMode: () => void;
+  isStargazingOpen: boolean;
+  setStargazingOpen: (open: boolean) => void;
+  isYearWrappedOpen: boolean;
+  setYearWrappedOpen: (open: boolean) => void;
 
   // Daily Streak & Countdown
   streakCount: number;
@@ -164,6 +171,11 @@ const INITIAL_ACHIEVEMENTS: Achievement[] = [
   { id: 'secret_room', title: 'Secret Room Explorer', desc: 'Unlocked the hidden developer memory vault (5+ secrets)', icon: '🚪', unlockedAt: null, secret: true },
   { id: 'universe_100', title: '100% Relationship Master', desc: 'Explored every corner of our 3-month universe', icon: '💖', unlockedAt: null, secret: true },
   { id: 'perfect_match', title: 'Perfect Match 💫', desc: 'Scored 90%+ on the Compatibility Test — cosmically aligned', icon: '💫', unlockedAt: null },
+  { id: 'stargazer_cosmic', title: 'Stargazing Soulmates 🌌', desc: 'Explored our sacred constellations under the open night sky', icon: '🌌', unlockedAt: null },
+  { id: 'heartbeat_synced', title: 'Telepathic Touch 💓', desc: 'Held and sent a live synchronized heartbeat', icon: '💓', unlockedAt: null },
+  { id: 'stealth_agent', title: 'Cover Disguise Master 🕵️‍♂️', desc: 'Used the scientific calculator panic disguise', icon: '🧮', unlockedAt: null, secret: true },
+  { id: 'year_one_legend', title: '365 Days of Forever 👑', desc: 'Unlocked the 1-Year Anniversary Master Suite', icon: '👑', unlockedAt: null },
+  { id: 'reasons_explorer', title: 'Love Jar Collector 💌', desc: 'Discovered folded notes from the 365 Reasons Jar', icon: '🏺', unlockedAt: null },
 ];
 
 export const useUniverseStore = create<UniverseStore>()(
@@ -451,38 +463,79 @@ export const useUniverseStore = create<UniverseStore>()(
       setLibraryBookOpen: (open) => set({ isLibraryBookOpen: open }),
       isVideoCallOpen: false,
       setVideoCallOpen: (open) => set({ isVideoCallOpen: open }),
+      isStealthMode: true,
+      setStealthMode: (val) => set({ isStealthMode: val }),
+      toggleStealthMode: () => set((s) => ({ isStealthMode: !s.isStealthMode })),
+      isStargazingOpen: false,
+      setStargazingOpen: (open) => set({ isStargazingOpen: open }),
+      isYearWrappedOpen: false,
+      setYearWrappedOpen: (open) => set({ isYearWrappedOpen: open }),
 
       // Daily Streak & Countdown
-      streakCount: 1,
+      streakCount: 7,
       lastVisitDate: null,
       checkAndUpdateStreak: () => {
-        const todayStr = new Date().toISOString().slice(0, 10);
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+
         const { lastVisitDate, streakCount, unlockAchievement } = get();
 
+        // Local optimistic streak calculation
+        let localStreak = Math.max(streakCount || 1, 1);
         if (!lastVisitDate) {
-          set({ lastVisitDate: todayStr, streakCount: 1 });
-          return;
-        }
+          set({ lastVisitDate: todayStr, streakCount: localStreak });
+        } else if (typeof lastVisitDate === 'string' && lastVisitDate !== todayStr && lastVisitDate.includes('-')) {
+          try {
+            const [y1, m1, d1] = lastVisitDate.split('-').map(Number);
+            const [y2, m2, d2] = todayStr.split('-').map(Number);
+            const diffDays = Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86400000);
 
-        if (lastVisitDate === todayStr) {
-          // Already visited today
-          return;
-        }
-
-        const prevDate = new Date(lastVisitDate);
-        const currDate = new Date(todayStr);
-        const diffDays = Math.round((currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 1) {
-          // Consecutive day
-          const nextStreak = streakCount + 1;
-          set({ lastVisitDate: todayStr, streakCount: nextStreak });
-          if (nextStreak >= 3) {
-            unlockAchievement('countdown_streak');
+            if (diffDays === 1) {
+              localStreak += 1;
+              set({ lastVisitDate: todayStr, streakCount: localStreak });
+              if (localStreak >= 3) {
+                unlockAchievement('countdown_streak');
+              }
+            } else if (diffDays <= 2) {
+              // Forgive a 1-day gap: keep streak active
+              set({ lastVisitDate: todayStr });
+            } else {
+              localStreak = 1;
+              set({ lastVisitDate: todayStr, streakCount: 1 });
+            }
+          } catch (e) {
+            set({ lastVisitDate: todayStr, streakCount: 1 });
           }
-        } else if (diffDays > 1) {
-          // Reset streak
-          set({ lastVisitDate: todayStr, streakCount: 1 });
+        }
+
+
+        // Global sync with server so Nush and Yajat share the exact same streak!
+        if (typeof window !== 'undefined') {
+          fetch('/api/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'streak',
+              action: 'check_in',
+              date: todayStr,
+            }),
+          })
+            .then((r) => r.json())
+            .then((res) => {
+              if (res && res.data && typeof res.data.streakCount === 'number') {
+                set({
+                  streakCount: Math.max(res.data.streakCount, 1),
+                  lastVisitDate: res.data.lastVisitDate || todayStr,
+                });
+                if (res.data.streakCount >= 3) {
+                  unlockAchievement('countdown_streak');
+                }
+              }
+            })
+            .catch(() => {});
         }
       },
 

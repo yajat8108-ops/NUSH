@@ -85,8 +85,8 @@ export default function ScrollProgress() {
         }}
       />
 
-      {/* 21 Section boundary markers */}
-      <div className="absolute inset-0 flex justify-between items-center px-1 pointer-events-none">
+      {/* 21 Section boundary markers (desktop only) */}
+      <div className="hidden sm:flex absolute inset-0 justify-between items-center px-1 pointer-events-none">
         {SECTIONS.map((sec, idx) => {
           const isPassed = (scrollYProgress.get() >= idx / (SECTIONS.length - 1));
           return (

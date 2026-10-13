@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { SoundEngine } from '@/lib/audio';
 import { useLiveMoment } from '@/lib/useLiveMoment';
+import { useUniverseStore } from '@/lib/universeStore';
 
 export default function AnniversaryHero() {
   const liveMoment = useLiveMoment();
@@ -121,10 +122,10 @@ export default function AnniversaryHero() {
               initial={{ opacity: 0, y: 15, scale: 0.8 }}
               animate={{ opacity: 1, y: -20, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className="absolute -top-12 left-0 md:left-10 z-50 bg-blue-500 text-white font-nunito font-bold text-xs md:text-sm px-4 py-2 rounded-2xl shadow-xl border-2 border-white flex items-center gap-1.5 whitespace-nowrap"
+              className="absolute -top-12 left-1/2 -translate-x-1/2 md:left-10 md:translate-x-0 z-50 bg-blue-500 text-white font-nunito font-bold text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-2xl shadow-xl border-2 border-white flex items-center gap-1.5 whitespace-nowrap max-w-[92vw]"
             >
               <span>💻</span>
-              <span>Yajat: Coding websites &amp; loving Nush ({clickCount.yajat} clicks! 💙)</span>
+              <span>Yajat: Loving Nush ({clickCount.yajat} clicks! 💙)</span>
             </motion.div>
           )}
 
@@ -133,10 +134,10 @@ export default function AnniversaryHero() {
               initial={{ opacity: 0, y: 15, scale: 0.8 }}
               animate={{ opacity: 1, y: -20, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className="absolute -top-12 right-0 md:right-10 z-50 bg-pink-500 text-white font-nunito font-bold text-xs md:text-sm px-4 py-2 rounded-2xl shadow-xl border-2 border-white flex items-center gap-1.5 whitespace-nowrap"
+              className="absolute -top-12 left-1/2 -translate-x-1/2 md:left-auto md:right-10 md:translate-x-0 z-50 bg-pink-500 text-white font-nunito font-bold text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-2xl shadow-xl border-2 border-white flex items-center gap-1.5 whitespace-nowrap max-w-[92vw]"
             >
               <span>🌸</span>
-              <span>Nush: Prettiest girl in the universe ({clickCount.nush} clicks! 💖)</span>
+              <span>Nush: Prettiest girl ({clickCount.nush} clicks! 💖)</span>
             </motion.div>
           )}
 
@@ -145,7 +146,7 @@ export default function AnniversaryHero() {
               initial={{ opacity: 0, scale: 0.6 }}
               animate={{ opacity: 1, scale: 1.1, y: -25 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className="absolute -top-14 left-1/2 -translate-x-1/2 z-50 bg-gradient-to-r from-[var(--pink-deep)] to-blue-500 text-white font-caveat font-bold text-lg md:text-xl px-5 py-2 rounded-full shadow-2xl border-2 border-white flex items-center gap-2 whitespace-nowrap"
+              className="absolute -top-14 left-1/2 -translate-x-1/2 z-50 bg-gradient-to-r from-[var(--pink-deep)] to-blue-500 text-white font-caveat font-bold text-base md:text-xl px-4 md:px-5 py-1.5 md:py-2 rounded-full shadow-2xl border-2 border-white flex items-center gap-2 whitespace-nowrap max-w-[92vw]"
             >
               <span>♾️ Yajat + Nush = Sacred &amp; Forever ❤️</span>
             </motion.div>
@@ -164,17 +165,13 @@ export default function AnniversaryHero() {
             Yajat
           </motion.span>
 
-          <motion.span 
+          <span
             onClick={handleBothClick}
-            whileHover={{ scale: 1.3, rotate: 15 }}
-            whileTap={{ scale: 0.85 }}
-            animate={{ scale: [1, 1.15, 1] }} 
-            transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
-            className="text-[var(--pink-deep)] inline-block drop-shadow-xl cursor-pointer"
+            className="text-[var(--pink-deep)] inline-block drop-shadow-xl cursor-pointer hero-amp"
             title="Click & for a spark! 💖"
           >
             &amp;
-          </motion.span>
+          </span>
 
           <motion.span
             onClick={handleNushClick}
@@ -197,51 +194,51 @@ export default function AnniversaryHero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.6 }}
-        className="mt-8 bg-[var(--white)]/90 backdrop-blur-md border-2 border-[var(--pink-deep)]/40 rounded-3xl p-6 md:p-8 shadow-[var(--card-shadow)] flex flex-col items-center max-w-sm md:max-w-md mx-auto relative overflow-hidden group"
+        className="mt-6 sm:mt-8 bg-[var(--white)]/90 backdrop-blur-md border-2 border-[var(--pink-deep)]/40 rounded-3xl p-4 sm:p-6 md:p-8 shadow-[var(--card-shadow)] flex flex-col items-center w-full max-w-[92vw] sm:max-w-sm md:max-w-md mx-auto relative overflow-hidden group"
       >
         {/* Subtle decorative glow behind */}
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--pink)]/10 via-transparent to-[var(--lav)]/10 pointer-events-none" />
 
         {/* Days count */}
         <div className="flex items-baseline gap-2">
-          <span className="font-caveat text-6xl md:text-7xl font-bold text-[var(--pink-deep)] leading-none drop-shadow-sm">
+          <span className="font-caveat text-5xl sm:text-6xl md:text-7xl font-bold text-[var(--pink-deep)] leading-none drop-shadow-sm">
             {timePassed.days}
           </span>
-          <span className="font-nunito font-extrabold text-sm md:text-base text-[var(--plum-soft)] tracking-wider uppercase">
+          <span className="font-nunito font-extrabold text-xs sm:text-sm md:text-base text-[var(--plum-soft)] tracking-wider uppercase">
             Days
           </span>
         </div>
 
         {/* Subtitle */}
-        <span className="font-nunito font-extrabold text-xs md:text-sm tracking-widest uppercase text-[var(--plum)] mt-1 mb-4 text-center">
+        <span className="font-nunito font-extrabold text-[11px] sm:text-xs md:text-sm tracking-widest uppercase text-[var(--plum)] mt-1 mb-3 sm:mb-4 text-center">
           of us &amp; our little world ❤️🎶
         </span>
 
         {/* Time Pills Grid */}
-        <div className="grid grid-cols-3 gap-2.5 w-full font-mono text-[var(--plum)]">
-          <div className="bg-[var(--cream)]/80 border border-[var(--pink)]/30 rounded-2xl py-2 px-3 flex flex-col items-center shadow-inner">
-            <span className="text-xl md:text-2xl font-bold text-[var(--pink-deep)]">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 w-full font-mono text-[var(--plum)]">
+          <div className="bg-[var(--cream)]/80 border border-[var(--pink)]/30 rounded-2xl py-1.5 sm:py-2 px-2 sm:px-3 flex flex-col items-center shadow-inner">
+            <span className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--pink-deep)]">
               {String(timePassed.hours).padStart(2, '0')}
             </span>
-            <span className="text-[10px] font-nunito font-bold text-[var(--plum-soft)] uppercase tracking-wider">
+            <span className="text-[9px] sm:text-[10px] font-nunito font-bold text-[var(--plum-soft)] uppercase tracking-wider">
               Hours
             </span>
           </div>
 
-          <div className="bg-[var(--cream)]/80 border border-[var(--pink)]/30 rounded-2xl py-2 px-3 flex flex-col items-center shadow-inner">
-            <span className="text-xl md:text-2xl font-bold text-[var(--pink-deep)]">
+          <div className="bg-[var(--cream)]/80 border border-[var(--pink)]/30 rounded-2xl py-1.5 sm:py-2 px-2 sm:px-3 flex flex-col items-center shadow-inner">
+            <span className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--pink-deep)]">
               {String(timePassed.minutes).padStart(2, '0')}
             </span>
-            <span className="text-[10px] font-nunito font-bold text-[var(--plum-soft)] uppercase tracking-wider">
+            <span className="text-[9px] sm:text-[10px] font-nunito font-bold text-[var(--plum-soft)] uppercase tracking-wider">
               Mins
             </span>
           </div>
 
-          <div className="bg-[var(--cream)]/80 border border-[var(--pink)]/30 rounded-2xl py-2 px-3 flex flex-col items-center shadow-inner">
-            <span className="text-xl md:text-2xl font-bold text-[var(--pink-deep)] animate-pulse">
+          <div className="bg-[var(--cream)]/80 border border-[var(--pink)]/30 rounded-2xl py-1.5 sm:py-2 px-2 sm:px-3 flex flex-col items-center shadow-inner">
+            <span className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--pink-deep)] animate-pulse">
               {String(timePassed.seconds).padStart(2, '0')}
             </span>
-            <span className="text-[10px] font-nunito font-bold text-[var(--plum-soft)] uppercase tracking-wider">
+            <span className="text-[9px] sm:text-[10px] font-nunito font-bold text-[var(--plum-soft)] uppercase tracking-wider">
               Secs
             </span>
           </div>
@@ -256,6 +253,93 @@ export default function AnniversaryHero() {
           <p className="font-caveat text-xl md:text-2xl text-[var(--plum)] font-bold mt-2 leading-snug">
             &ldquo;{liveMoment.combinedFlourish}&rdquo;
           </p>
+        </div>
+      </motion.div>
+
+      {/* ─── GRAND 1-YEAR MASTER SUITE & PRIVATE SANCTUARY BANNER ─── */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ delay: 0.35, duration: 0.7 }}
+        className="mt-6 sm:mt-8 w-full max-w-2xl mx-auto p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-[#241335] via-[#1a0e2e] to-[#2b122c] border-2 border-amber-400/60 shadow-[0_0_40px_rgba(251,191,36,0.25)] text-white text-center relative overflow-hidden select-none font-nunito"
+      >
+        <div className="absolute top-0 right-0 w-36 h-36 bg-gradient-to-bl from-amber-400/20 to-transparent rounded-bl-full pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-36 h-36 bg-gradient-to-tr from-pink-500/20 to-transparent rounded-tr-full pointer-events-none" />
+
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/20 border border-amber-300/40 text-[11px] font-mono text-amber-300 font-bold mb-3 shadow">
+          <span>👑</span>
+          <span>1-YEAR ANNIVERSARY &middot; 365 DAYS OF US MASTER SUITE</span>
+          <span>✨</span>
+        </div>
+
+        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold font-mono tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-pink-300 to-white">
+          Our Private Sanctuary Portal
+        </h3>
+
+        <p className="text-xs sm:text-sm text-zinc-300 max-w-lg mx-auto mt-2 leading-relaxed font-serif">
+          From our acoustic guitar origin &amp; fake dating pact to 365 days of forever. Jump straight into any sacred room:
+        </p>
+
+        {/* Prominent Quick-Jump Action Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mt-5">
+          <button
+            onClick={() => {
+              SoundEngine.chime();
+              useUniverseStore.getState().setYearWrappedOpen(true);
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-white font-mono text-xs font-bold shadow-lg transition-transform hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
+          >
+            <span>👑</span>
+            <span>Year 1 Wrapped</span>
+          </button>
+
+          <button
+            onClick={() => {
+              SoundEngine.click();
+              const el = document.getElementById('stargazing-sky');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-mono text-xs font-bold shadow-lg transition-transform hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
+          >
+            <span>🌌</span>
+            <span>Stargazing Sky</span>
+          </button>
+
+          <button
+            onClick={() => {
+              SoundEngine.pop();
+              const el = document.getElementById('reasons-365-jar');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-pink-200 font-mono text-xs font-bold shadow transition-transform hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
+          >
+            <span>🏺</span>
+            <span>365 Love Jar</span>
+          </button>
+
+          <button
+            onClick={() => {
+              SoundEngine.click();
+              const el = document.getElementById('dream-sanctuary-room');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-amber-200 font-mono text-xs font-bold shadow transition-transform hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
+          >
+            <span>🏡</span>
+            <span>Dream Room</span>
+          </button>
+
+          <button
+            onClick={() => {
+              SoundEngine.click();
+              const el = document.getElementById('open-when-vault');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-emerald-200 font-mono text-xs font-bold shadow transition-transform hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
+          >
+            <span>💌</span>
+            <span>Open When Letters</span>
+          </button>
         </div>
       </motion.div>
 

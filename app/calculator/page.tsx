@@ -1,3 +1,5 @@
+'use client';
+
 import Calculator from '@/components/Calculator';
 import Link from 'next/link';
 

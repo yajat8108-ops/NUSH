@@ -18,7 +18,7 @@ const MOODS: { emoji: JournalEntry['mood']; label: string }[] = [
 ];
 
 export default function RelationshipJournal() {
-  const { entries, addEntry } = useJournalStore();
+  const { entries, addEntry, syncWithServer, isSyncing, isLoading } = useJournalStore();
   const [mounted, setMounted] = useState(false);
   const [activeMood, setActiveMood] = useState<string>('all');
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
@@ -35,6 +35,16 @@ export default function RelationshipJournal() {
 
   useEffect(() => {
     setMounted(true);
+    syncWithServer();
+
+    const interval = setInterval(syncWithServer, 15000);
+    window.addEventListener('focus', syncWithServer);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', syncWithServer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!mounted) return null;
@@ -92,16 +102,16 @@ export default function RelationshipJournal() {
       : entries.filter((entry) => entry.mood === activeMood);
 
   return (
-    <section id="relationship-journal" className="anniversary-section py-20 px-4 select-none">
+    <section id="relationship-journal" className="anniversary-section py-10 sm:py-20 px-3 sm:px-4 select-none font-nunito">
       <SectionHead
         eyebrow="daily chronicles · our private diary"
         title="Relationship Journal & Diary"
         subtitle="candid thoughts, real memories, and quiet late-night reflections 📖✍️"
       />
 
-      <div className="max-w-4xl mx-auto mt-6">
+      <div className="max-w-4xl mx-auto mt-4 sm:mt-6">
         {/* Top Control Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-3xl bg-black/25 backdrop-blur-md border border-white/10 shadow-lg mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-black/25 backdrop-blur-md border border-white/10 shadow-lg mb-6 sm:mb-8">
           {/* Mood Filter Chips */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <button
@@ -137,18 +147,47 @@ export default function RelationshipJournal() {
             ))}
           </div>
 
-          <button
-            onClick={() => {
-              SoundEngine.click();
-              setIsComposing(true);
-            }}
-            className="px-5 py-2 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--butter)] text-black font-mono text-xs font-bold shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
-          >
-            <span>✍️</span> Write Entry
-          </button>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5 shadow">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{isSyncing ? 'Syncing...' : 'Live Synced ☁️'}</span>
+            </span>
+
+            <button
+              onClick={() => {
+                SoundEngine.click();
+                setIsComposing(true);
+              }}
+              className="px-5 py-2 rounded-full bg-gradient-to-r from-[var(--pink-deep)] to-[var(--butter)] text-black font-mono text-xs font-bold shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>✍️</span> Write Entry
+            </button>
+          </div>
         </div>
 
         {/* DIARY ENTRY CARDS */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[0, 1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="relative p-6 rounded-3xl bg-white/5 border border-white/10 shadow-xl flex flex-col gap-3 animate-pulse"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-white/10" />
+                  <div className="flex flex-col gap-1">
+                    <div className="h-2.5 w-16 rounded bg-white/10" />
+                    <div className="h-2 w-24 rounded bg-white/10" />
+                  </div>
+                </div>
+                <div className="h-5 w-3/4 rounded bg-white/10" />
+                <div className="h-3 w-full rounded bg-white/10" />
+                <div className="h-3 w-5/6 rounded bg-white/10" />
+                <div className="h-3 w-2/3 rounded bg-white/10" />
+              </div>
+            ))}
+          </div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredEntries.map((entry) => (
             <motion.div
@@ -208,6 +247,7 @@ export default function RelationshipJournal() {
             </motion.div>
           ))}
         </div>
+        )}
       </div>
 
       {/* READ DIARY ENTRY MODAL */}
@@ -298,7 +338,7 @@ export default function RelationshipJournal() {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative max-w-lg w-full bg-[#161224] border-2 border-[var(--pink)] rounded-3xl p-6 shadow-2xl text-white space-y-4 max-h-[90vh] overflow-y-auto"
+              className="relative max-w-lg w-full bg-[#161224] border-2 border-[var(--pink)] rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl text-white space-y-3.5 sm:space-y-4 max-h-[88vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between pb-3 border-b border-white/10">
                 <h3 className="font-bold text-lg text-[var(--butter)] font-mono flex items-center gap-2">

@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  turbopack: {},
   // Enable WebAssembly
+
   webpack: (config, { isServer }) => {
     // Required for .wasm file support
     config.experiments = {
@@ -31,18 +31,13 @@ const nextConfig = {
     ];
   },
 
-  // Output for static hosting
-  output: 'standalone',
-
   // Strict mode
   reactStrictMode: true,
 
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: false,
   },
 };
+
 
 export default nextConfig;

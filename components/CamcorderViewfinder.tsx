@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUniverseStore } from '@/lib/universeStore';
 
 export default function CamcorderViewfinder() {
-  const { isCamcorderOn } = useUniverseStore();
+  const { isCamcorderOn, setCamcorderOn } = useUniverseStore();
   const [timeString, setTimeString] = useState('');
 
   useEffect(() => {
@@ -55,13 +55,17 @@ export default function CamcorderViewfinder() {
 
             {/* HUD Elements Container */}
             <div className="absolute inset-0 p-6 md:p-12 drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]">
-              {/* Top Left: REC */}
-              <div className="absolute left-6 top-6 flex items-center gap-2 md:left-12 md:top-12">
-                <span className="h-4 w-4 animate-pulse rounded-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.8)]" />
-                <span className="font-bold tracking-widest text-red-500 shadow-red-500/50 [text-shadow:0_0_8px_rgba(220,38,38,0.8)]">
-                  REC
+              {/* Top Left: REC & Click to Exit */}
+              <button
+                onClick={() => setCamcorderOn(false)}
+                className="pointer-events-auto cursor-pointer absolute left-4 top-16 sm:left-6 sm:top-6 md:left-12 md:top-12 flex items-center gap-2 bg-black/60 hover:bg-black/90 px-3 py-1.5 rounded-full border border-red-500/50 shadow-lg active:scale-95 transition-all"
+                title="Tap to Exit VHS Mode"
+              >
+                <span className="h-3.5 w-3.5 animate-pulse rounded-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.8)]" />
+                <span className="font-bold tracking-widest text-red-500 shadow-red-500/50 [text-shadow:0_0_8px_rgba(220,38,38,0.8)] text-xs">
+                  REC ● EXIT VHS
                 </span>
-              </div>
+              </button>
 
               {/* Top Right: Status */}
               <div className="absolute right-6 top-6 md:right-12 md:top-12">
