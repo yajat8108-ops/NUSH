@@ -57,7 +57,7 @@ class NotificationHelper @Inject constructor(
     /** Build and show a heartbeat notification. */
     fun showHeartbeatNotification(title: String, body: String) {
         val notification = NotificationCompat.Builder(context, CHANNEL_HEARTBEAT)
-            .setSmallIcon(R.drawable.ic_notification_heart)
+            .setSmallIcon(R.drawable.ic_notification_calculator)
             .setContentTitle(title)
             .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

@@ -60,6 +60,7 @@ async function sendHeartbeatPush(fromRole: 'nush' | 'yajat') {
             notification: {
               channelId: 'heartbeat',
               sound: 'default',
+              icon: 'ic_notification_calculator',
               color: '#FF5C8E',
               clickAction: 'OPEN_HEARTBEAT',
             },
