@@ -72,9 +72,8 @@ export async function registerPushToken(role: 'nush' | 'yajat', token: string): 
   const filtered = existing.filter((t) => t.token !== token);
   inMemoryTokens[role] = [{ token, updatedAt: now }, ...filtered];
 
-  // Debounced write
-  if (writeDebounceTimer) clearTimeout(writeDebounceTimer);
-  writeDebounceTimer = setTimeout(writeTokensToGitHub, 1200);
+  // Immediately persist to GitHub on serverless environments
+  await writeTokensToGitHub();
 }
 
 export async function pruneInvalidTokens(role: 'nush' | 'yajat', badTokens: string[]): Promise<void> {

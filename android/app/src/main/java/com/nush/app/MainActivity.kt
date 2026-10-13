@@ -112,6 +112,21 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        // Register push token immediately on launch (even while in calculator disguise)
+        LaunchedEffect(Unit) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val hasPermission = ContextCompat.checkSelfPermission(
+                    this@MainActivity,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+                if (hasPermission) {
+                    androidBridge.registerPush()
+                }
+            } else {
+                androidBridge.registerPush()
+            }
+        }
+
         // ── Calculator disguise gate ──────────────────────────────────────────
         if (!isAuthenticated) {
             CalculatorAuthScreen(
