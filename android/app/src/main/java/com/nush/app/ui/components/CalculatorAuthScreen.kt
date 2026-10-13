@@ -289,13 +289,8 @@ fun CalculatorAuthScreen(
 
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(
-                            if (showSecretKeypad)
-                                Brush.horizontalGradient(listOf(PinkGlow.copy(alpha = 0.25f), PurpleGlow.copy(alpha = 0.25f)))
-                            else
-                                Brush.horizontalGradient(listOf(CalcSurface, CalcSurface))
-                        )
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(CalcSurface)
                         .clickable {
                             showSecretKeypad = !showSecretKeypad
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -303,10 +298,10 @@ fun CalculatorAuthScreen(
                         .padding(horizontal = 10.dp, vertical = 5.dp)
                 ) {
                     Text(
-                        text = if (showSecretKeypad) "ABC" else "123",
-                        color = if (showSecretKeypad) PinkGlow else TextMuted,
+                        text = if (showSecretKeypad) "123" else "ABC",
+                        color = TextMuted,
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
@@ -437,14 +432,12 @@ fun CalculatorAuthScreen(
                         }
                     }
 
-                    Spacer(Modifier.height(4.dp))
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         GlowCalcButton(
-                            label     = "Clear",
+                            label     = "C",
                             bgBrush   = Brush.linearGradient(listOf(CalcActionBtn, CalcActionBtn)),
                             glowColor = Color.Transparent,
                             textColor = TextWhite,
@@ -452,13 +445,24 @@ fun CalculatorAuthScreen(
                             onClick   = { onKeyClicked("C") }
                         )
                         GlowCalcButton(
-                            label     = "Unlock 🔓",
-                            bgBrush   = Brush.linearGradient(listOf(CalcOpBtn, PurpleGlow)),
+                            label     = "space",
+                            bgBrush   = Brush.linearGradient(listOf(CalcNumBtn, CalcNumBtn)),
+                            glowColor = Color.Transparent,
+                            textColor = TextMuted,
+                            textSize  = 14.sp,
+                            modifier  = Modifier.weight(2.2f),
+                            onClick   = { /* Normal keyboard spacebar */ }
+                        )
+                        GlowCalcButton(
+                            label     = "=",
+                            bgBrush   = Brush.linearGradient(listOf(CalcOpBtn, CalcOpBtn)),
                             glowColor = PinkGlow,
                             textColor = Color.White,
-                            textSize  = 16.sp,
-                            modifier  = Modifier.weight(1.6f),
-                            onClick   = { checkAndUnlock(rawInputBuffer) }
+                            modifier  = Modifier.weight(1f),
+                            onClick   = {
+                                // Checking code automatically happens on each letter press, but hitting '=' also checks
+                                checkAndUnlock(rawInputBuffer)
+                            }
                         )
                     }
                 }
