@@ -70,7 +70,7 @@ async function sendHeartbeatPush(fromRole: 'nush' | 'yajat') {
           },
           data: {
             type: 'heartbeat',
-            from: fromRole,
+            senderRole: fromRole,
             title: 'Calculator',
             body: 'Calculator is yearning for you 🩷',
             timestamp: String(Date.now()),
