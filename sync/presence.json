@@ -2,13 +2,13 @@
   "nush": {
     "role": "nush",
     "status": "missing uu loveee",
-    "heartbeat": true,
-    "timestamp": 1791966900024
+    "heartbeat": false,
+    "timestamp": 1791966897429
   },
   "yajat": {
     "role": "yajat",
     "status": "missing uu loveee",
     "heartbeat": false,
-    "timestamp": 1791966807440
+    "timestamp": 1791966807423
   }
 }
