@@ -28,9 +28,8 @@ class NushFirebaseMessagingService : FirebaseMessagingService() {
         scope.launch {
             preferencesManager.setFcmToken(token)
             val role = preferencesManager.roleFlow.first()
-            if (role.isNotBlank()) {
-                pushRepository.registerToken(role, token)
-            }
+            val effectiveRole = if (role.isNotBlank()) role else com.nush.app.BuildConfig.DEFAULT_ROLE
+            pushRepository.registerToken(effectiveRole, token)
         }
     }
 

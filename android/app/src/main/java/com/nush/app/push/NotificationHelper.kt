@@ -46,7 +46,13 @@ class NotificationHelper(private val context: Context) {
             description = "General messages and updates"
         }
 
-        manager.createNotificationChannels(listOf(heartbeatChannel, messagesChannel))
+        // Ensure Heartbeat channel exists and is IMPORTANCE_HIGH (recreate if old channel had low importance)
+        val existing = manager.getNotificationChannel(CHANNEL_HEARTBEAT)
+        if (existing != null && existing.importance < NotificationManager.IMPORTANCE_HIGH) {
+            manager.deleteNotificationChannel(CHANNEL_HEARTBEAT)
+        }
+        manager.createNotificationChannel(heartbeatChannel)
+        manager.createNotificationChannel(messagesChannel)
     }
 
     /** Build and show a heartbeat notification. */
@@ -69,8 +75,10 @@ class NotificationHelper(private val context: Context) {
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentIntent(pendingIntent)
+            .setFullScreenIntent(pendingIntent, false) // Triggers heads-up banner on screen
             .setColor(Color.parseColor("#FF5C8E"))
             .setAutoCancel(true)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setVibrate(longArrayOf(0L, 60L, 40L, 80L, 200L))
             .build()
 

@@ -56,7 +56,6 @@ async function sendHeartbeatPush(fromRole: 'nush' | 'yajat') {
           },
           android: {
             priority: 'high',
-            ttl: 0, // Deliver immediately, do not queue on Google servers
             directBootOk: true,
             notification: {
               channelId: 'heartbeat',

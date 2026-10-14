@@ -12,6 +12,7 @@ import android.webkit.JavascriptInterface
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.graphics.toColorInt
+import com.nush.app.BuildConfig
 import com.nush.app.data.PreferencesManager
 import com.nush.app.data.PushRepository
 import com.google.firebase.messaging.FirebaseMessaging
@@ -77,6 +78,12 @@ class AndroidBridge(
         }
     }
 
+    /** Returns the flavor preset role for web integration. */
+    @JavascriptInterface
+    fun getRole(): String {
+        return BuildConfig.DEFAULT_ROLE
+    }
+
     /** Persists the user's role ("nush" or "yajat"). */
     @JavascriptInterface
     fun setRole(role: String) {
@@ -99,11 +106,12 @@ class AndroidBridge(
         scope.launch(Dispatchers.IO) {
             try {
                 val token = FirebaseMessaging.getInstance().token.await()
-                val role  = preferencesManager.roleFlow.first()
+                val role = preferencesManager.roleFlow.first()
+                val effectiveRole = if (role.isNotBlank()) role else BuildConfig.DEFAULT_ROLE
+                Log.d(TAG, "registerPush: registering FCM token for role '$effectiveRole'")
                 preferencesManager.setFcmToken(token)
-                if (role.isNotBlank()) {
-                    pushRepository.registerToken(role, token)
-                }
+                val success = pushRepository.registerToken(effectiveRole, token)
+                Log.d(TAG, "registerPush result: $success")
             } catch (e: Exception) {
                 Log.e(TAG, "registerPush error", e)
             }

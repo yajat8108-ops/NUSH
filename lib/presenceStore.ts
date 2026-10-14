@@ -33,10 +33,22 @@ export const PRESET_STATUSES = [
   'Hugging Teddy Yajat 🧸',
 ];
 
+function detectInitialRole(): 'nush' | 'yajat' {
+  if (typeof window !== 'undefined') {
+    try {
+      const q = new URLSearchParams(window.location.search).get('role');
+      if (q === 'yajat' || q === 'nush') return q;
+      const bRole = (window as any).AndroidBridge?.getRole?.();
+      if (bRole === 'yajat' || bRole === 'nush') return bRole;
+    } catch (_) {}
+  }
+  return 'nush';
+}
+
 export const usePresenceStore = create<PresenceState>()(
   persist(
     (set, get) => ({
-      myRole: 'nush',
+      myRole: detectInitialRole(),
       setMyRole: (role) => set({ myRole: role }),
       myStatus: 'Curled in blanket missing you 🥺',
       setMyStatus: (status) => {
@@ -60,6 +72,14 @@ export const usePresenceStore = create<PresenceState>()(
 
       syncPresence: async () => {
         try {
+          // Keep role in sync with AndroidBridge or URL if available
+          if (typeof window !== 'undefined') {
+            const current = get().myRole;
+            const detected = detectInitialRole();
+            if (detected && detected !== current && (new URLSearchParams(window.location.search).has('role') || (window as any).AndroidBridge?.getRole)) {
+              set({ myRole: detected });
+            }
+          }
           const { myRole, myStatus, isHoldingHeartbeat } = get();
           const res = await fetch('/api/presence', {
             method: 'POST',
@@ -107,6 +127,13 @@ export const usePresenceStore = create<PresenceState>()(
 
       sendHeartbeatPing: async () => {
         try {
+          if (typeof window !== 'undefined') {
+            const current = get().myRole;
+            const detected = detectInitialRole();
+            if (detected && detected !== current && (new URLSearchParams(window.location.search).has('role') || (window as any).AndroidBridge?.getRole)) {
+              set({ myRole: detected });
+            }
+          }
           const { myRole, myStatus } = get();
           SoundEngine.heartbeat();
           if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {

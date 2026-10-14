@@ -114,16 +114,17 @@ class MainActivity : ComponentActivity() {
 
         // Register push token immediately on launch (even while in calculator disguise)
         LaunchedEffect(Unit) {
+            androidBridge.registerPush()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val hasPermission = ContextCompat.checkSelfPermission(
                     this@MainActivity,
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
-                if (hasPermission) {
-                    androidBridge.registerPush()
+                if (!hasPermission) {
+                    requestNotificationPermissionLauncher.launch(
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
                 }
-            } else {
-                androidBridge.registerPush()
             }
         }
 
@@ -227,7 +228,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
 
-                            loadUrl(BuildConfig.NUSH_BASE_URL)
+                            loadUrl("${BuildConfig.NUSH_BASE_URL}?role=${BuildConfig.DEFAULT_ROLE}")
                             webViewInstance = this
                         }
                     },
