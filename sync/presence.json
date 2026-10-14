@@ -3,12 +3,12 @@
     "role": "nush",
     "status": "Curled in blanket missing you 🥺",
     "heartbeat": false,
-    "timestamp": 1791966475948
+    "timestamp": 1791966482126
   },
   "yajat": {
     "role": "yajat",
-    "status": "Coding in room 💻",
-    "heartbeat": false,
-    "timestamp": 0
+    "status": "Curled in blanket missing you 🥺",
+    "heartbeat": true,
+    "timestamp": 1791966485406
   }
 }
