@@ -3,6 +3,7 @@ package com.nush.app.push
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -50,11 +51,24 @@ class NotificationHelper(private val context: Context) {
 
     /** Build and show a heartbeat notification. */
     fun showHeartbeatNotification(title: String, body: String) {
+        val intent = Intent(context, com.nush.app.MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pendingIntent = android.app.PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification = NotificationCompat.Builder(context, CHANNEL_HEARTBEAT)
             .setSmallIcon(R.drawable.ic_notification_calculator)
             .setContentTitle(title)
             .setContentText(body)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setContentIntent(pendingIntent)
             .setColor(Color.parseColor("#FF5C8E"))
             .setAutoCancel(true)
             .setVibrate(longArrayOf(0L, 60L, 40L, 80L, 200L))
