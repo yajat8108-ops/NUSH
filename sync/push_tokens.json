@@ -1,5 +1,10 @@
 {
-  "nush": [],
+  "nush": [
+    {
+      "token": "test_token_123",
+      "updatedAt": 1792066182874
+    }
+  ],
   "yajat": [
     {
       "token": "test",
