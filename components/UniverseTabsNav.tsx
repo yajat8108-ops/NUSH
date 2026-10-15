@@ -128,6 +128,31 @@ export default function UniverseTabsNav() {
     }
   };
 
+  // Listen for user typing "sorry" anywhere on the keyboard to instantly open the sorry section
+  useEffect(() => {
+    let keyBuffer = '';
+    const handleKeyDetection = (e: KeyboardEvent) => {
+      // Don't intercept when user is typing in form inputs, textareas, or contenteditables
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || target?.isContentEditable) {
+        return;
+      }
+
+      if (e.key && e.key.length === 1) {
+        keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-10);
+        if (keyBuffer.endsWith('sorry')) {
+          keyBuffer = '';
+          handleSelectTab('sorry');
+          SoundEngine.pop();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDetection);
+    return () => window.removeEventListener('keydown', handleKeyDetection);
+  }, []);
+
   const handleSendLoveCTA = async () => {
     SoundEngine.heartbeat();
     setHeartSending(true);

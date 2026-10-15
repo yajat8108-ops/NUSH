@@ -394,6 +394,13 @@ export default function NushSecret() {
         else if (b.includes('puzzle') || b.includes('jigsaw')) triggerSecret('puzzle');
         else if (b.includes('90') || b.includes('3month') || b.includes('quarter')) triggerSecret('90');
         else if (b.includes('60') || b.includes('2month')) triggerSecret('60');
+        else if (b.includes('sorry')) {
+          useUniverseStore.getState().setActiveTab('sorry');
+          if (typeof window !== 'undefined') {
+            window.location.hash = '#sorry';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }
       }
     };
 
