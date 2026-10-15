@@ -5,6 +5,8 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.nush.app.R
@@ -23,7 +25,13 @@ class NotificationHelper(private val context: Context) {
     fun createChannels() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
-        // Heartbeat channel — high importance, custom vibration, pink LED
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val audioAttributes = AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_INSTANT)
+            .build()
+
+        // Heartbeat channel — high importance, custom vibration, pink LED, heads-up
         val heartbeatChannel = NotificationChannel(
             CHANNEL_HEARTBEAT,
             "Calculator",
@@ -33,20 +41,25 @@ class NotificationHelper(private val context: Context) {
             enableLights(true)
             lightColor = Color.parseColor("#FF5C8E")
             enableVibration(true)
-            // Matches HeartbeatBeacon haptic pattern: [60,40,80,200]
             vibrationPattern = longArrayOf(0L, 60L, 40L, 80L, 200L)
+            setSound(defaultSoundUri, audioAttributes)
+            lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
         }
 
-        // Messages channel — default importance
+        // Messages channel — high importance
         val messagesChannel = NotificationChannel(
             CHANNEL_MESSAGES,
             "Messages 💌",
-            NotificationManager.IMPORTANCE_DEFAULT,
+            NotificationManager.IMPORTANCE_HIGH,
         ).apply {
             description = "General messages and updates"
+            enableLights(true)
+            enableVibration(true)
+            setSound(defaultSoundUri, audioAttributes)
+            lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
         }
 
-        // Ensure Heartbeat channel exists and is IMPORTANCE_HIGH (recreate if old channel had low importance)
+        // Ensure Heartbeat channel exists and is IMPORTANCE_HIGH
         val existing = manager.getNotificationChannel(CHANNEL_HEARTBEAT)
         if (existing != null && existing.importance < NotificationManager.IMPORTANCE_HIGH) {
             manager.deleteNotificationChannel(CHANNEL_HEARTBEAT)
@@ -55,8 +68,11 @@ class NotificationHelper(private val context: Context) {
         manager.createNotificationChannel(messagesChannel)
     }
 
-    /** Build and show a heartbeat notification. */
+    /** Build and show a heartbeat / message notification. */
     fun showHeartbeatNotification(title: String, body: String) {
+        // Guarantee channels exist even if background service was awakened cold
+        createChannels()
+
         val intent = Intent(context, com.nush.app.MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
@@ -75,7 +91,6 @@ class NotificationHelper(private val context: Context) {
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentIntent(pendingIntent)
-            .setFullScreenIntent(pendingIntent, false) // Triggers heads-up banner on screen
             .setColor(Color.parseColor("#FF5C8E"))
             .setAutoCancel(true)
             .setDefaults(NotificationCompat.DEFAULT_ALL)

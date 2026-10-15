@@ -92,8 +92,11 @@ export default function FloatingBottomDock() {
           <button
             onClick={() => {
               SoundEngine.click();
-              const el = document.getElementById('stargazing-sky');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              useUniverseStore.getState().setActiveTab('timeline');
+              setTimeout(() => {
+                const el = document.getElementById('stargazing-sky');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }, 80);
             }}
             className="flex flex-col items-center justify-center w-12 h-12 rounded-xl gap-0.5 text-pink-300 hover:bg-white/10 transition-all active:scale-90 cursor-pointer"
             title="Stargazing Sanctuary"
@@ -198,8 +201,11 @@ export default function FloatingBottomDock() {
           <motion.button
             onClick={() => {
               SoundEngine.click();
-              const el = document.getElementById('stargazing-sky');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              useUniverseStore.getState().setActiveTab('timeline');
+              setTimeout(() => {
+                const el = document.getElementById('stargazing-sky');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }, 80);
             }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

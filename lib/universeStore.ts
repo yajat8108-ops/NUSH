@@ -39,7 +39,13 @@ export interface FortuneEntry {
   date: string;
 }
 
+export type UniverseTab = 'story' | 'timeline' | 'gallery' | 'games' | 'vault';
+
 interface UniverseStore {
+  // Tabs Navigation
+  activeTab: UniverseTab;
+  setActiveTab: (tab: UniverseTab) => void;
+
   // Exploration Progress
   enteredUniverse: boolean;
   setEnteredUniverse: (val: boolean) => void;
@@ -181,6 +187,11 @@ const INITIAL_ACHIEVEMENTS: Achievement[] = [
 export const useUniverseStore = create<UniverseStore>()(
   persist(
     (set, get) => ({
+      activeTab: 'story',
+      setActiveTab: (tab) => {
+        SoundEngine.click();
+        set({ activeTab: tab });
+      },
       enteredUniverse: true,
       setEnteredUniverse: (val) => set({ enteredUniverse: val }),
       explorationPoints: {},
@@ -542,6 +553,7 @@ export const useUniverseStore = create<UniverseStore>()(
       // Reset Helper
       resetUniverse: () => {
         set({
+          activeTab: 'story',
           enteredUniverse: false,
           explorationPoints: {},
           discoveredSecrets: {},

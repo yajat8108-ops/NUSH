@@ -24,18 +24,19 @@ class NushFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d(TAG, "New FCM token: ${token.take(8)}…")
+        Log.d(TAG, "New FCM token generated: ${token.take(12)}…")
         scope.launch {
             preferencesManager.setFcmToken(token)
             val role = preferencesManager.roleFlow.first()
             val effectiveRole = if (role.isNotBlank()) role else com.nush.app.BuildConfig.DEFAULT_ROLE
+            Log.d(TAG, "Registering FCM token for role '$effectiveRole' with backend")
             pushRepository.registerToken(effectiveRole, token)
         }
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Log.d(TAG, "FCM message received: ${message.data}")
+        Log.d(TAG, "FCM message received from: ${message.from}, data: ${message.data}, notification: ${message.notification?.title}")
 
         val title = message.notification?.title
             ?: message.data["title"]
@@ -43,10 +44,8 @@ class NushFirebaseMessagingService : FirebaseMessagingService() {
         val body  = message.notification?.body
             ?: message.data["body"]
             ?: "Calculator is yearning for you 🩷"
-        val type  = message.data["type"] ?: "heartbeat"
 
-        if (type == "heartbeat") {
-            notificationHelper.showHeartbeatNotification(title, body)
-        }
+        // Display notification for any received message
+        notificationHelper.showHeartbeatNotification(title, body)
     }
 }

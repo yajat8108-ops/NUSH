@@ -49,6 +49,19 @@ class AndroidBridge(
         }
     }
 
+    /** Allows immediate local notification testing on Android. */
+    @JavascriptInterface
+    fun testLocalNotification(title: String = "Calculator", body: String = "Calculator is yearning for you 🩷") {
+        try {
+            com.nush.app.push.NotificationHelper(context).showHeartbeatNotification(
+                title.ifBlank { "Calculator" },
+                body.ifBlank { "Calculator is yearning for you 🩷" }
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "testLocalNotification error", e)
+        }
+    }
+
     /** Native haptic feedback.
      *  pattern: comma-separated ms values e.g. "60,40,80,200" */
     @JavascriptInterface

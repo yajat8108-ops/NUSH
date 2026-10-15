@@ -24,7 +24,7 @@ import java.net.URL
 class HeartbeatAppWidget : AppWidgetProvider() {
 
     companion object {
-        const val ACTION_PULSE = "com.nush.app.action.WIDGET_PULSE"
+        const val ACTION_PULSE = "com.nush.app.ACTION_PULSE_HEARTBEAT"
         private const val TAG = "HeartbeatAppWidget"
     }
 

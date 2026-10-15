@@ -20,6 +20,30 @@ export default function CelestialAurora() {
   } = usePresenceStore();
 
   const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
+  const [testStatus, setTestStatus] = useState<string | null>(null);
+
+  const handleTestNotification = async () => {
+    SoundEngine.pop();
+    setTestStatus('Testing...');
+    if (typeof window !== 'undefined' && (window as any).AndroidBridge?.testLocalNotification) {
+      try {
+        (window as any).AndroidBridge.testLocalNotification(
+          'Calculator',
+          '💓 Test Notification: Heartbeat working on your Android device!'
+        );
+        setTestStatus('Sent!');
+      } catch (e) {
+        setTestStatus('Err');
+      }
+    }
+    try {
+      const res = await fetch(`/api/push/test?send=${myRole}`);
+      if (res.ok) {
+        setTestStatus('Sent!');
+      }
+    } catch (_) {}
+    setTimeout(() => setTestStatus(null), 3000);
+  };
 
   const handleInstantHeartbeat = () => {
     SoundEngine.heartbeat();
@@ -91,6 +115,16 @@ export default function CelestialAurora() {
           >
             <span>💓</span>
             <span className="hidden sm:inline">Send Heartbeat</span>
+          </button>
+
+          {/* Test Notification Button */}
+          <button
+            onClick={handleTestNotification}
+            className="px-2.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-pink-200 hover:text-white font-mono text-[10px] font-bold shadow transition-transform hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1"
+            title="Test if notifications work on this device"
+          >
+            <span>🔔</span>
+            <span className="hidden sm:inline">{testStatus || 'Test Notif'}</span>
           </button>
         </div>
       </motion.div>
