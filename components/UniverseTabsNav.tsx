@@ -172,13 +172,13 @@ export default function UniverseTabsNav() {
       <header
         ref={navRef}
         aria-label="Universe Header & Navigation"
-        className="fixed top-0 left-0 right-0 z-50 w-full select-none shadow-[0_10px_35px_rgba(0,0,0,0.65)] print:hidden"
+        className="fixed top-0 left-0 right-0 z-50 w-full select-none backdrop-blur-2xl shadow-[0_8px_30px_rgba(0,0,0,0.35)] border-b border-pink-500/20 print:hidden"
       >
       {/* ─────────────────────────────────────────────────────────────
           TIER 1: TOP UTILITY STRIP (Like Reference's Blue Bar)
-          Cosmic dark theme with romantic accents & live telemetry
+          Translucent cosmic theme with romantic accents & live telemetry
           ───────────────────────────────────────────────────────────── */}
-      <div className="w-full bg-gradient-to-r from-[#090412] via-[#1b0826] to-[#090412] border-b border-pink-500/20 text-pink-200/80 text-[10px] sm:text-xs font-mono py-1 px-3 sm:px-6">
+      <div className="w-full backdrop-blur-xl bg-[#090412]/45 dark:bg-[#090412]/50 border-b border-white/10 text-pink-200/85 text-[10px] sm:text-xs font-mono py-1 px-3 sm:px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           {/* Left: Romantic Greeting */}
           <div className="flex items-center gap-2 truncate">
@@ -216,9 +216,9 @@ export default function UniverseTabsNav() {
 
       {/* ─────────────────────────────────────────────────────────────
           TIER 2: MAIN NAVIGATION BAR (Like Reference's Main Header)
-          Logo on Left, Center Tabs, Right Action Icons & "Send Love" CTA
+          Translucent frosted glass with Logo, Tabs, and Action Icons
           ───────────────────────────────────────────────────────────── */}
-      <div className="w-full backdrop-blur-2xl bg-black/85 dark:bg-[#0c0a14]/90 border-b border-pink-500/25 transition-all">
+      <div className="w-full backdrop-blur-2xl bg-black/45 dark:bg-[#0c0a14]/55 transition-all">
         <div className="max-w-7xl mx-auto px-3 sm:px-6">
           <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-4">
             
@@ -367,7 +367,7 @@ export default function UniverseTabsNav() {
             MOBILE TAB STRIP (Visible on mobile/tablet screens < lg)
             Scrollable, swipeable, with auto-centering active tab
             ───────────────────────────────────────────────────────────── */}
-        <div className="lg:hidden w-full border-t border-white/10 bg-black/60 backdrop-blur-md px-2 py-1.5 overflow-x-auto no-scrollbar scroll-smooth">
+        <div className="lg:hidden w-full border-t border-white/10 bg-black/35 dark:bg-[#0c0a14]/45 backdrop-blur-xl px-2 py-1.5 overflow-x-auto no-scrollbar scroll-smooth">
           <div className="flex items-center gap-1.5 min-w-max mx-auto justify-start sm:justify-center">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
