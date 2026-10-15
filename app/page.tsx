@@ -111,11 +111,11 @@ export default function Home() {
       <FloatingBottomDock />
 
       <main className="anniversary-body min-h-screen">
-        {/* 2. LIVE PRESENCE & STATUS BEACON */}
-        <CelestialAurora />
-
-        {/* 2.5 STICKY MODERN UNIVERSE TABS BAR */}
+        {/* 2. STICKY TOP BAR & TABS NAVIGATION (ALWAYS VISIBLE AT TOP) */}
         <UniverseTabsNav />
+
+        {/* 2.5 LIVE PRESENCE & STATUS BEACON */}
+        <CelestialAurora />
 
         {/* ─────────────────────────────────────────────────────────────
             TAB 1: OUR STORY (Hero, Origin, The Kiss, Love Letter, Vows)
