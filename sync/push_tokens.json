@@ -1,18 +1,11 @@
 {
-  "nush": [
-    {
-      "token": "test_token_123",
-      "updatedAt": 1792066182874
-    }
-  ],
-  "yajat": [
-    {
-      "token": "test",
-      "updatedAt": 1792066005589
-    },
-    {
-      "token": "f-hyjfwgSkqwsMXgNSNpin:APA91bHKlfyjRm0sQYbtnsHDSiH_JdgL1-7pXnCYjYPjz4x1oocFIFkOPpyEPJy9kXndz--Pl_9nRCZN0rKiamfpJSp4vVrpNSCND_LnawVM0O0A-9lNikc",
-      "updatedAt": 1792065402322
-    }
-  ]
+    "nush":  [
+
+             ],
+    "yajat":  [
+                  {
+                      "updatedAt":  1792065402322,
+                      "token":  "f-hyjfwgSkqwsMXgNSNpin:APA91bHKlfyjRm0sQYbtnsHDSiH_JdgL1-7pXnCYjYPjz4x1oocFIFkOPpyEPJy9kXndz--Pl_9nRCZN0rKiamfpJSp4vVrpNSCND_LnawVM0O0A-9lNikc"
+                  }
+              ]
 }
