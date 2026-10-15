@@ -16,7 +16,10 @@ export function getFirebaseAdmin(): admin.app.App | null {
   }
 
   try {
-    const serviceAccount = JSON.parse(serviceAccountRaw);
+    // Strip surrounding single or double quotes that may be present
+    // when the value is pasted into Vercel dashboard (e.g. '{"type":...}')
+    const trimmed = serviceAccountRaw.trim().replace(/^['"]|['"]$/g, '');
+    const serviceAccount = JSON.parse(trimmed);
     firebaseAdminApp = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
