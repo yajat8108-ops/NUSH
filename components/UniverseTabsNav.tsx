@@ -147,13 +147,33 @@ export default function UniverseTabsNav() {
   };
 
   const percent = getExplorationPercent();
+  const [headerHeight, setHeaderHeight] = useState<number>(100);
+
+  // Dynamically measure header height so the spacer is pixel-perfect on all screen sizes
+  useEffect(() => {
+    if (!navRef.current) return;
+    const updateHeight = () => {
+      if (navRef.current) {
+        setHeaderHeight(navRef.current.offsetHeight);
+      }
+    };
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(navRef.current);
+    window.addEventListener('resize', updateHeight);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateHeight);
+    };
+  }, []);
 
   return (
-    <header
-      ref={navRef}
-      aria-label="Universe Header & Navigation"
-      className="sticky top-0 z-50 w-full select-none shadow-[0_10px_35px_rgba(0,0,0,0.65)] print:hidden"
-    >
+    <>
+      <header
+        ref={navRef}
+        aria-label="Universe Header & Navigation"
+        className="fixed top-0 left-0 right-0 z-50 w-full select-none shadow-[0_10px_35px_rgba(0,0,0,0.65)] print:hidden"
+      >
       {/* ─────────────────────────────────────────────────────────────
           TIER 1: TOP UTILITY STRIP (Like Reference's Blue Bar)
           Cosmic dark theme with romantic accents & live telemetry
@@ -378,5 +398,12 @@ export default function UniverseTabsNav() {
         </div>
       </div>
     </header>
+    {/* Dynamic pixel-perfect spacer so the content starts right below the fixed header */}
+    <div
+      style={{ height: `${headerHeight}px` }}
+      className="w-full pointer-events-none transition-all duration-150"
+      aria-hidden="true"
+    />
+  </>
   );
 }
