@@ -52,6 +52,13 @@ export const TABS: TabItem[] = [
     badge: '365 Notes',
     description: '60 Reasons, 365 Jar, Two-Way Vault, Open When & Sanctuary',
   },
+  {
+    id: 'sorry',
+    label: 'Sorry 🥺',
+    icon: '🧸',
+    badge: 'Apology',
+    description: "I'm Sorry: Apology Letter, Promises & Healing Sanctuary",
+  },
 ];
 
 export default function UniverseTabsNav() {
@@ -87,7 +94,7 @@ export default function UniverseTabsNav() {
       const queryTab = searchParams.get('tab') as UniverseTab | null;
       const hashTab = window.location.hash.replace('#', '') as UniverseTab | null;
 
-      const validTabs: UniverseTab[] = ['story', 'timeline', 'gallery', 'games', 'vault'];
+      const validTabs: UniverseTab[] = ['story', 'timeline', 'gallery', 'games', 'vault', 'sorry'];
       const target = (queryTab && validTabs.includes(queryTab)) ? queryTab :
                      (hashTab && validTabs.includes(hashTab)) ? hashTab : null;
 
@@ -176,14 +183,14 @@ export default function UniverseTabsNav() {
       >
       {/* ─────────────────────────────────────────────────────────────
           TIER 1: TOP UTILITY STRIP (Like Reference's Blue Bar)
-          Translucent cosmic theme with romantic accents & live telemetry
+          Translucent theme: Mocha Brown in light mode, Pink in dark mode
           ───────────────────────────────────────────────────────────── */}
-      <div className="w-full backdrop-blur-xl bg-[#090412]/45 dark:bg-[#090412]/50 border-b border-white/10 text-pink-200/85 text-[10px] sm:text-xs font-mono py-1 px-3 sm:px-6">
+      <div className="w-full backdrop-blur-xl bg-[#FFF4ED]/75 dark:bg-[#090412]/50 border-b border-[#8A5A34]/15 dark:border-white/10 text-[#8A5A34]/85 dark:text-pink-200/85 text-[10px] sm:text-xs font-mono py-1 px-3 sm:px-6 transition-colors duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
-          {/* Left: Romantic Greeting */}
+          {/* Left: Romantic Greeting (Brown in light mode, Pink in dark mode) */}
           <div className="flex items-center gap-2 truncate">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
-            <span className="font-semibold tracking-wide text-white/90 truncate">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+            <span className="font-extrabold tracking-wide text-[#8A5A34] dark:text-[#FF9EC9] truncate transition-colors duration-300">
               Welcome to Yajat &amp; Nush&apos;s Infinite Universe ✨
             </span>
           </div>
@@ -191,24 +198,24 @@ export default function UniverseTabsNav() {
           {/* Right: Quick Stats & Anniversary Milestone */}
           <div className="flex items-center gap-3 sm:gap-5 flex-shrink-0">
             {/* Days Together */}
-            <div className="flex items-center gap-1 text-pink-300">
+            <div className="flex items-center gap-1 text-[#8A5A34] dark:text-pink-300">
               <span>📅</span>
-              <span className="hidden sm:inline text-white/70">Milestone:</span>
-              <span className="text-[var(--butter)] font-bold">Aug 22, 2024</span>
+              <span className="hidden sm:inline text-[#8A5A34]/70 dark:text-white/70">Milestone:</span>
+              <span className="text-[#8A5A34] dark:text-[var(--butter)] font-bold">Aug 22, 2024</span>
             </div>
 
             {/* Streak Counter */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 text-[#8A5A34] dark:text-pink-200">
               <span>🔥</span>
-              <span className="text-[var(--butter)] font-bold">{streakCount}d</span>
-              <span className="hidden sm:inline text-white/60">streak</span>
+              <span className="text-[#8A5A34] dark:text-[var(--butter)] font-bold">{streakCount}d</span>
+              <span className="hidden sm:inline text-[#8A5A34]/70 dark:text-white/60">streak</span>
             </div>
 
             {/* Explored Percentage */}
-            <div className="hidden md:flex items-center gap-1.5 text-purple-300">
+            <div className="hidden md:flex items-center gap-1.5 text-[#8A5A34] dark:text-purple-300">
               <span>🌌</span>
-              <span className="text-white/70">Explored:</span>
-              <span className="text-[var(--butter)] font-bold">{percent}%</span>
+              <span className="text-[#8A5A34]/70 dark:text-white/70">Explored:</span>
+              <span className="text-[#8A5A34] dark:text-[var(--butter)] font-bold">{percent}%</span>
             </div>
           </div>
         </div>
@@ -218,7 +225,7 @@ export default function UniverseTabsNav() {
           TIER 2: MAIN NAVIGATION BAR (Like Reference's Main Header)
           Translucent frosted glass with Logo, Tabs, and Action Icons
           ───────────────────────────────────────────────────────────── */}
-      <div className="w-full backdrop-blur-2xl bg-black/45 dark:bg-[#0c0a14]/55 transition-all">
+      <div className="w-full backdrop-blur-2xl bg-white/65 dark:bg-[#0c0a14]/55 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-3 sm:px-6">
           <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-4">
             
@@ -263,7 +270,7 @@ export default function UniverseTabsNav() {
                     className={`relative px-3.5 py-2 rounded-xl font-mono text-xs xl:text-sm font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer flex items-center gap-2 ${
                       isActive
                         ? 'text-white'
-                        : 'text-zinc-400 hover:text-pink-200 hover:bg-white/5'
+                        : 'text-[#8A5A34]/80 dark:text-zinc-400 hover:text-[#8A5A34] dark:hover:text-pink-200 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                     title={tab.description}
                   >
@@ -284,7 +291,7 @@ export default function UniverseTabsNav() {
                         className={`text-[9px] uppercase px-1.5 py-0.5 rounded-full font-mono tracking-widest ${
                           isActive
                             ? 'bg-white/20 text-white'
-                            : 'bg-white/5 text-pink-300/60'
+                            : 'bg-black/5 dark:bg-white/5 text-[#8A5A34]/70 dark:text-pink-300/60'
                         }`}
                       >
                         {tab.badge}
@@ -367,7 +374,7 @@ export default function UniverseTabsNav() {
             MOBILE TAB STRIP (Visible on mobile/tablet screens < lg)
             Scrollable, swipeable, with auto-centering active tab
             ───────────────────────────────────────────────────────────── */}
-        <div className="lg:hidden w-full border-t border-white/10 bg-black/35 dark:bg-[#0c0a14]/45 backdrop-blur-xl px-2 py-1.5 overflow-x-auto no-scrollbar scroll-smooth">
+        <div className="lg:hidden w-full border-t border-black/5 dark:border-white/10 bg-white/60 dark:bg-[#0c0a14]/45 backdrop-blur-xl px-2 py-1.5 overflow-x-auto no-scrollbar scroll-smooth">
           <div className="flex items-center gap-1.5 min-w-max mx-auto justify-start sm:justify-center">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
@@ -379,7 +386,7 @@ export default function UniverseTabsNav() {
                   className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer flex-shrink-0 ${
                     isActive
                       ? 'text-white'
-                      : 'text-zinc-400 hover:text-pink-200 hover:bg-white/5'
+                      : 'text-[#8A5A34]/80 dark:text-zinc-400 hover:text-[#8A5A34] dark:hover:text-pink-200 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
                 >
                   {isActive && (

@@ -125,11 +125,6 @@ export default function Home() {
             {/* 3. HERO — 3D Hearts + Dynamic Countdown */}
             <AnniversaryHero />
 
-            <SectionDivider variant="wave" />
-
-            {/* 3.5 I'M SORRY SECTION */}
-            <SorrySection />
-
             <SectionDivider variant="cloud" />
 
             {/* 4. THE PROLOGUE — THE GUITAR & FAKE DATING PACT ORIGIN STORY */}
@@ -404,6 +399,15 @@ export default function Home() {
 
             {/* 37. FINAL CINEMATIC EPILOGUE */}
             <CinematicEnding />
+          </section>
+        )}
+
+        {/* ─────────────────────────────────────────────────────────────
+            TAB 6: I'M SORRY (Dedicated Apology & Amends Sanctuary — Kept at Last)
+            ───────────────────────────────────────────────────────────── */}
+        {activeTab === 'sorry' && (
+          <section id="tab-sorry" className="space-y-6 animate-in fade-in duration-300">
+            <SorrySection />
           </section>
         )}
 

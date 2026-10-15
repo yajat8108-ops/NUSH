@@ -39,7 +39,7 @@ export interface FortuneEntry {
   date: string;
 }
 
-export type UniverseTab = 'story' | 'timeline' | 'gallery' | 'games' | 'vault';
+export type UniverseTab = 'story' | 'timeline' | 'gallery' | 'games' | 'vault' | 'sorry';
 
 interface UniverseStore {
   // Tabs Navigation
