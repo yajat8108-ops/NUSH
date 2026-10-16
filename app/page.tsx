@@ -107,7 +107,6 @@ export default function Home() {
 
       <ThemeToggle />
       <CamcorderViewfinder />
-      <TimeMachineVault />
       <FloatingBottomDock />
 
       <main className="anniversary-body min-h-screen">
@@ -313,6 +312,11 @@ export default function Home() {
 
             {/* 28. EMERGENCY EMOTIONAL CARE: OPEN WHEN LETTERS */}
             <OpenWhenVault />
+
+            <SectionDivider variant="stars" />
+
+            {/* 28.5 THE MULTIVERSE TIME MACHINE VAULT */}
+            <TimeMachineVault />
 
             <SectionDivider variant="aurora" />
 
