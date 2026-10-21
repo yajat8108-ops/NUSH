@@ -26,7 +26,7 @@ export default function CinematicEnding() {
           viewport={{ once: true }}
           className="font-mono text-2xl md:text-4xl font-bold text-[var(--butter)]"
         >
-          3 Months. A Whole Quarter of a Year.
+          4 Months. Four Whole Months of Us.
         </motion.h2>
 
         <motion.p

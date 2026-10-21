@@ -89,7 +89,7 @@ export default function PhotoBoothSecret({ onClose }: PhotoBoothSecretProps) {
               PHOTOMATON &middot; YAJAT &amp; NUSH
             </p>
             <p className="font-caveat text-base font-bold text-rose-600">
-              Three Months of Pure Magic
+              Four Months of Pure Magic
             </p>
           </div>
 

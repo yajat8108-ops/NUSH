@@ -46,9 +46,9 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: 'Yajat & Nush — Three Months of Us (Quarter of a Year) 👑💖',
-  description: 'Happy 3rd month anniversary, Nushi! Three months of pure magic, library study dates, your velvety voice, and our whole relationship universe ❤️',
-  keywords: ['anniversary', 'love', 'vit bhopal', 'yajat and nush', 'month 3', 'three months'],
+  title: 'Yajat & Nush — Four Months of Us (Our Infinite Universe) 👑💖',
+  description: 'Happy 4th month anniversary, Nushi! Four months of pure magic, library study dates, your velvety voice, and our whole relationship universe ❤️',
+  keywords: ['anniversary', 'love', 'vit bhopal', 'yajat and nush', 'month 4', 'four months'],
   authors: [{ name: 'Yajat Kataria' }],
   manifest: '/manifest.json',
   icons: {
@@ -61,8 +61,8 @@ export const metadata: Metadata = {
     title: 'Yajat & Nush',
   },
   openGraph: {
-    title: 'Yajat & Nush — Three Months of Us (Quarter of a Year) 👑💖',
-    description: 'Happy 3rd month anniversary, Nushi! Three months of pure magic, library study dates, your velvety voice, and our whole relationship universe ❤️',
+    title: 'Yajat & Nush — Four Months of Us (Our Infinite Universe) 👑💖',
+    description: 'Happy 4th month anniversary, Nushi! Four months of pure magic, library study dates, your velvety voice, and our whole relationship universe ❤️',
     type: 'website',
   },
 };

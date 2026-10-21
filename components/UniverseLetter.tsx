@@ -23,7 +23,7 @@ export default function UniverseLetter() {
 
   useEffect(() => {
     if (isInView) {
-      addExplorationPoint('love_letter', 'Read 3-Month Love Letter');
+      addExplorationPoint('love_letter', 'Read 4-Month Love Letter');
       confetti({
         particleCount: 50,
         spread: 60,
@@ -86,7 +86,7 @@ export default function UniverseLetter() {
 
     ctx.fillStyle = '#6b4d78';
     ctx.font = '20px sans-serif';
-    ctx.fillText('Three Months & A Quarter of a Year Together 👑💖', 400, 310);
+    ctx.fillText('Four Months of Pure Magic Together 👑💖', 400, 310);
 
     ctx.fillStyle = '#FF5C8E';
     ctx.font = 'italic 18px Georgia, serif';
@@ -97,7 +97,7 @@ export default function UniverseLetter() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'yajat-and-nush-three-months.png';
+      a.download = 'yajat-and-nush-four-months.png';
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -114,10 +114,10 @@ export default function UniverseLetter() {
       </button>
 
       <div className="letter print:shadow-none print:bg-white print:border-none print:w-full print:max-w-none" ref={letterRef}>
-        <span className="eyebrow print:hidden">quarter of a year &middot; month three live</span>
+        <span className="eyebrow print:hidden">four months of us &middot; month four live</span>
         <h2 className="script" style={{ fontSize: '3rem', margin: '0.4rem 0 1.4rem' }}>for you, my nushi ❤️</h2>
 
-        <p>Happy 3 months to us, <strong>Nushi</strong> 😭❤️ (a whole quarter of a year already, and it still feels like magic!)</p>
+        <p>Happy 4 months to us, <strong>Nushi</strong> 😭❤️ (four full months already, and it still feels like magic!)</p>
 
         <p>
           Honestly, it&apos;s crazy to think how much our little world has grown, <strong>baby</strong>. When I look back,
@@ -230,15 +230,15 @@ export default function UniverseLetter() {
         </p>
 
         <p>
-          <strong>Happy 3 months, meri Nushi ❤️🥹 (A quarter of a year down, and a whole lifetime of memories to go!)</strong>
+          <strong>Happy 4 months, meri Nushi ❤️🥹 (Four months down, and a whole lifetime of memories to go!)</strong>
         </p>
 
         <p>
-          Thank you for making these three months the happiest of my life. Thank you for your voice, your laughs, your tears of happiness, your random tight hugs, the late night video calls, and every single extra minute we somehow manage to steal together.
+          Thank you for making these four months the happiest of my life. Thank you for your voice, your laughs, your tears of happiness, your random tight hugs, the late night video calls, and every single extra minute we somehow manage to steal together.
         </p>
 
         <p className="font-bold text-center text-lg text-[var(--pink-deep)] my-4">
-          I love you so so much, Nushi ❤️ Happy 3 months to us, baby. Here&apos;s to us and our little world ❤️🎶😭
+          I love you so so much, Nushi ❤️ Happy 4 months to us, baby. Here&apos;s to us and our little world ❤️🎶😭
         </p>
 
         {/* Media Video Selector */}
@@ -277,7 +277,7 @@ export default function UniverseLetter() {
             onClick={handleShareStory}
             className="bg-gradient-to-r from-[var(--pink-deep)] to-[var(--lav)] text-white px-8 py-3 rounded-full font-nunito font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2"
           >
-            💌 Share Our 3-Month Story
+            💌 Share Our 4-Month Story
           </button>
         </div>
 

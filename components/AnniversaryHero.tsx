@@ -97,7 +97,7 @@ export default function AnniversaryHero() {
 
       
       <p className="eyebrow fade-in slide-in-from-bottom-4 zoom-in-95 animate-in" style={{ animationDuration: '1s' }}>
-        a very official 3-month anniversary website &middot; a whole quarter of a year together 👑💖
+        a very official 4-month anniversary website &middot; four months of pure magic together 👑💖
       </p>
 
       {/* Live Midnight Countdown / Road to Sep 22nd Anniversary Status */}
@@ -186,7 +186,7 @@ export default function AnniversaryHero() {
       </div>
 
       <p className="hero-sub mt-3 max-w-xl mx-auto">
-        three months of pure magic, our all-night calls, library study dates, your velvety voice, and a whole universe of memories 🥹❤️
+        four months of pure magic, our all-night calls, library study dates, your velvety voice, and a whole universe of memories 🥹❤️
       </p>
 
       {/* Redesigned & Beautifully Polished Day Counter Card */}

@@ -7,7 +7,7 @@ import { SoundEngine } from '@/lib/audio';
 import confetti from 'canvas-confetti';
 
 const FORTUNES: Omit<FortuneEntry, 'id' | 'date'>[] = [
-  { type: 'prediction', text: 'A suspiciously cute date with extra tight hugs is approaching in Month 3.' },
+  { type: 'prediction', text: 'A suspiciously cute date with extra tight hugs is approaching in Month 4.' },
   { type: 'date', text: 'Late-night campus walk + 2 AM Maggi with extra cheese, no questions asked.' },
   { type: 'roast', text: 'Prediction: You will lose an argument against Yajat and still somehow win completely.' },
   { type: 'moment', text: 'A sacred memory at Open Audi will be retold with happy tears tonight.' },

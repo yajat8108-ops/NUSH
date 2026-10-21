@@ -61,7 +61,7 @@ const STORY_CHAPTERS: StoryChapter[] = [
     badge: 'Pure Reality',
     quote: '“We fell deeply in love online before we even met in person again.”',
     content: 'What started as pretending slowly turned into the most genuine, overwhelming feelings either of us had ever experienced. Between the 4 AM FaceTime calls, the butterflies in our stomachs, and the way we couldn’t stop talking, the ‘fake’ part completely disappeared. Before we even saw each other in person again, both of us had fallen head-over-heels, madly in love. What started as moving on became our forever.',
-    subtext: 'Pretending dissolved • True love conquered • 3 months and forever to go 🥹❤️',
+    subtext: 'Pretending dissolved • True love conquered • 4 months and forever to go 🥹❤️',
   },
 ];
 

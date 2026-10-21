@@ -98,8 +98,8 @@ const TIMELINE_NODES: TimelineNode[] = [
   {
     id: 'month3_now',
     date: 'September 22, 2026 (Live Today!)',
-    title: '👑 Month 3 — A Quarter of a Year Universe',
-    desc: 'Three months of pure magic, library study dates, deleted music apps for your voice, and forever to go.',
+    title: '👑 Month 4 — Our Infinite 4-Month Universe',
+    desc: 'Four months of pure magic, library study dates, deleted music apps for your voice, and forever to go.',
     emoji: '💖',
     type: 'milestone',
     targetUrl: '#letter',

@@ -318,20 +318,20 @@ function buildSorryBanner(scene: THREE.Scene): { group: THREE.Group; hitMesh: TH
     ctx.font = 'bold 56px Quicksand, sans-serif';
     ctx.textAlign = 'center';
     ctx.letterSpacing = '12px';
-    ctx.fillText('✦  A PROMISE FROM YAJAT  ✦', 2048, 200);
+    ctx.fillText('✦  FOUR MONTHS OF US  ✦', 2048, 200);
 
     // Main romantic headline — ultra bold, dark contrast plum/burgundy (#2A0824)
     // No white glare/shine, perfectly legible in all room lighting
     ctx.fillStyle = '#2A0824';
-    ctx.font = '900 150px Quicksand, "Arial Black", sans-serif';
-    ctx.letterSpacing = '4px';
-    ctx.fillText("I'M SO SORRY, NUSH 🤍", 2048, 490);
+    ctx.font = '900 138px Quicksand, "Arial Black", sans-serif';
+    ctx.letterSpacing = '3px';
+    ctx.fillText("HAPPY 4RTH ANIVERSARY NUSH 💖", 2048, 490);
 
     // Subtitle promise — dark deep rose-plum (#5E183E)
     ctx.fillStyle = '#5E183E';
     ctx.font = 'italic 700 82px Nunito, sans-serif';
     ctx.letterSpacing = '1px';
-    ctx.fillText('You are my first and only choice — always & forever ✨', 2048, 730);
+    ctx.fillText('Four whole months of pure magic & loving you — always & forever ✨', 2048, 730);
 
     // Bottom garland divider
     ctx.fillStyle = '#C84C7A';
@@ -840,7 +840,7 @@ export default function DormRoom() {
         {/* Hint bar */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none">
           <div className="bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-[10px] font-mono text-white/70 whitespace-nowrap">
-            🖱️ drag to orbit · scroll to zoom · tap 🧸 Teddy, 🖼️ Photos, or 🎀 Sorry Banner
+            🖱️ drag to orbit · scroll to zoom · tap 🧸 Teddy, 🖼️ Photos, or 🎀 4th Anniversary Banner
           </div>
         </div>
       </div>
@@ -863,20 +863,20 @@ export default function DormRoom() {
               className="bg-[#181028] border-2 border-pink-500/60 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-[0_0_80px_rgba(236,72,153,0.5)] text-center cursor-pointer select-none"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="text-5xl mb-3 animate-bounce">🕊️</div>
+              <div className="text-5xl mb-3 animate-bounce">👑💖</div>
               <h3 className="text-xl sm:text-2xl font-bold font-quicksand text-white mb-2">
-                I&apos;m Really Sorry, Nush 🤍
+                Happy 4th Anniversary, Nush! 💖
               </h3>
               <p className="text-pink-200/90 font-nunito text-sm sm:text-base leading-relaxed mb-6">
-                I hung this banner right here in our sanctuary because you are my whole world. Thinking of going on any trip without you was thoughtless and wrong. I promise you will always be my first and only choice.
+                Four whole months of pure magic, our all-night calls, library dates, laughter, and building our entire universe together. You are my whole world, my favourite person, and my forever choice.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <a
-                  href="#im-sorry"
+                  href="#letter"
                   onClick={() => setSorryBannerModal(false)}
                   className="px-6 py-3 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-quicksand font-bold text-sm shadow-lg hover:shadow-pink-500/30 transition-all hover:scale-105 active:scale-95"
                 >
-                  Read My Letter &amp; Promises ↓
+                  Read Our 4-Month Love Letter ↓
                 </a>
                 <button
                   type="button"

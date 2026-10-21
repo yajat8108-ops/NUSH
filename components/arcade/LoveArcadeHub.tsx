@@ -77,7 +77,7 @@ export default function LoveArcadeHub() {
       <SectionHead
         eyebrow="exhibit d · love arcade"
         title="The Relationship Playground"
-        subtitle="11 fully interactive mini-games crafted for our 3-month universe"
+        subtitle="11 fully interactive mini-games crafted for our 4-month universe"
       />
 
       <div className="max-w-5xl mx-auto px-4">

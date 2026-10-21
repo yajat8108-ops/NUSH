@@ -6,7 +6,7 @@ import { useUniverseStore } from '@/lib/universeStore';
 import { motion } from 'framer-motion';
 
 const DEV_NOTES = [
-  '“Yes, I coded this 3-month universe instead of touching grass.” 💻❤️',
+  '“Yes, I coded this 4-month universe instead of touching grass.” 💻❤️',
   '“This feature was completely unnecessary, but your smile made it mandatory.” ✨',
   '“You weren’t supposed to find this secret room, but obviously you are a detective.” 🕵️‍♀️',
   '“Fun Fact: The all-night video call on Month 2 reached 8 hours 42 minutes.” 🌙',

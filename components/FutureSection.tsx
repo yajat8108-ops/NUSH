@@ -187,12 +187,12 @@ const RAW_DROPS: Omit<DailyDrop, 'dayNumber' | 'dateLabel'>[] = [
   },
   // DAY 14 (Sep 22 - 3 Month Anniversary)
   {
-    title: 'OUR 3-MONTH ANNIVERSARY GRAND FINALE! 💍👑💖',
+    title: 'OUR 4-MONTH ANNIVERSARY GRAND FINALE! 💍👑💖',
     category: 'Day 14 Anniversary',
-    badge: 'September 22nd — 3-Month Anniversary',
+    badge: 'October 22nd — 4-Month Anniversary',
     icon: '💍',
-    teaser: 'HAPPY 3-MONTH ANNIVERSARY, MERI NUSHI! A whole quarter of a year of us.',
-    secretContent: '“HAPPY 3-MONTH ANNIVERSARY, MERI NUSHI! ❤️🥹 Today is September 22nd—three full months of pure magic, our sacred Open Audi spots, our library notes, and watching you sleep on FaceTime until 4:23 AM. You are my best friend, my soulmate, my bbg, and my wifeyyy. Next stop: our 4-month anniversary on October 22nd! Happy Anniversary to us, baby! ❤️🎶😭”',
+    teaser: 'HAPPY 4-MONTH ANNIVERSARY, MERI NUSHI! Four whole months of pure magic together.',
+    secretContent: '“HAPPY 4-MONTH ANNIVERSARY, MERI NUSHI! ❤️🥹 Today is October 22nd—four full months of pure magic, our sacred Open Audi spots, our library notes, and watching you sleep on FaceTime until 4:23 AM. You are my best friend, my soulmate, my bbg, and my wifeyyy. Next stop: our 5-month anniversary on November 22nd! Happy Anniversary to us, baby! ❤️🎶😭”',
     tokenReward: '👑 Eternal Trophy: Best Girlfriend in the Universe Official Master Award',
     accentGradient: 'from-[#FFD700] via-[#FF5C8E] to-[#B9AEF5]',
     mediaType: 'finale',

@@ -144,13 +144,13 @@ export default function AskYajatConsole() {
     if (lowerQ.includes('do you love me') || lowerQ.includes('kitna pyar') || lowerQ.includes('pyar karte ho')) {
       return pick([
         "Do I love you? Nushi, you are my entire universe 😭❤️ From that first acoustic guitar meet to our 4 AM calls, I am completely, head-over-heels in love with you. Forever, no cap 🥹✨",
-        "Kitna pyar? Kitna bhi bolu kam padega baby. Like... beyond infinity. 3 months down, 100 years to go 💍❤️"
+        "Kitna pyar? Kitna bhi bolu kam padega baby. Like... beyond infinity. 4 months down, 100 years to go 💍❤️"
       ]);
     }
 
     if (lowerQ.includes('love') || lowerQ.includes('ily') || lowerQ.includes('pyar')) {
       return pick([
-        "I love you so so much more, Nushi ❤️ Like... mathematically infinite. Every single second of these 3 months has proved to me that you're the one. Forever and always, bbg 🥹💋",
+        "I love you so so much more, Nushi ❤️ Like... mathematically infinite. Every single second of these 4 months has proved to me that you're the one. Forever and always, bbg 🥹💋",
         "I love you too meri jaan 😭❤️ You have no idea how happy you make me just by existing. Come here and take a tight hug 🫢"
       ]);
     }
@@ -218,7 +218,7 @@ export default function AskYajatConsole() {
     }
 
     if (lowerQ.includes('marry') || lowerQ.includes('future') || lowerQ.includes('wifey')) {
-      return "Wifeyyy, that's already written in the stars 💍 You are my Nush, my Nushi, my baby, my bbg, and my future wife all in one. 3 months down, an entire lifetime to go. I am never letting you go ❤️👑";
+      return "Wifeyyy, that's already written in the stars 💍 You are my Nush, my Nushi, my baby, my bbg, and my future wife all in one. 4 months down, an entire lifetime to go. I am never letting you go ❤️👑";
     }
 
     if (lowerQ.includes('mad at you') || lowerQ.includes('gussa') || lowerQ.includes('shut up')) {

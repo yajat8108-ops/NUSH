@@ -156,7 +156,7 @@ interface UniverseStore {
 }
 
 const INITIAL_ACHIEVEMENTS: Achievement[] = [
-  { id: 'universe_entered', title: 'Cosmic Step', desc: 'Entered the 3-Month Relationship Universe', icon: '🌌', unlockedAt: null },
+  { id: 'universe_entered', title: 'Cosmic Step', desc: 'Entered the 4-Month Relationship Universe', icon: '🌌', unlockedAt: null },
   { id: 'first_secret', title: 'First Secret Found', desc: 'Discovered your first hidden easter egg', icon: '🔍', unlockedAt: null },
   { id: 'kiss_unlocked', title: 'The 22 August Kiss', desc: 'Collided the hearts and unlocked our actual kiss memory', icon: '💋', unlockedAt: null },
   { id: 'smooch_23', title: '23 — First Smooch', desc: 'Revealed the first smooch milestone', icon: '🫦', unlockedAt: null },
@@ -175,7 +175,7 @@ const INITIAL_ACHIEVEMENTS: Achievement[] = [
   { id: 'countdown_streak', title: 'Daily Devotee 🔥', desc: 'Checked into the universe on consecutive days during the countdown', icon: '🔥', unlockedAt: null, secret: true },
   { id: 'countdown_complete', title: 'Century Milestone Master 👑', desc: 'Unlocked all 10 daily countdown drops', icon: '👑', unlockedAt: null, secret: true },
   { id: 'secret_room', title: 'Secret Room Explorer', desc: 'Unlocked the hidden developer memory vault (5+ secrets)', icon: '🚪', unlockedAt: null, secret: true },
-  { id: 'universe_100', title: '100% Relationship Master', desc: 'Explored every corner of our 3-month universe', icon: '💖', unlockedAt: null, secret: true },
+  { id: 'universe_100', title: '100% Relationship Master', desc: 'Explored every corner of our 4-month universe', icon: '💖', unlockedAt: null, secret: true },
   { id: 'perfect_match', title: 'Perfect Match 💫', desc: 'Scored 90%+ on the Compatibility Test — cosmically aligned', icon: '💫', unlockedAt: null },
   { id: 'stargazer_cosmic', title: 'Stargazing Soulmates 🌌', desc: 'Explored our sacred constellations under the open night sky', icon: '🌌', unlockedAt: null },
   { id: 'heartbeat_synced', title: 'Telepathic Touch 💓', desc: 'Held and sent a live synchronized heartbeat', icon: '💓', unlockedAt: null },

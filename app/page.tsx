@@ -134,7 +134,7 @@ export default function Home() {
 
             <SectionDivider variant="heartbeat" />
 
-            {/* 6. 3-MONTH COMPLETE LOVE LETTER */}
+            {/* 6. 4-MONTH COMPLETE LOVE LETTER */}
             <UniverseLetter />
 
             <SectionDivider variant="stars" />
@@ -161,7 +161,7 @@ export default function Home() {
 
             <SectionDivider variant="cloud" />
 
-            {/* 9. 3 MONTHS AGO VS NOW — INTERACTIVE ERA DIFF SLIDER */}
+            {/* 9. 4 MONTHS AGO VS NOW — INTERACTIVE ERA DIFF SLIDER */}
             <EraDiff />
 
             <SectionDivider variant="heartbeat" />
@@ -421,7 +421,7 @@ export default function Home() {
 
         <footer className="anniversary-footer">
           <div className="heart-row">🩷🐻👑</div>
-          three months of us &middot; a quarter of a year &middot; forever to go ❤️🎶😭
+          four months of us &middot; four months of pure magic &middot; forever to go ❤️🎶😭
         </footer>
       </main>
     </>

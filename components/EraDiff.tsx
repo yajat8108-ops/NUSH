@@ -37,7 +37,7 @@ export default function EraDiff() {
     <section id="era-diff" className="anniversary-section py-16 px-4 max-w-5xl mx-auto font-nunito select-none">
       <SectionHead
         eyebrow="evolution &amp; growth diff"
-        title="3 Months Ago vs. Right Now ⏳⚡"
+        title="4 Months Ago vs. Right Now ⏳⚡"
         subtitle="drag the split slider to compare where we started vs our entire universe today"
       />
 
@@ -53,7 +53,7 @@ export default function EraDiff() {
         <div className="absolute inset-0 bg-gradient-to-br from-[#1b122c] via-[#2a1740] to-[#120a1f] p-6 md:p-10 flex flex-col justify-between text-white">
           <div className="flex items-center justify-end">
             <span className="bg-gradient-to-r from-[var(--pink-deep)] to-[var(--butter)] text-black px-4 py-1.5 rounded-full font-mono text-xs font-bold shadow-lg">
-              👑 Month 3 (Today): Relationship Universe
+              👑 Month 4 (Today): Relationship Universe
             </span>
           </div>
 
@@ -71,7 +71,7 @@ export default function EraDiff() {
               </div>
               <div className="bg-white/10 p-2.5 rounded-xl border border-white/20">
                 <span className="text-[10px] text-gray-400 block">💌 REASONS COUNT</span>
-                <span className="text-[var(--pink)] font-bold">90 Reasons Revealed</span>
+                <span className="text-[var(--pink)] font-bold">120 Reasons Revealed</span>
               </div>
               <div className="bg-white/10 p-2.5 rounded-xl border border-white/20">
                 <span className="text-[10px] text-gray-400 block">🧸 SACRED COMPANION</span>
@@ -145,7 +145,7 @@ export default function EraDiff() {
 
       {/* Helper caption */}
       <p className="text-center text-xs font-mono text-[var(--plum-soft)] mt-4">
-        💡 Drag or swipe the handle left &amp; right to compare Month 1 vs Month 3
+        💡 Drag or swipe the handle left &amp; right to compare Month 1 vs Month 4
       </p>
     </section>
   );

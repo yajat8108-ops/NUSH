@@ -91,7 +91,7 @@ export default function CertificateSection() {
     ctx.textAlign = 'left';
     ctx.font = '16px sans-serif';
     ctx.fillStyle = '#222';
-    ctx.fillText('Issued: September 22, 2026 (Month 3)', 80, 480);
+    ctx.fillText('Issued: October 22, 2026 (Month 4)', 80, 480);
 
     // Signature
     ctx.textAlign = 'center';

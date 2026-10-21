@@ -22,7 +22,7 @@ export default function CollageMakerGame() {
     { id: '1', emoji: '🧸', x: 20, y: 70, rotate: -12 },
     { id: '2', emoji: '💖', x: 75, y: 15, rotate: 15 },
   ]);
-  const [caption, setCaption] = useState('Our 3-Month Memory Snapshot 🌸');
+  const [caption, setCaption] = useState('Our 4-Month Memory Snapshot 🌸');
   const [showGallery, setShowGallery] = useState(false);
   const canvasRef = useRef<HTMLDivElement | null>(null);
 

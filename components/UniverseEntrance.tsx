@@ -17,8 +17,8 @@ interface Slide {
 const INTRO_SLIDES: Slide[] = [
   {
     badge: 'CHAPTER I &middot; TIME',
-    line1: 'Three months.',
-    line2: 'Just 90 days on a calendar...',
+    line1: 'Four months.',
+    line2: '120 days on a calendar...',
     emoji: '⏳',
     accentColor: '#B9AEF5',
   },
@@ -38,7 +38,7 @@ const INTRO_SLIDES: Slide[] = [
   },
   {
     badge: 'CHAPTER IV &middot; OUR STORY',
-    line1: 'It’s three months of a whole universe.',
+    line1: 'It’s four months of a whole universe.',
     line2: 'Our guitars, our late-night pacts, our kisses, and our little world ❤️',
     emoji: '🌌',
     accentColor: '#FF5C8E',
@@ -279,7 +279,7 @@ export default function UniverseEntrance() {
 
                   <div className="space-y-2">
                     <span className="text-[10px] md:text-xs font-mono uppercase tracking-widest text-[#FFDD8C] font-bold px-4 py-1.5 rounded-full bg-white/10 border border-white/20 inline-block">
-                      Three Months of Pure Magic &middot; 90 Days
+                      Four Months of Pure Magic &middot; 120 Days
                     </span>
 
                     <h1 className="text-3xl md:text-5xl font-black font-mono text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.9)]">

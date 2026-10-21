@@ -22,7 +22,7 @@ export const TABS: TabItem[] = [
     label: 'Story',
     icon: '💖',
     badge: 'Our Love',
-    description: 'Hero, Origin Story, The Kiss & 3-Month Love Letter',
+    description: 'Hero, Origin Story, The Kiss & 4-Month Love Letter',
   },
   {
     id: 'timeline',

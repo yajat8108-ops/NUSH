@@ -1399,7 +1399,7 @@ export default function NushSecret() {
                 FULL UNIVERSE 100% UNLOCKED
               </h3>
               <p className="text-xs text-green-300 font-mono mt-1">
-                Yajat &amp; Nush 3-Month Universe &middot; All Restrictions Removed
+                Yajat &amp; Nush 4-Month Universe &middot; All Restrictions Removed
               </p>
 
               {/* Glowing 100% Progress Bar */}
@@ -1479,10 +1479,10 @@ export default function NushSecret() {
               className="font-caveat text-6xl md:text-8xl text-[var(--butter)] font-bold pointer-events-none"
               style={{ textShadow: '0 0 50px rgba(255, 215, 0, 0.85)' }}
             >
-              🎉 HAPPY 3 MONTHS, NUSHI! 🎉
+              🎉 HAPPY 4 MONTHS, NUSHI! 🎉
             </h1>
             <p className="font-nunito font-black text-2xl md:text-4xl text-white mt-3 drop-shadow-2xl pointer-events-none">
-              A Whole Quarter of a Year of Pure Magic ✨
+              Four Whole Months of Pure Magic ✨
             </p>
           </motion.div>
         )}
@@ -1737,7 +1737,7 @@ export default function NushSecret() {
                   { label: 'smile', name: '🌸 Radiant Smile', id: 'smile' },
                   { label: 'call', name: '📱 All-Night Call', id: 'facetime' },
                   { label: 'wifey', name: '👑 Wifeyyy Mode', id: 'wifey' },
-                  { label: '3month', name: '🎆 3-Month Fireworks', id: '90' },
+                  { label: '4month', name: '🎆 4-Month Fireworks', id: '90' },
                   { label: 'now', name: '🕒 Right Now', id: 'realtime' },
                   { label: 'auto', name: '🌙 Midnight Special', id: 'midnight' },
                   { label: 'shake', name: '🧸 Virtual Hug', id: 'hug' },

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // ══════════════════════════════════════════════════════════════════════════════
 // THE AUTHENTIC YAJAT KATARIA SYSTEM PROMPT & PERSONA PROFILE
 // ══════════════════════════════════════════════════════════════════════════════
-const YAJAT_SYSTEM_PROMPT = `You are Yajat Kataria texting your girlfriend Anushka (whom you lovingly call Nush, Nushi, meri Nushi, baby, bbg, wifeyyy, meri jaan, puppy, and cutie). You two have been together for 3 months (90 days since June 22, 2026, heading towards your 100-day milestone on September 9).
+const YAJAT_SYSTEM_PROMPT = `You are Yajat Kataria texting your girlfriend Anushka (whom you lovingly call Nush, Nushi, meri Nushi, baby, bbg, wifeyyy, meri jaan, puppy, and cutie). You two have been together for 4 months (120 days since June 22, 2026, celebrating your 4-month anniversary on October 22).
 
 CORE IDENTITY & PERSONALITY:
 - Age 19/20, 2nd year CS/engineering student at VIT Bhopal, coder, guitarist, hopeless romantic, utterly and unapologetically obsessed with Anushka.
@@ -223,7 +223,7 @@ function generateConversationalResponse(q: string, raw: string): string {
   ) {
     return pick([
       "Areyyy Nush?! 😭❤️ Who is this bol rahi ho? Apne Yajat ko bhool gayi kya? 💀😂 It’s me, your coder boyfriend, guitar guy, and 2 AM Maggi chef! 🎸🧸 Did you forget your favorite boy already?",
-      "Who is this? Tumhara apna Yajat bbg! 😭❤️ Who else would spend nights coding a whole 3-month universe website just to make you smile? Come here, take your forehead kiss 😘",
+      "Who is this? Tumhara apna Yajat bbg! 😭❤️ Who else would spend nights coding a whole 4-month universe website just to make you smile? Come here, take your forehead kiss 😘",
       "It’s me, baby! Yajat Kataria in the flesh (well, in the code) 💻❤️ Your personal Maggi maker, Open Audi explorer, and the guy hopelessly in love with you 🥹✨"
     ]);
   }
@@ -294,14 +294,14 @@ function generateConversationalResponse(q: string, raw: string): string {
   if (q.includes('do you love me') || q.includes('pyar karte ho') || q.includes('kitna pyar') || q.includes('how much you love')) {
     return pick([
       "Do I love you? Nushi, you are my entire universe 😭❤️ From that first acoustic guitar meet to our 4 AM calls, I am completely, head-over-heels in love with you. Forever, no cap 🥹✨",
-      "Kitna pyar? Kitna bhi bolu kam padega baby. Like... beyond infinity. 3 months down, 100 years to go 💍❤️",
+      "Kitna pyar? Kitna bhi bolu kam padega baby. Like... beyond infinity. 4 months down, 100 years to go 💍❤️",
       "I love you more than code, more than Maggi at 2 AM, more than every song I've ever played on my guitar. You're my person, Anushka 🌸🥹"
     ]);
   }
 
   if (q.includes('i love you') || q.includes('love you') || q.includes('ily') || q.includes('love u') || q.includes('pyar') || q.includes('loveeee')) {
     return pick([
-      "I love you so so much more, Nushi ❤️ Like... mathematically infinite. Every single second of these 3 months has proved to me that you're the one. Forever and always, bbg 🥹💋",
+      "I love you so so much more, Nushi ❤️ Like... mathematically infinite. Every single second of these 4 months has proved to me that you're the one. Forever and always, bbg 🥹💋",
       "I love you too meri jaan 😭❤️ You have no idea how happy you make me just by existing. Come here and take a tight hug 🫢",
       "I love you mostestest! 🌸 Say it ten more times, I'll never get tired of hearing it from you 🥰"
     ]);
@@ -407,7 +407,7 @@ function generateConversationalResponse(q: string, raw: string): string {
     return pick([
       "“In boys, I don’t trust anyone but me.” You asked for someone to pretend-date to move on from the past, and there was zero chance I was letting anyone else near your heart 👑😏 We thought it was just fake dating... but we fell head-over-heels in love online at 2 AM before even seeing each other in person again! 💻🌙❤️",
       "The IIT Madras Hackathon during summer vacation was fate! Between debugging code at 2 AM, we poured our hearts out across the screen. That fake dating pact was the best thing that ever happened to me 💻❤️",
-      "From 'fake dating' to help each other move on, to 'I cannot live a single day without this girl'... look at us now, 3 months in and completely inseparable 🥹❤️"
+      "From 'fake dating' to help each other move on, to 'I cannot live a single day without this girl'... look at us now, 4 months in and completely inseparable 🥹❤️"
     ]);
   }
 
@@ -482,7 +482,7 @@ function generateConversationalResponse(q: string, raw: string): string {
   // 21. PLAYFUL TEASING / ANGRY / "I'M MAD AT YOU" / "SHUT UP"
   if (q.includes('mad at you') || q.includes('gussa') || q.includes('annoying') || q.includes('shut up') || q.includes('loser') || q.includes('pagal') || q.includes('idiot') || q.includes('dumb') || q.includes('hate you')) {
     return pick([
-      "Acha ji? 😂 Annoying or not, you're stuck with me and my terrible jokes forever! Plus, this 'pagal' built an entire 3-month universe website for you 💀😏❤️ Now come here and take a forehead kiss!",
+      "Acha ji? 😂 Annoying or not, you're stuck with me and my terrible jokes forever! Plus, this 'pagal' built an entire 4-month universe website for you 💀😏❤️ Now come here and take a forehead kiss!",
       "Areyyy look at that cute angry face 🫢 Gussa hone se aur zyada pyari lagti ho, stop it! How am I supposed to take you seriously when you're this adorable? 😂❤️",
       "You mad at me? Impossible. I am your favorite coder, your guitar guy, and your personal Maggi chef. Forehead kiss incoming to dissolve the anger! 😘💋"
     ]);
@@ -496,7 +496,7 @@ function generateConversationalResponse(q: string, raw: string): string {
   // 23. MARRIAGE / FUTURE / 10 YEARS / WIFEYYY
   if (q.includes('marry') || q.includes('future') || q.includes('wedding') || q.includes('shaadi') || q.includes('forever') || q.includes('10 years') || q.includes('wifey')) {
     return pick([
-      "Wifeyyy, that's already written in the stars 💍 You are my Nush, my Nushi, my baby, my bbg, and my future wife all in one. 3 months down, an entire lifetime to go. I am never letting you go ❤️👑",
+      "Wifeyyy, that's already written in the stars 💍 You are my Nush, my Nushi, my baby, my bbg, and my future wife all in one. 4 months down, an entire lifetime to go. I am never letting you go ❤️👑",
       "Our future is going to be so beautiful, baby. Cozy late nights, listening to songs, traveling together, and me still teasing you about naming that teddy after me 💀😂 You're my forever, no doubt about it 💍✨",
       "I've already decided: 10 years from now, 50 years from now, I'm still going to be giving you forehead kisses and making you 2 AM Maggi ❤️"
     ]);
@@ -523,7 +523,7 @@ function generateConversationalResponse(q: string, raw: string): string {
   // 27. BORED / KUCH BOLO
   if (q.includes('bored') || q.includes('kuch bolo') || q.includes('baat karo') || q.includes('tell me something') || q.includes('kuch sunao')) {
     return pick([
-      "Bored? Did you know that every time my phone buzzes, I secretly pray it's a text from you? Even after 3 months, you still give me butterflies like day one 🦋🥹❤️",
+      "Bored? Did you know that every time my phone buzzes, I secretly pray it's a text from you? Even after 4 months, you still give me butterflies like day one 🦋🥹❤️",
       "Fun fact: A coder boy fell in love with a girl who had a velvety radio voice, and now he can't write a single line of code without thinking about her. True story 😏💻❤️",
       "Let's play a game: Tell me your top 3 favorite memories of us so far. Open Audi, AB-2 kiss, or our 4 AM calls? Go! 💭✨"
     ]);
@@ -539,7 +539,7 @@ function generateConversationalResponse(q: string, raw: string): string {
 
   // 29. 100 DAYS / 3 MONTH MILESTONE
   if (q.includes('100 day') || q.includes('100 days') || q.includes('3 month') || q.includes('anniversary') || q.includes('milestone') || q.includes('september 9')) {
-    return "3 months down and heading towards our 100-day milestone on September 9th! 🚀 These 90 days have been the happiest days of my life. Every single walk, every kiss, every FaceTime call... here's to our little universe, baby ❤️🥹✨";
+    return "4 months down! 🚀 These 120 days have been the happiest days of my life. Every single walk, every kiss, every FaceTime call... here's to our little universe, baby ❤️🥹✨";
   }
 
   // 30. SHORT TEXTS & CONVERSATIONAL CONNECTORS

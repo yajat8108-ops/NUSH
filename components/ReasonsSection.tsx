@@ -15,7 +15,7 @@ const NINETY_REASONS = [
   "you hugged that teddy bear (named after me) tighter than you hug most people",
   "you've kept the Day 16 card I made you safe in your room this whole time",
   "you turn every dumb candid selfie into my new favorite wallpaper",
-  "three months in, and I still look forward to your notifications like it's day one",
+  "four months in, and I still look forward to your notifications like it's day one",
   "the way you say 'Yajat' when you're annoyed — it's weirdly the cutest sound on earth",
 
   // 11 - 20
@@ -105,14 +105,14 @@ const NINETY_REASONS = [
   // 81 - 90
   "your endless patience with my terrible jokes and coder humor 💻❤️",
   "the way you look in candid photos when you don't even know the camera is on you",
-  "how three months already feel like a solid foundation for a whole lifetime together",
+  "how four months already feel like a solid foundation for a whole lifetime together",
   "the excitement of planning our future dates, trips, and anniversary milestones",
   "the way your hugs make all the college stress and tiredness completely vanish",
   "how beautiful your soul is — kind, genuine, loving, and fiercely loyal",
   "the promise that no matter where life takes us, I will always choose you first",
   "how you are my home, my comfort, my favorite person, and my sweetest dream come true",
-  "90 days down, and every single second with you has been pure poetry",
-  "I love you, Anushka. Simply, deeply, completely, and endlessly. Happy 3 Months! 👑💖"
+  "120 days down, and every single second with you has been pure poetry",
+  "I love you, Anushka. Simply, deeply, completely, and endlessly. Happy 4 Months! 👑💖"
 ];
 
 const COLORS = ["var(--pink)", "var(--lav)", "var(--butter)", "var(--mocha-light)"];
@@ -150,7 +150,7 @@ export default function ReasonsSection() {
   return (
     <section id="reasons" className="anniversary-section relative py-12">
       <SectionHead
-        eyebrow="exhibit b · 90 days of us"
+        eyebrow="exhibit b · 4 months of us"
         title="90 Days, 90 Reasons"
         subtitle="Tap each numbered tile to scratch & reveal why I love you so deeply"
       />

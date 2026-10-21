@@ -20,7 +20,7 @@ const LEVELS: ScrambleLevel[] = [
   { id: 3, word: 'OPEN AUDI', scrambled: ['D', 'U', 'I', ' ', 'A', 'N', 'E', 'P', 'O'], hint: 'Our sacred, pavitra memory place 🥹', category: 'Memories 📍' },
   { id: 4, word: 'FOREHEAD KISS', scrambled: ['R', 'E', 'H', 'E', 'A', 'D', ' ', 'F', 'O', 'S', 'S', 'I', 'K'], hint: 'Yajat’s signature affectionate move 😘', category: 'Moments 💋' },
   { id: 5, word: 'TEDDY YAJAT', scrambled: ['Y', 'A', 'J', 'A', 'T', ' ', 'T', 'E', 'D', 'D', 'Y'], hint: 'The bear named after me on your birthday 🧸', category: 'Inside Jokes 😂' },
-  { id: 6, word: 'HAPPY THREE MONTHS', scrambled: ['T', 'H', 'R', 'E', 'E', ' ', 'P', 'A', 'P', 'H', 'Y', ' ', 'S', 'H', 'T', 'N', 'O', 'M'], hint: 'A whole quarter year together! 👑💖', category: 'Milestones 🌟' },
+  { id: 6, word: 'HAPPY FOUR MONTHS', scrambled: ['F', 'O', 'U', 'R', ' ', 'P', 'A', 'P', 'H', 'Y', ' ', 'S', 'H', 'T', 'N', 'O', 'M'], hint: 'Four whole months together! 👑💖', category: 'Milestones 🌟' },
 ];
 
 export default function WordScrambleGame() {
